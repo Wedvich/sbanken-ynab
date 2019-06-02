@@ -4,7 +4,8 @@ import { spawn } from 'redux-saga/effects';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 
 import {
-  connect as connectSbankenApi,
+  actions as sbankenActions,
+  api as sbankenApi,
   reducer as sbankenReducer,
   saga as sbankenSaga
 } from './sbanken';
@@ -30,12 +31,14 @@ const store = createStore(rootReducer, undefined, composeWithDevTools(
   applyMiddleware(...middleware)
 ));
 
-connectSbankenApi(store);
+sbankenApi.connect(store);
 
 const rootSaga = function* () {
   yield spawn(sbankenSaga);
 };
 
 sagaMiddleware.run(rootSaga);
+
+store.dispatch(sbankenActions.loadSbankenCachedCredentials());
 
 export default store;

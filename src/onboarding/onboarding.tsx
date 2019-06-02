@@ -6,14 +6,45 @@ import { actions as sbankenActions, api as sbankenApi } from '../sbanken';
 import './style.css';
 
 export interface OnboardingProps {
+  credentials?: string;
+  customerId?: string;
   getSbankenToken: typeof sbankenActions.getSbankenTokenRequest;
   loading: boolean;
 }
 
-const Onboarding: FunctionComponent<OnboardingProps> = ({ getSbankenToken, loading }) => {
-  const [clientId, setClientId] = useState();
-  const [clientSecret, setClientSecret] = useState();
-  const [customerId, setCustomerId] = useState();
+const unwrapClientCredentials = (credentials?: string) => {
+  if (!credentials) {
+    return {
+      clientId: '',
+      clientSecret: '',
+    };
+  }
+
+  const [clientId, clientSecret] = atob(credentials)
+    .split(':')
+    .map(p => decodeURIComponent(p));
+
+  return {
+    clientId,
+    clientSecret,
+  };
+}
+
+const Onboarding: FunctionComponent<OnboardingProps> = ({
+  getSbankenToken,
+  loading,
+  credentials,
+  customerId: cachedCustomerId,
+}) => {
+  const {
+    clientId: cachedClientId,
+    clientSecret: cachedClientSecret,
+  } = unwrapClientCredentials(credentials);
+
+
+  const [clientId, setClientId] = useState(cachedClientId || '');
+  const [clientSecret, setClientSecret] = useState(cachedClientSecret || '');
+  const [customerId, setCustomerId] = useState(cachedCustomerId || '');
 
   const nextClicked = () => {
     getSbankenToken(clientId, clientSecret, customerId);
@@ -67,6 +98,8 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({ getSbankenToken, loadi
 };
 
 const mapStateToProps = (state: any) => ({
+  credentials: state.authentication.sbanken.credentials,
+  customerId: state.authentication.sbanken.customerId,
   loading: state.authentication.sbanken.loading,
 });
 

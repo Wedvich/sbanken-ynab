@@ -8,9 +8,10 @@ module.exports = api => {
   ];
 
   const plugins = [
-    ['@babel/plugin-transform-runtime', {
+    ['@babel/transform-runtime', {
       corejs: 3,
     }],
+    '@babel/proposal-class-properties',
     'babel-plugin-redux-saga',
   ];
 

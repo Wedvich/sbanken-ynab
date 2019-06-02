@@ -4,13 +4,15 @@ export enum SbankenActionTypes {
   GetTokenRequest = 'sbanken/get-token-request',
   GetTokenSuccess = 'sbanken/get-token-success',
   GetTokenFailure = 'sbanken/get-token-failure',
+  LoadCachedCredentials = 'sbanken/load-cached-credentials',
+  LoadCachedCredentialsSuccess = 'sbanken/load-cached-credentials-success',
 };
 
 export interface GetSbankenTokenRequestAction
   extends Action<SbankenActionTypes.GetTokenRequest> {
-  credentials: string;
-  customerId: string;
-}
+    credentials: string;
+    customerId: string;
+  }
 
 const getSbankenTokenRequest = (clientId: string, clientSecret: string, customerId: string): GetSbankenTokenRequestAction => {
   const credentials = btoa(`${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`);
@@ -23,9 +25,9 @@ const getSbankenTokenRequest = (clientId: string, clientSecret: string, customer
 
 export interface GetSbankenTokenSuccessAction
   extends Action<SbankenActionTypes.GetTokenSuccess> {
-  token: string;
-  tokenExpiry: number;
-}
+    token: string;
+    tokenExpiry: number;
+  }
 
 const getSbankenTokenSuccess = (token: string, tokenExpiry: number): GetSbankenTokenSuccessAction => {
   return {
@@ -37,8 +39,8 @@ const getSbankenTokenSuccess = (token: string, tokenExpiry: number): GetSbankenT
 
 export interface GetSbankenTokenFailureAction
   extends Action<SbankenActionTypes.GetTokenFailure> {
-  errorMessage: string;
-}
+    errorMessage: string;
+  }
 
 const getSbankenTokenFailure = (error: Error): GetSbankenTokenFailureAction => {
   return {
@@ -47,13 +49,37 @@ const getSbankenTokenFailure = (error: Error): GetSbankenTokenFailureAction => {
   };
 };
 
+export interface LoadSbankenCachedCredentialsAction
+  extends Action<SbankenActionTypes.LoadCachedCredentials> {}
+
+const loadSbankenCachedCredentials = (): LoadSbankenCachedCredentialsAction => ({
+  type: SbankenActionTypes.LoadCachedCredentials,
+});
+
+export interface LoadSbankenCachedCredentialsSuccessAction
+  extends Action<SbankenActionTypes.LoadCachedCredentialsSuccess> {
+    credentials: string;
+    customerId: string;
+  }
+
+const loadSbankenCachedCredentialsSuccess = (credentials: string, customerId: string):
+  LoadSbankenCachedCredentialsSuccessAction => ({
+    type: SbankenActionTypes.LoadCachedCredentialsSuccess,
+    credentials,
+    customerId,
+  });
+
 export const actions = {
   getSbankenTokenRequest,
   getSbankenTokenSuccess,
   getSbankenTokenFailure,
+  loadSbankenCachedCredentials,
+  loadSbankenCachedCredentialsSuccess,
 };
 
 export type SbankenAction =
   GetSbankenTokenRequestAction |
   GetSbankenTokenSuccessAction |
-  GetSbankenTokenFailureAction;
+  GetSbankenTokenFailureAction |
+  LoadSbankenCachedCredentialsAction |
+  LoadSbankenCachedCredentialsSuccessAction;

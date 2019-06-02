@@ -42,6 +42,13 @@ export const reducer: Reducer<SbankenState, SbankenAction> = (state = initialSta
         loading: false,
       };
 
+    case SbankenActionTypes.LoadCachedCredentialsSuccess:
+      return {
+        ...state,
+        credentials: action.credentials,
+        customerId: action.customerId,
+      };
+
     default:
       return state;
   }
