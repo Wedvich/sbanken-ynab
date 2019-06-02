@@ -7,8 +7,12 @@ import {
   actions as sbankenActions,
   api as sbankenApi,
   reducer as sbankenReducer,
-  saga as sbankenSaga
+  saga as sbankenSaga,
 } from './sbanken';
+
+import {
+  api as ynabApi,
+} from './ynab';
 
 const sagaMiddleware = createSagaMiddleware();
 const middleware = [sagaMiddleware];
@@ -32,6 +36,7 @@ const store = createStore(rootReducer, undefined, composeWithDevTools(
 ));
 
 sbankenApi.connect(store);
+ynabApi.connect(store);
 
 const rootSaga = function* () {
   yield spawn(sbankenSaga);
