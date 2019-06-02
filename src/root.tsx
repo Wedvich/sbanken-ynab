@@ -1,17 +1,18 @@
 import React, { FunctionComponent } from 'react';
 import { Provider } from 'react-redux';
 import { hot } from 'react-hot-loader/root';
+import { MemoryRouter, Route } from 'react-router';
 
 import store from './store';
-
-import { actionTypes } from './api/sbanken';
 import Onboarding from './onboarding/onboarding';
-
-store.dispatch({ type: actionTypes.GET_TOKEN_REQUEST });
 
 const Root: FunctionComponent = () => (
   <Provider store={store}>
-    <Onboarding />
+    <MemoryRouter>
+      <Route path="/">
+        <Onboarding />
+      </Route>
+    </MemoryRouter>
   </Provider>
 );
 

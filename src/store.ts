@@ -1,19 +1,41 @@
-import { applyMiddleware, createStore } from 'redux';
+import { applyMiddleware, createStore, combineReducers } from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import { spawn } from 'redux-saga/effects';
+import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 
-const middleware = [];
+import {
+  connect as connectSbankenApi,
+  reducer as sbankenReducer,
+  saga as sbankenSaga
+} from './sbanken';
+
+const sagaMiddleware = createSagaMiddleware();
+const middleware = [sagaMiddleware];
+
 if (process.env.NODE_ENV === 'development') {
   const { createLogger } = require('redux-logger');
   const logger = createLogger({ collapsed: true });
   middleware.push(logger);
 }
 
-const initialState = {
-  onboarding: {
-    complete: false
-  },
+const authenticationReducer = combineReducers({
+  sbanken: sbankenReducer,
+})
+
+const rootReducer = combineReducers({
+  authentication: authenticationReducer,
+});
+
+const store = createStore(rootReducer, undefined, composeWithDevTools(
+  applyMiddleware(...middleware)
+));
+
+connectSbankenApi(store);
+
+const rootSaga = function* () {
+  yield spawn(sbankenSaga);
 };
 
-const rootReducer = (state: any = initialState, action: any) => state;
-const store = createStore(rootReducer, undefined, applyMiddleware(...middleware));
+sagaMiddleware.run(rootSaga);
 
 export default store;

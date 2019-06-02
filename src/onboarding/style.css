@@ -1,0 +1,11 @@
+.onboarding__row {
+  display: flex;
+}
+
+.onboarding__label {
+  flex: 0.2;
+}
+
+.onboarding__input {
+  flex: 0.8;
+}
