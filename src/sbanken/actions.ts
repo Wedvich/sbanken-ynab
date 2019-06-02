@@ -1,5 +1,7 @@
 import { Action } from 'redux';
 
+import { wrapClientCredentials } from './helpers';
+
 export enum SbankenActionTypes {
   GetTokenRequest = 'sbanken/get-token-request',
   GetTokenSuccess = 'sbanken/get-token-success',
@@ -15,7 +17,7 @@ export interface GetSbankenTokenRequestAction
   }
 
 const getSbankenTokenRequest = (clientId: string, clientSecret: string, customerId: string): GetSbankenTokenRequestAction => {
-  const credentials = btoa(`${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`);
+  const credentials = wrapClientCredentials(clientId, clientSecret);
   return {
     type: SbankenActionTypes.GetTokenRequest,
     credentials,

@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 
-import { actions as sbankenActions, api as sbankenApi } from '../sbanken';
+import { actions as sbankenActions, api as sbankenApi, unwrapClientCredentials } from '../sbanken';
 
 import './style.css';
 
@@ -10,24 +10,6 @@ export interface OnboardingProps {
   customerId?: string;
   getSbankenToken: typeof sbankenActions.getSbankenTokenRequest;
   loading: boolean;
-}
-
-const unwrapClientCredentials = (credentials?: string) => {
-  if (!credentials) {
-    return {
-      clientId: '',
-      clientSecret: '',
-    };
-  }
-
-  const [clientId, clientSecret] = atob(credentials)
-    .split(':')
-    .map(p => decodeURIComponent(p));
-
-  return {
-    clientId,
-    clientSecret,
-  };
 }
 
 const Onboarding: FunctionComponent<OnboardingProps> = ({
@@ -39,7 +21,7 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
   const {
     clientId: cachedClientId,
     clientSecret: cachedClientSecret,
-  } = unwrapClientCredentials(credentials);
+  } = unwrapClientCredentials(credentials || '');
 
 
   const [clientId, setClientId] = useState(cachedClientId || '');
