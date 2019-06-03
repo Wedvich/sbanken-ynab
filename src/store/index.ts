@@ -1,18 +1,11 @@
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import { spawn } from 'redux-saga/effects';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 
-import {
-  actions as sbankenActions,
-  api as sbankenApi,
-  reducer as sbankenReducer,
-  saga as sbankenSaga,
-} from '../sbanken';
-
-import {
-  api as ynabApi,
-} from '../ynab';
+import rootReducer from './rootReducer';
+import rootSaga from './rootSaga';
+import { api as sbankenApi } from '../sbanken';
+import { api as ynabApi } from '../ynab';
 
 const sagaMiddleware = createSagaMiddleware();
 const middleware = [sagaMiddleware];
@@ -23,14 +16,6 @@ if (process.env.NODE_ENV === 'development') {
   middleware.push(logger);
 }
 
-const authenticationReducer = combineReducers({
-  sbanken: sbankenReducer,
-})
-
-const rootReducer = combineReducers({
-  authentication: authenticationReducer,
-});
-
 const store = createStore(rootReducer, undefined, composeWithDevTools(
   applyMiddleware(...middleware)
 ));
@@ -38,12 +23,6 @@ const store = createStore(rootReducer, undefined, composeWithDevTools(
 sbankenApi.connect(store);
 ynabApi.connect(store);
 
-const rootSaga = function* () {
-  yield spawn(sbankenSaga);
-};
-
 sagaMiddleware.run(rootSaga);
-
-store.dispatch(sbankenActions.loadSbankenCachedCredentials());
 
 export default store;
