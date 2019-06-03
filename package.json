@@ -14,7 +14,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node server",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --hot",
-    "build": "cross-env NODE_ENV=production webpack",
+    "build": "cross-env NODE_ENV=production webpack --progress",
     "build:watch": "cross-env NODE_ENV=development webpack --watch",
     "types": "tsc",
     "types:watch": "tsc --watch"
@@ -27,6 +27,8 @@
     "chalk": "^2.4.2",
     "cross-env": "^5.2.0",
     "koa": "^2.7.0",
+    "koa-compress": "^3.0.0",
+    "koa-helmet": "^4.1.0",
     "koa-static": "^5.0.0"
   },
   "devDependencies": {
@@ -53,6 +55,7 @@
     "eslint-plugin-react": "^7.13.0",
     "eslint-plugin-react-hooks": "^1.6.0",
     "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.7.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-hot-loader": "^4.8.8",

@@ -2,10 +2,12 @@ require('dotenv').config();
 
 const path = require('path');
 const HtmlPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = process.env.NODE_ENV === 'development';
 
+const host = process.env.HOST || 'localhost';
 const port = process.env.PORT || 3000;
 
 const entry = ['./src/index'];
@@ -18,6 +20,10 @@ const plugins = [
     template: './src/index.html',
   }),
 ];
+
+if (isProduction) {
+  plugins.push(new MiniCssExtractPlugin());
+}
 
 module.exports = {
   mode: isProduction ? 'production' : 'development',
@@ -36,7 +42,7 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          'style-loader',
+          isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
           'css-loader',
         ],
       },
@@ -51,6 +57,8 @@ module.exports = {
   plugins,
   devServer: {
     historyApiFallback: true,
+    host,
+    http2: true,
     open: true,
     port, 
   },

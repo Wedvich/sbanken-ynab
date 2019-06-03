@@ -46,4 +46,6 @@ export function* saga() {
   yield takeLatest(SbankenActionTypes.GetTokenRequest, getSbankenTokenSaga);
   yield takeEvery(SbankenActionTypes.GetTokenSuccess, storeSbankenCredentialsSaga);
   yield takeEvery(SbankenActionTypes.LoadCachedCredentials, loadSbankenCachedCredentialsSaga);
+
+  yield put(actions.loadSbankenCachedCredentials());
 }

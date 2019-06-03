@@ -62,3 +62,8 @@ typings/
 
 # macOS attributes
 .DS_Store
+
+# Keys and certificates
+*.crt
+*.key
+*.pem
