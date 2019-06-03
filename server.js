@@ -1,14 +1,11 @@
+require('dotenv').config();
+
 const Koa = require('koa');
 const static = require('koa-static');
+const { default: chalk } = require('chalk');
 
-const app = new Koa()
-  .use(static('public'));
+const port = process.env.PORT || 3000;
 
-// if (process.env.NODE_ENV === 'development') {
-//   const koaWebpack = require('koa-webpack');
-//   const middleware = await koaWebpack({});
-//   app.use(middleware);
-// }
-
-app.listen(3000);
-console.log('Listening on port 3000');
+new Koa()
+  .use(static('public'))
+  .listen(port, () => { console.log('App is running on %s', chalk.bold.cyan(`http://localhost:${port}`)); });

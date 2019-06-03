@@ -8,11 +8,11 @@ import {
   api as sbankenApi,
   reducer as sbankenReducer,
   saga as sbankenSaga,
-} from './sbanken';
+} from '../sbanken';
 
 import {
   api as ynabApi,
-} from './ynab';
+} from '../ynab';
 
 const sagaMiddleware = createSagaMiddleware();
 const middleware = [sagaMiddleware];

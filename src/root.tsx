@@ -1,18 +1,19 @@
 import React, { FunctionComponent } from 'react';
 import { Provider } from 'react-redux';
 import { hot } from 'react-hot-loader/root';
-import { MemoryRouter, Route } from 'react-router';
+import { Route } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 
 import store from './store';
 import Onboarding from './onboarding/onboarding';
 
 const Root: FunctionComponent = () => (
   <Provider store={store}>
-    <MemoryRouter>
+    <BrowserRouter>
       <Route path="/">
         <Onboarding />
       </Route>
-    </MemoryRouter>
+    </BrowserRouter>
   </Provider>
 );
 
