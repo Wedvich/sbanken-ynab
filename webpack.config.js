@@ -6,6 +6,8 @@ const HtmlPlugin = require('html-webpack-plugin');
 const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = process.env.NODE_ENV === 'development';
 
+const port = process.env.PORT || 3000;
+
 const entry = ['./src/index'];
 if (isDevelopment) {
   entry.unshift('react-hot-loader/patch');
@@ -47,4 +49,9 @@ module.exports = {
     },
   },
   plugins,
+  devServer: {
+    historyApiFallback: true,
+    open: true,
+    port, 
+  },
 };

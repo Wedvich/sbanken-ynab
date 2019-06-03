@@ -12,6 +12,8 @@
   },
   "homepage": "https://github.com/Wedvich/sbanken-ynab#readme",
   "scripts": {
+    "start": "cross-env NODE_ENV=production node server",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --hot",
     "build": "cross-env NODE_ENV=production webpack",
     "build:watch": "cross-env NODE_ENV=development webpack --watch",
     "types": "tsc",
@@ -58,6 +60,7 @@
     "style-loader": "^0.23.1",
     "typescript": "^3.5.1",
     "webpack": "^4.32.2",
-    "webpack-cli": "^3.3.2"
+    "webpack-cli": "^3.3.2",
+    "webpack-dev-server": "^3.5.1"
   }
 }
