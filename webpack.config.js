@@ -24,7 +24,7 @@ module.exports = {
   devtool: isProduction ? 'source-map' : 'eval-source-map',
   entry,
   output: {
-    path: path.resolve(__dirname, 'public')
+    path: path.resolve(__dirname, 'public'),
   },
   module: {
     rules: [
@@ -37,7 +37,7 @@ module.exports = {
         test: /\.css$/,
         use: [
           'style-loader',
-          'css-loader'
+          'css-loader',
         ],
       },
     ],
