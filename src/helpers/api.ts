@@ -7,7 +7,7 @@ import { Store, Dispatch } from 'redux';
  * @param apiName The name of the API. This will be displayed in the error message.
  */
 export const createNotConnectedInterceptor = (apiName: string) => (config: AxiosRequestConfig) => {
-  console.error(
+  console.error( // eslint-disable-line no-console
     `You must call %cconnect(store)%c for the ${apiName} API before using it!`,
     'font-weight: bold;',
     'font-weight: inherit',
@@ -25,7 +25,7 @@ export abstract class Api {
 
   constructor(apiName: string, baseUrl: string) {
     this.instance = axios.create({
-      baseURL: baseUrl
+      baseURL: baseUrl,
     });
     this.notConnectedInterceptorId = this.instance.interceptors.request.use(createNotConnectedInterceptor(apiName));
   }
