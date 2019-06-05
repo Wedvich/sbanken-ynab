@@ -2,8 +2,10 @@ import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { actions as sbankenActions, api as sbankenApi, unwrapClientCredentials } from '../sbanken';
+import TextInput from '../components/text-input';
+import OnboardingProgress from './OnboardingProgress';
 
-import './style.css';
+import './style.scss';
 
 export interface OnboardingProps {
   credentials?: string;
@@ -35,45 +37,42 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
   const getStuffClicked = async () => {
     const response = await sbankenApi.getAccounts();
     const [account] = response.data.items;
-    const transactions = await sbankenApi.getTransactions(account.accountNumber);
+    const transactions = await sbankenApi.getTransactions(account.accountId);
     console.log(transactions.data);
   };
 
   return (
     <div className="onboarding">
       <div className="onboarding__row">
-        <label htmlFor="onboarding__clientId" className="onboarding__label">Client ID</label>
-        <input
+        <TextInput
           id="onboarding__clientId"
-          type="text"
-          className="onboarding__input"
-          defaultValue={clientId}
-          onInput={e => setClientId((e.target as HTMLInputElement).value)}
+          label="Client ID"
+          value={clientId}
+          setValue={setClientId}
         />
       </div>
       <div className="onboarding__row">
-        <label htmlFor="onboarding__clientSecret" className="onboarding__label">Client Secret</label>
-        <input
+        <TextInput
           id="onboarding__clientSecret"
-          type="text"
-          className="onboarding__input"
-          defaultValue={clientSecret}
-          onInput={e => setClientSecret((e.target as HTMLInputElement).value)}
+          label="Client Secret"
+          value={clientSecret}
+          setValue={setClientSecret}
         />
       </div>
       <div className="onboarding__row">
-        <label htmlFor="onboarding__customerId" className="onboarding__label">Customer ID</label>
-        <input
+        <TextInput
           id="onboarding__customerId"
-          type="text"
-          className="onboarding__input"
-          defaultValue={customerId}
-          onInput={e => setCustomerId((e.target as HTMLInputElement).value)}
+          label="Customer ID"
+          value={customerId}
+          setValue={setCustomerId}
         />
       </div>
-      <div>
-        <button onClick={nextClicked} disabled={loading}>Next</button>
-        <button onClick={getStuffClicked} disabled={loading}>Get transactions</button>
+      <div className="onboarding__row">
+        <div>
+          <button onClick={nextClicked} disabled={loading}>Next</button>
+          <button onClick={getStuffClicked} disabled={loading}>Get transactions</button>
+        </div>
+        <OnboardingProgress />
       </div>
     </div>
   );

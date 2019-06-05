@@ -8,6 +8,6 @@ kjempebra! Denne appen gir et visuelt grensesnitt for å overføre transaksjoner
 (TODO dokumentasjon)
 - Registrer utviklertilgang i Sbanken
 - Generer appnøkkel i YNAB
-- Opprett TLS-sertifikat ok nøkkel
+- Opprett TLS-sertifikat og nøkkel
 - Bygg og kjør appen
 - Kjør appen i utviklingsmodus

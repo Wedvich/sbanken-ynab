@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Store } from 'redux';
 
 import { Api } from '../helpers/api';
@@ -19,7 +19,7 @@ export interface SbankenListResult<T> {
   errorMessage: string | null;
   errorType: SbankenErrorType | null;
   isError: boolean;
-  items: Array<T>;
+  items: T[];
   traceId: string | null;
 }
 
@@ -39,7 +39,7 @@ export interface SbankenTransaction {
 }
 
 const tokenAndCustomerIdSelector = (state: any) => {
-  const { token, customerId }: { token: string; customerId: string; } = state.authentication.sbanken;
+  const { token, customerId }: { token: string; customerId: string } = state.authentication.sbanken;
   return { token, customerId };
 };
 

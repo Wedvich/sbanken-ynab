@@ -8,7 +8,8 @@ export enum SbankenActionTypes {
   GetTokenFailure = 'sbanken/get-token-failure',
   LoadCachedCredentials = 'sbanken/load-cached-credentials',
   LoadCachedCredentialsSuccess = 'sbanken/load-cached-credentials-success',
-};
+  RefreshToken = 'sbanken/refresh-token',
+}
 
 export interface GetSbankenTokenRequestAction
   extends Action<SbankenActionTypes.GetTokenRequest> {

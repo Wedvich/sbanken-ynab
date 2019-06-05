@@ -40,11 +40,21 @@ module.exports = {
         use: 'babel-loader',
       },
       {
-        test: /\.css$/,
+        test: /\.s?css$/,
         use: [
           isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
           'css-loader',
+          'sass-loader',
         ],
+      },
+      {
+        test: /\.ttf$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: 'fonts/[name].[ext]',
+          },
+        },
       },
     ],
   },
@@ -60,6 +70,10 @@ module.exports = {
     host,
     http2: true,
     open: true,
-    port, 
+    port,
+    stats: {
+      children: false,
+      modules: false,
+    },
   },
 };

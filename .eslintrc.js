@@ -25,15 +25,23 @@ module.exports = {
   ],
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/indent': [
       'warn',
       2,
     ],
+    '@typescript-eslint/no-empty-interface': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     'comma-dangle': [
       'warn',
       'always-multiline',
     ],
+    'quotes': [
+      'error',
+      'single'
+    ],
+    'react/prop-types': 'off',
     'semi': 'error',
   },
   settings: {
