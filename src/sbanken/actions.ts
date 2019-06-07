@@ -7,8 +7,8 @@ export enum SbankenActionTypes {
   GetTokenSuccess = 'sbanken/get-token-success',
   GetTokenFailure = 'sbanken/get-token-failure',
   LoadCachedCredentials = 'sbanken/load-cached-credentials',
-  LoadCachedCredentialsSuccess = 'sbanken/load-cached-credentials-success',
   RefreshToken = 'sbanken/refresh-token',
+  StoreCredentials = 'sbanken/store-credentials',
 }
 
 export interface GetSbankenTokenRequestAction
@@ -58,24 +58,25 @@ const loadSbankenCachedCredentials = (): LoadSbankenCachedCredentialsAction => (
   type: SbankenActionTypes.LoadCachedCredentials,
 });
 
-export interface LoadSbankenCachedCredentialsSuccessAction
-  extends Action<SbankenActionTypes.LoadCachedCredentialsSuccess> {
-    credentials: string;
-    customerId: string;
-  }
-
-const loadSbankenCachedCredentialsSuccess = (credentials: string, customerId: string):
-  LoadSbankenCachedCredentialsSuccessAction => ({
-    type: SbankenActionTypes.LoadCachedCredentialsSuccess,
-    credentials,
-    customerId,
-  });
-
-
 export type RefreshSbankenTokenAction = Action<SbankenActionTypes.RefreshToken> 
 
 const refreshSbankenToken = (): RefreshSbankenTokenAction => ({
   type: SbankenActionTypes.RefreshToken,
+});
+
+export interface StoreSbankenCredentialsAction extends Action<SbankenActionTypes.StoreCredentials> {
+  credentials: string;
+  customerId: string;
+}
+
+export const storeSbankenCredentials = (
+  clientId: string,
+  clientSecret: string,
+  customerId: string,
+): StoreSbankenCredentialsAction => ({
+  type: SbankenActionTypes.StoreCredentials,
+  credentials: wrapClientCredentials(clientId, clientSecret),
+  customerId,
 });
 
 export const actions = {
@@ -83,8 +84,8 @@ export const actions = {
   getSbankenTokenSuccess,
   getSbankenTokenFailure,
   loadSbankenCachedCredentials,
-  loadSbankenCachedCredentialsSuccess,
   refreshSbankenToken,
+  storeSbankenCredentials,
 };
 
 export type SbankenAction =
@@ -92,5 +93,5 @@ export type SbankenAction =
   GetSbankenTokenSuccessAction |
   GetSbankenTokenFailureAction |
   LoadSbankenCachedCredentialsAction |
-  LoadSbankenCachedCredentialsSuccessAction |
-  RefreshSbankenTokenAction
+  RefreshSbankenTokenAction |
+  StoreSbankenCredentialsAction

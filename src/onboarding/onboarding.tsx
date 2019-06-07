@@ -1,91 +1,94 @@
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 
-import { actions as sbankenActions, api as sbankenApi, unwrapClientCredentials } from '../sbanken';
 import TextInput from '../components/text-input';
-import OnboardingProgress from './OnboardingProgress';
+import { unwrapClientCredentials } from '../sbanken';
+import { storeOnboardingSettings } from './actions';
 
-import './style.scss';
-
-export interface OnboardingProps {
-  credentials?: string;
-  customerId?: string;
-  getSbankenToken: typeof sbankenActions.getSbankenTokenRequest;
-  loading: boolean;
+interface OnboardingStateProps {
+  savedSbankenClientId: string;
+  savedSbankenClientSecret: string;
+  savedSbankenCustomerId: string;
+  savedYnabAccessToken: string;
 }
 
-const Onboarding: FunctionComponent<OnboardingProps> = ({
-  getSbankenToken,
-  loading,
-  credentials,
-  customerId: cachedCustomerId,
+interface OnboardingDispatchProps {
+  storeOnboardingSettings: typeof storeOnboardingSettings;
+}
+
+const Onboarding: FunctionComponent<OnboardingStateProps & OnboardingDispatchProps> = ({
+  savedSbankenClientId,
+  savedSbankenClientSecret,
+  savedSbankenCustomerId,
+  savedYnabAccessToken,
+  storeOnboardingSettings,
 }) => {
-  const {
-    clientId: cachedClientId,
-    clientSecret: cachedClientSecret,
-  } = unwrapClientCredentials(credentials || '');
+  const [sbankenClientId, setSbankenClientId] = useState(savedSbankenClientId);
+  const [sbankenClientSecret, setSbankenClientSecret] = useState(savedSbankenClientSecret);
+  const [sbankenCustomerId, setSbankenCustomerId] = useState(savedSbankenCustomerId);
+  const [ynabAccessToken, setYnabAccessToken] = useState(savedYnabAccessToken);
 
-
-  const [clientId, setClientId] = useState(cachedClientId || '');
-  const [clientSecret, setClientSecret] = useState(cachedClientSecret || '');
-  const [customerId, setCustomerId] = useState(cachedCustomerId || '');
-
-  const nextClicked = () => {
-    getSbankenToken(clientId, clientSecret, customerId);
-  };
-
-  const getStuffClicked = async () => {
-    const response = await sbankenApi.getAccounts();
-    const [account] = response.data.items;
-    const transactions = await sbankenApi.getTransactions(account.accountId);
-    console.log(transactions.data);
-  };
+  const saveClicked = () => storeOnboardingSettings(
+    sbankenClientId,
+    sbankenClientSecret,
+    sbankenCustomerId,
+    ynabAccessToken,
+  );
 
   return (
     <div className="onboarding">
       <div className="onboarding__row">
+        <div>Sbanken</div>
         <TextInput
-          id="onboarding__clientId"
+          id="sbankenClientId"
           label="Client ID"
-          value={clientId}
-          setValue={setClientId}
+          value={sbankenClientId}
+          setValue={setSbankenClientId}
         />
-      </div>
-      <div className="onboarding__row">
         <TextInput
-          id="onboarding__clientSecret"
+          id="sbankenClientSecret"
           label="Client Secret"
-          value={clientSecret}
-          setValue={setClientSecret}
+          value={sbankenClientSecret}
+          setValue={setSbankenClientSecret}
         />
-      </div>
-      <div className="onboarding__row">
         <TextInput
-          id="onboarding__customerId"
+          id="sbankenCustomerId"
           label="Customer ID"
-          value={customerId}
-          setValue={setCustomerId}
+          value={sbankenCustomerId}
+          setValue={setSbankenCustomerId}
         />
       </div>
       <div className="onboarding__row">
-        <div>
-          <button onClick={nextClicked} disabled={loading}>Next</button>
-          <button onClick={getStuffClicked} disabled={loading}>Get transactions</button>
-        </div>
-        <OnboardingProgress />
+        <div>YNAB</div>
+        <TextInput
+          id="ynabAccessToken"
+          label="Access Token"
+          value={ynabAccessToken}
+          setValue={setYnabAccessToken}
+        />
+      </div>
+      <div className="onboarding__row">
+        <button onClick={saveClicked}>Save</button>
       </div>
     </div>
   );
 };
 
-const mapStateToProps = (state: any) => ({
-  credentials: state.authentication.sbanken.credentials,
-  customerId: state.authentication.sbanken.customerId,
-  loading: state.authentication.sbanken.loading,
-});
+const mapStateToProps = (state: any): OnboardingStateProps =>  {
+  const {
+    clientId: savedSbankenClientId,
+    clientSecret: savedSbankenClientSecret,
+  } = unwrapClientCredentials(state.sbanken.credentials);
+  return {
+    savedSbankenClientId,
+    savedSbankenClientSecret,
+    savedSbankenCustomerId: state.sbanken.customerId,
+    savedYnabAccessToken: state.ynab.accessToken,
+  };
+};
 
-const mapDispatchToProps = ({
-  getSbankenToken: sbankenActions.getSbankenTokenRequest,
-});
+const mapDispatchToProps: OnboardingDispatchProps = {
+  storeOnboardingSettings,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Onboarding);

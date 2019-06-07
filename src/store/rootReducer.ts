@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 
 import { reducer as sbankenReducer } from '../sbanken';
+import { reducer as ynabReducer } from '../ynab';
 
-const authenticationReducer = combineReducers({
+const rootReducer = combineReducers({
   sbanken: sbankenReducer,
-})
-
-export default combineReducers({
-  authentication: authenticationReducer,
+  ynab: ynabReducer,
 });
+
+export default rootReducer;

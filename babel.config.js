@@ -12,7 +12,8 @@ module.exports = api => {
       corejs: 3,
     }],
     '@babel/proposal-class-properties',
-    'babel-plugin-redux-saga',
+    'redux-saga',
+    '@babel/syntax-dynamic-import',
   ];
 
   if (process.env.NODE_ENV !== 'development') {

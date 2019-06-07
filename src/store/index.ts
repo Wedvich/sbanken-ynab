@@ -1,11 +1,9 @@
-import { applyMiddleware, createStore, combineReducers } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 
 import rootReducer from './rootReducer';
 import rootSaga from './rootSaga';
-import { api as sbankenApi } from '../sbanken';
-import { api as ynabApi } from '../ynab';
 
 const sagaMiddleware = createSagaMiddleware();
 const middleware = [sagaMiddleware];
@@ -20,9 +18,8 @@ const store = createStore(rootReducer, undefined, composeWithDevTools(
   applyMiddleware(...middleware)
 ));
 
-sbankenApi.connect(store);
-ynabApi.connect(store);
-
 sagaMiddleware.run(rootSaga);
+
+export type RootState = ReturnType<typeof rootReducer>;
 
 export default store;

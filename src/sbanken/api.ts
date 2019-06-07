@@ -1,5 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Store } from 'redux';
+import { AxiosResponse } from 'axios';
 
 import { Api } from '../helpers/api';
 
@@ -34,38 +33,16 @@ export interface SbankenAccount {
   ownerCustomerId: string;
 }
 
-export interface SbankenTransaction {
-
-}
-
-const tokenAndCustomerIdSelector = (state: any) => {
-  const { token, customerId }: { token: string; customerId: string } = state.authentication.sbanken;
-  return { token, customerId };
-};
-
 export class SbankenApi extends Api {
   constructor() {
-    super('Sbanken', SBANKEN_API_BASE_URL);
-  }
-
-  public connect(store: Store) {
-    super.connect(store);
-    this.instance.interceptors.request.use((config: AxiosRequestConfig) => {
-      const { token, customerId } = tokenAndCustomerIdSelector(this.getState!());
-      config.headers = {
-        ...config.headers,
-        'Authorization': `Bearer ${token}`,
-        'customerId': customerId,
-      };
-      return config;
-    });
+    super(SBANKEN_API_BASE_URL);
   }
 
   getAccounts(): Promise<AxiosResponse<SbankenListResult<SbankenAccount>>> {
     return this.instance.get('/bank/api/v1/Accounts');
   }
     
-  getTransactions(accountId: string): Promise<AxiosResponse<SbankenListResult<SbankenTransaction>>> {
+  getTransactions(accountId: string): Promise<AxiosResponse<SbankenListResult<{}>>> {
     return this.instance.get(`/bank/api/v1/Transactions/${accountId}`);
   } 
 }

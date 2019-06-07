@@ -8,7 +8,7 @@ export interface SbankenState {
   loading: boolean;
   token?: string;
   tokenExpiry?: number;
-};
+}
 
 const initialState: SbankenState = {
   credentials: undefined,
@@ -18,7 +18,7 @@ const initialState: SbankenState = {
   tokenExpiry: undefined,
 };
 
-export const reducer: Reducer<SbankenState, SbankenAction> = (state = initialState, action) => {
+const sbankenReducer: Reducer<SbankenState, SbankenAction> = (state = initialState, action) => {
   switch (action.type) {
     case SbankenActionTypes.GetTokenRequest:
       return {
@@ -42,7 +42,7 @@ export const reducer: Reducer<SbankenState, SbankenAction> = (state = initialSta
         loading: false,
       };
 
-    case SbankenActionTypes.LoadCachedCredentialsSuccess:
+    case SbankenActionTypes.StoreCredentials:
       return {
         ...state,
         credentials: action.credentials,
@@ -53,3 +53,5 @@ export const reducer: Reducer<SbankenState, SbankenAction> = (state = initialSta
       return state;
   }
 };
+
+export default sbankenReducer;
