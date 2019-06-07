@@ -1,0 +1,23 @@
+@import '../../colors.scss';
+
+.button {
+  background: $primary-color;
+  border: none;
+  border-radius: 2px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+
+  &__content {
+    display: block;
+    padding: 10px 20px;
+  }
+
+  &:active,
+  &:focus {
+    outline: none;
+  }
+}

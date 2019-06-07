@@ -3,10 +3,11 @@ import { Provider } from 'react-redux';
 import { hot } from 'react-hot-loader/root';
 import 'normalize.css';
 
+import './root.scss';
+
 import store from './store';
 import Onboarding from './onboarding';
-
-import './root.scss';
+import Button from './components/button';
 
 const Root: FunctionComponent = () => {
   const [onboarding, setOnboarding] = useState(true);
@@ -14,8 +15,7 @@ const Root: FunctionComponent = () => {
     <Provider store={store}>
       {onboarding && <Onboarding hide={() => setOnboarding(false)} />}
       {!onboarding && <div>
-        Not onboarding
-        <button onClick={() => setOnboarding(true)}>Settings</button>
+        <Button onClick={() => setOnboarding(true)}>Settings</Button>
       </div>}
     </Provider>
   );

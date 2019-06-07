@@ -1,6 +1,9 @@
 import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 
+import './style.scss';
+
+import Button from '../components/button';
 import TextInput from '../components/text-input';
 import { unwrapClientCredentials } from '../sbanken';
 import { storeOnboardingSettings } from './actions';
@@ -46,19 +49,25 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
   return (
     <div className="onboarding">
       <div className="onboarding__row">
-        <div>Sbanken</div>
+        <h1>Sbanken</h1>
+      </div>
+      <div className="onboarding__row">
         <TextInput
           id="sbankenClientId"
           label="Client ID"
           value={sbankenClientId}
           setValue={setSbankenClientId}
         />
+      </div>
+      <div className="onboarding__row">
         <TextInput
           id="sbankenClientSecret"
           label="Client Secret"
           value={sbankenClientSecret}
           setValue={setSbankenClientSecret}
         />
+      </div>
+      <div className="onboarding__row">
         <TextInput
           id="sbankenCustomerId"
           label="Customer ID"
@@ -66,8 +75,11 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
           setValue={setSbankenCustomerId}
         />
       </div>
+      <div className="onboarding__divider" />
       <div className="onboarding__row">
-        <div>YNAB</div>
+        <h1>YNAB</h1>
+      </div>
+      <div className="onboarding__row">
         <TextInput
           id="ynabAccessToken"
           label="Access Token"
@@ -75,9 +87,10 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
           setValue={updateYnabAccessToken}
         />
       </div>
-      <div className="onboarding__row">
-        <button onClick={saveClicked}>Save</button>
-        <button onClick={() => hide()}>Close</button>
+      <div className="onboarding__divider" />
+      <div className="onboarding__row onboarding__buttons">
+        <Button onClick={saveClicked}>Save</Button>
+        <Button onClick={() => hide()}>Close</Button>
       </div>
     </div>
   );

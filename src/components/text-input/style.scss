@@ -1,10 +1,7 @@
 @import '../../colors.scss';
 
 .text-input {
-  padding: 10px;
-}
-
-  .text-input label {
+  label {
     color: scale-color($text-color-1, $lightness: 20%);
     display: block;
     font-weight: bold;
@@ -13,7 +10,7 @@
     width: 100%;
   }
 
-  .text-input input {
+  input {
     border: 1px solid change-color($text-color-1, $alpha: 0.5);
     border-radius: 2px;
     color: $text-color-1;
@@ -21,12 +18,14 @@
     font-family: 'Fira Code', 'Courier New', Courier, monospace;
     margin-top: 5px;
     padding: 10px;
+    transition: all 0.2s ease-in-out;
     width: 100%;
-  }
 
-  .text-input input:focus {
-    color: $text-color-1;
-    border-color: $primary-color;
-    box-shadow: 0 0 5px adjust-color($primary-color, $lightness: 40%);
-    outline: none;
+    &:focus {
+      color: $text-color-1;
+      border-color: $primary-color;
+      box-shadow: 0 0 5px adjust-color($primary-color, $lightness: 30%);
+      outline: none;
+    }
   }
+}

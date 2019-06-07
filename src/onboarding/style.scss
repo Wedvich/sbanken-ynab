@@ -1,0 +1,29 @@
+@import '../colors.scss';
+
+
+
+.onboarding {
+  h1 {
+    margin: 0;
+  }
+
+  &__row {
+    padding: 10px;
+  }
+
+  &__divider {
+    background: change-color($text-color-1, $alpha: 0.25);
+    height: 1px;
+    margin: 20px 10px;
+  }
+
+  &__buttons {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+    & > * {
+      margin: 0 10px;
+    }
+  }
+}
