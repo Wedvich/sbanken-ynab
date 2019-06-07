@@ -2,17 +2,17 @@
 
 .text-input {
   label {
-    color: scale-color($text-color-1, $lightness: 20%);
+    color: $text-color-2;
     display: block;
     font-weight: bold;
-    font-size: 0.9rem;
+    font-size: 0.9em;
     text-transform: uppercase;
     width: 100%;
   }
 
   input {
-    border: 1px solid change-color($text-color-1, $alpha: 0.5);
-    border-radius: 2px;
+    border: 1px solid $border-color-1;
+    border-radius: .2em;
     color: $text-color-1;
     display: block;
     font-family: 'Fira Code', 'Courier New', Courier, monospace;
@@ -24,7 +24,7 @@
     &:focus {
       color: $text-color-1;
       border-color: $primary-color;
-      box-shadow: 0 0 5px adjust-color($primary-color, $lightness: 30%);
+      box-shadow: 0 0 .5em adjust-color($primary-color, $lightness: 30%);
       outline: none;
     }
   }

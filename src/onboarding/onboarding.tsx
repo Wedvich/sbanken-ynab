@@ -89,8 +89,8 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
       </div>
       <div className="onboarding__divider" />
       <div className="onboarding__row onboarding__buttons">
-        <Button onClick={saveClicked}>Save</Button>
-        <Button onClick={() => hide()}>Close</Button>
+        <Button onClick={saveClicked}>Lagre</Button>
+        <Button onClick={() => hide()}>Lukk</Button>
       </div>
     </div>
   );

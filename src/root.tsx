@@ -13,10 +13,10 @@ const Root: FunctionComponent = () => {
   const [onboarding, setOnboarding] = useState(true);
   return (
     <Provider store={store}>
+      <header className="header">
+        <Button onClick={() => setOnboarding(true)}>Innstillinger</Button>
+      </header>
       {onboarding && <Onboarding hide={() => setOnboarding(false)} />}
-      {!onboarding && <div>
-        <Button onClick={() => setOnboarding(true)}>Settings</Button>
-      </div>}
     </Provider>
   );
 }
