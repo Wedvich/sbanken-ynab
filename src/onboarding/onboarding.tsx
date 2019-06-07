@@ -16,24 +16,32 @@ interface OnboardingDispatchProps {
   storeOnboardingSettings: typeof storeOnboardingSettings;
 }
 
-const Onboarding: FunctionComponent<OnboardingStateProps & OnboardingDispatchProps> = ({
+interface OnboardingProps extends OnboardingStateProps, OnboardingDispatchProps {
+  hide: Function;
+}
+
+const Onboarding: FunctionComponent<OnboardingProps> = ({
   savedSbankenClientId,
   savedSbankenClientSecret,
   savedSbankenCustomerId,
   savedYnabAccessToken,
   storeOnboardingSettings,
+  hide,
 }) => {
   const [sbankenClientId, setSbankenClientId] = useState(savedSbankenClientId);
   const [sbankenClientSecret, setSbankenClientSecret] = useState(savedSbankenClientSecret);
   const [sbankenCustomerId, setSbankenCustomerId] = useState(savedSbankenCustomerId);
-  const [ynabAccessToken, setYnabAccessToken] = useState(savedYnabAccessToken);
+  const [ynabAccessToken, updateYnabAccessToken] = useState(savedYnabAccessToken);
 
-  const saveClicked = () => storeOnboardingSettings(
-    sbankenClientId,
-    sbankenClientSecret,
-    sbankenCustomerId,
-    ynabAccessToken,
-  );
+  const saveClicked = () => {
+    storeOnboardingSettings(
+      sbankenClientId,
+      sbankenClientSecret,
+      sbankenCustomerId,
+      ynabAccessToken,
+    );
+    hide();
+  };
 
   return (
     <div className="onboarding">
@@ -64,11 +72,12 @@ const Onboarding: FunctionComponent<OnboardingStateProps & OnboardingDispatchPro
           id="ynabAccessToken"
           label="Access Token"
           value={ynabAccessToken}
-          setValue={setYnabAccessToken}
+          setValue={updateYnabAccessToken}
         />
       </div>
       <div className="onboarding__row">
         <button onClick={saveClicked}>Save</button>
+        <button onClick={() => hide()}>Close</button>
       </div>
     </div>
   );

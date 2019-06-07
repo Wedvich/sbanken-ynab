@@ -11,7 +11,7 @@ const initialState = {
 
 const ynabReducer: Reducer<YnabState, YnabAction> = (state = initialState, action) => {
   switch (action.type) {
-    case YnabActionTypes.StoreAccessToken:
+    case YnabActionTypes.UpdateAccessToken:
       return {
         ...state,
         accessToken: action.accessToken,

@@ -42,7 +42,7 @@ const sbankenReducer: Reducer<SbankenState, SbankenAction> = (state = initialSta
         loading: false,
       };
 
-    case SbankenActionTypes.StoreCredentials:
+    case SbankenActionTypes.UpdateCredentials:
       return {
         ...state,
         credentials: action.credentials,

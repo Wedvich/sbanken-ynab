@@ -1,21 +1,21 @@
 import { Action } from 'redux';
 
 export enum YnabActionTypes {
-  StoreAccessToken = 'ynab/store-access-token'
+  UpdateAccessToken = 'ynab/update-access-token'
 }
 
-export interface StoreYnabAccessTokenAction extends Action<YnabActionTypes.StoreAccessToken> {
+export interface UpdateYnabAccessTokenAction extends Action<YnabActionTypes.UpdateAccessToken> {
   accessToken: string;
 }
 
-export const storeYnabAccessToken = (accessToken: string): StoreYnabAccessTokenAction => ({
-  type: YnabActionTypes.StoreAccessToken,
+export const updateYnabAccessToken = (accessToken: string): UpdateYnabAccessTokenAction => ({
+  type: YnabActionTypes.UpdateAccessToken,
   accessToken,
 });
 
 export const actions = {
-  storeYnabAccessToken,
+  updateYnabAccessToken,
 };
 
 export type YnabAction =
-  StoreYnabAccessTokenAction
+  UpdateYnabAccessTokenAction

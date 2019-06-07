@@ -1,11 +1,14 @@
 import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
 
-import { GetSbankenTokenRequestAction, actions, SbankenActionTypes, SbankenAction } from './actions';
+import { GetSbankenTokenRequestAction, actions, SbankenActionTypes, SbankenAction, UpdateSbankenCredentialsAction } from './actions';
 import { unwrapClientCredentials } from './helpers';
 
 const SBANKEN_STS_URL = 'https://auth.sbanken.no/identityserver/connect/token';
 
+/**
+ * Request an access token from the Sbanken STS.
+ */
 function* getSbankenTokenSaga(action: GetSbankenTokenRequestAction) {
   try {
     const response = yield call(axios.post, SBANKEN_STS_URL, 'grant_type=client_credentials', {
@@ -22,9 +25,12 @@ function* getSbankenTokenSaga(action: GetSbankenTokenRequestAction) {
   }
 }
 
+/**
+ * Trigger a refresh of the Sbanken token.
+ */
 function* refreshTokenSaga() {
   const { credentials, customerId }: { credentials: string; customerId: string } =
-    yield select(s => s.authentication.sbanken);
+    yield select(s => s.sbanken);
 
   if (!credentials || !customerId) {
     // TODO: Reset onboarding
@@ -46,5 +52,5 @@ function* refreshTokenSaga() {
 
 export function* saga() {
   yield takeLatest(SbankenActionTypes.GetTokenRequest, getSbankenTokenSaga);
-  yield takeLatest(SbankenActionTypes.RefreshToken, refreshTokenSaga);
+  yield takeLatest([SbankenActionTypes.RefreshToken, SbankenActionTypes.UpdateCredentials], refreshTokenSaga);
 }
