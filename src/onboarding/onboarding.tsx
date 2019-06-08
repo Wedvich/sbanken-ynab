@@ -13,6 +13,7 @@ interface OnboardingStateProps {
   savedSbankenClientSecret: string;
   savedSbankenCustomerId: string;
   savedYnabAccessToken: string;
+  savedYnabBudgetId: string;
 }
 
 interface OnboardingDispatchProps {
@@ -28,6 +29,7 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
   savedSbankenClientSecret,
   savedSbankenCustomerId,
   savedYnabAccessToken,
+  savedYnabBudgetId,
   storeOnboardingSettings,
   hide,
 }) => {
@@ -35,6 +37,7 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
   const [sbankenClientSecret, setSbankenClientSecret] = useState(savedSbankenClientSecret);
   const [sbankenCustomerId, setSbankenCustomerId] = useState(savedSbankenCustomerId);
   const [ynabAccessToken, updateYnabAccessToken] = useState(savedYnabAccessToken);
+  const [ynabBudgetId, updateYnabBudgetId] = useState(savedYnabBudgetId);
 
   const saveClicked = () => {
     storeOnboardingSettings(
@@ -42,6 +45,7 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
       sbankenClientSecret,
       sbankenCustomerId,
       ynabAccessToken,
+      ynabBudgetId,
     );
     hide();
   };
@@ -87,6 +91,14 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
           setValue={updateYnabAccessToken}
         />
       </div>
+      <div className="onboarding__row">
+        <TextInput
+          id="ynabBudgetId"
+          label="Budget ID"
+          value={ynabBudgetId}
+          setValue={updateYnabBudgetId}
+        />
+      </div>
       <div className="onboarding__divider" />
       <div className="onboarding__row onboarding__buttons">
         <Button onClick={saveClicked}>Lagre</Button>
@@ -106,6 +118,7 @@ const mapStateToProps = (state: any): OnboardingStateProps =>  {
     savedSbankenClientSecret,
     savedSbankenCustomerId: state.sbanken.customerId,
     savedYnabAccessToken: state.ynab.accessToken,
+    savedYnabBudgetId: state.ynab.budgetId,
   };
 };
 

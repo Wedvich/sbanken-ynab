@@ -17,8 +17,11 @@
     display: block;
     font-family: 'Fira Code', 'Courier New', Courier, monospace;
     margin-top: 5px;
+    overflow: hidden;
     padding: 10px;
+    text-overflow: ellipsis;
     transition: all 0.2s ease-in-out;
+    white-space: nowrap;
     width: 100%;
 
     &:focus {
@@ -26,6 +29,11 @@
       border-color: $primary-color;
       box-shadow: 0 0 .5em adjust-color($primary-color, $lightness: 30%);
       outline: none;
+    }
+
+    &::placeholder {
+      color: change-color($text-color-1, $alpha: 0.5);
+      font-family: 'Lato', sans-serif;
     }
   }
 }

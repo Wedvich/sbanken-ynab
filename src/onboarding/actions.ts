@@ -9,6 +9,7 @@ export interface StoreOnboardingSettingsAction extends Action<OnboardingActionTy
   sbankenClientSecret: string;
   sbankenCustomerId: string;
   ynabAccessToken: string;
+  ynabBudgetId: string;
 }
 
 export const storeOnboardingSettings = (
@@ -16,12 +17,14 @@ export const storeOnboardingSettings = (
   sbankenClientSecret: string,
   sbankenCustomerId: string,
   ynabAccessToken: string,
+  ynabBudgetId: string,
 ): StoreOnboardingSettingsAction => ({
   type: OnboardingActionTypes.StoreSettings,
   sbankenClientId,
   sbankenClientSecret,
   sbankenCustomerId,
   ynabAccessToken,
+  ynabBudgetId,
 });
 
 export const actions = {

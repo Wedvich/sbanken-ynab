@@ -6,11 +6,13 @@ export enum YnabActionTypes {
 
 export interface UpdateYnabAccessTokenAction extends Action<YnabActionTypes.UpdateAccessToken> {
   accessToken: string;
+  budgetId: string;
 }
 
-export const updateYnabAccessToken = (accessToken: string): UpdateYnabAccessTokenAction => ({
+export const updateYnabAccessToken = (accessToken: string, budgetId: string): UpdateYnabAccessTokenAction => ({
   type: YnabActionTypes.UpdateAccessToken,
   accessToken,
+  budgetId,
 });
 
 export const actions = {
