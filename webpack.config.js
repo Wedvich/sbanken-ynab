@@ -31,6 +31,7 @@ module.exports = {
   entry,
   output: {
     path: path.resolve(__dirname, 'public'),
+    publicPath: '/'
   },
   module: {
     rules: [
