@@ -1,0 +1,41 @@
+@import '../colors.scss';
+
+.header {
+  align-items: center;
+  background: $primary-color;
+  display: flex;
+  justify-content: flex-start;
+
+  a {
+    background: none;
+    border-bottom: .25em solid transparent;
+    color: $text-color;
+    font-size: 1.5em;
+    margin: 10px;
+    text-decoration: none;
+
+    span {
+      display: block;
+      padding: .25em;
+    }
+
+
+    &:hover {
+      border-color: $primary-color-dark;
+    }
+
+    &:focus {
+      outline: none;
+
+      span {
+        background: rgba(255, 255, 255, .5);
+      }
+    }
+
+    &.active,
+    &:active {
+      background: none;
+      border-color: $primary-color-dark;
+    }
+  }
+}

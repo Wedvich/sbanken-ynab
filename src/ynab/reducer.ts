@@ -4,11 +4,13 @@ import { YnabAction, YnabActionTypes } from './actions';
 export interface YnabState {
   accessToken: string;
   budgetId: string;
+  serverKnowledge: { [key: string]: number };
 }
 
-const initialState = {
+const initialState: YnabState = {
   accessToken: '',
   budgetId: '',
+  serverKnowledge: {},
 };
 
 const ynabReducer: Reducer<YnabState, YnabAction> = (state = initialState, action) => {
