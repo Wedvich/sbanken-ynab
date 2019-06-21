@@ -4,6 +4,7 @@ const path = require('path');
 const HtmlPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackBar = require('webpackbar');
+const threadLoader = require('thread-loader');
 
 const { getHttpsOptions } = require('./utils');
 
@@ -29,6 +30,18 @@ if (isProduction) {
   plugins.push(new MiniCssExtractPlugin());
 }
 
+const threadLoaderOptions = {
+  poolRespawn: !isDevelopment,
+  poolTimeout: isDevelopment ? Infinity : 500,
+};
+
+threadLoader.warmup(threadLoaderOptions, [
+  'babel-loader',
+  '@babel/preset-typescript',
+  '@babel/preset-env',
+  '@babel/preset-react',
+]);
+
 module.exports = {
   mode: isProduction ? 'production' : 'development',
   devtool: isProduction ? 'source-map' : 'eval-source-map',
@@ -42,7 +55,13 @@ module.exports = {
       {
         test: /\.(j|t)sx?$/,
         exclude: /node_modules/,
-        use: 'babel-loader',
+        use: [
+          {
+            loader: 'thread-loader',
+            options: threadLoaderOptions,
+          },
+          'babel-loader',
+        ],
       },
       {
         test: /\.s?css$/,
