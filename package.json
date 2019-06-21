@@ -14,7 +14,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node server",
     "start:dev": "cross-env NODE_ENV=development webpack-dev-server --hot",
-    "build": "cross-env NODE_ENV=production webpack --progress",
+    "build": "cross-env NODE_ENV=production webpack",
     "types": "tsc",
     "types:watch": "tsc --watch"
   },
@@ -77,6 +77,7 @@
     "typescript": "^3.5.2",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
-    "webpack-dev-server": "^3.7.2"
+    "webpack-dev-server": "^3.7.2",
+    "webpackbar": "^3.2.0"
   }
 }

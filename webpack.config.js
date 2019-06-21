@@ -3,6 +3,7 @@ require('dotenv').config();
 const path = require('path');
 const HtmlPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const WebpackBar = require('webpackbar');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -19,6 +20,7 @@ const plugins = [
   new HtmlPlugin({
     template: './src/index.html',
   }),
+  new WebpackBar(),
 ];
 
 if (isProduction) {
