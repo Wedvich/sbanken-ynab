@@ -5,6 +5,8 @@ const HtmlPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackBar = require('webpackbar');
 
+const { getHttpsOptions } = require('./utils');
+
 const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = process.env.NODE_ENV === 'development';
 
@@ -33,7 +35,7 @@ module.exports = {
   entry,
   output: {
     path: path.resolve(__dirname, 'public'),
-    publicPath: '/'
+    publicPath: '/',
   },
   module: {
     rules: [
@@ -72,6 +74,7 @@ module.exports = {
     historyApiFallback: true,
     host,
     http2: true,
+    https: getHttpsOptions(),
     open: true,
     port,
     stats: {

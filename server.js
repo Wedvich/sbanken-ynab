@@ -10,18 +10,16 @@ const helmet = require('koa-helmet');
 const compress = require('koa-compress');
 const { default: chalk } = require('chalk');
 
+const { getHttpsOptions } = require('./utils');
+
 const host = process.env.HOST || 'localhost';
 const port = process.env.PORT || 3000;
-
-const options = {
-  cert: fs.readFileSync(process.env.TLS_CERTIFICATE, 'utf8'),
-  key: fs.readFileSync(process.env.TLS_CERTIFICATE_KEY, 'utf8'),
-};
 
 const app = new Koa()
   .use(helmet({
     contentSecurityPolicy: {
       directives: {
+        // eslint-disable-next-line quotes
         'default-src': [`'self'`],
       },
     },
@@ -33,7 +31,7 @@ const app = new Koa()
   .use(compress())
   .use(static('public'));
 
-http2.createSecureServer(options, app.callback())
+http2.createSecureServer(getHttpsOptions(), app.callback())
   .listen(port, host,  () => {
     console.log('App is running at %s', chalk.bold.blue(`https://localhost:${port}/`));
     console.log('Content is served from %s', chalk.bold.blue('/public'));
