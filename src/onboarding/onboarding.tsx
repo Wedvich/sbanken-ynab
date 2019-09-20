@@ -40,13 +40,7 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
   const [ynabBudgetId, updateYnabBudgetId] = useState(savedYnabBudgetId);
 
   const saveClicked = () => {
-    storeOnboardingSettings(
-      sbankenClientId,
-      sbankenClientSecret,
-      sbankenCustomerId,
-      ynabAccessToken,
-      ynabBudgetId,
-    );
+    storeOnboardingSettings(sbankenClientId, sbankenClientSecret, sbankenCustomerId, ynabAccessToken, ynabBudgetId);
     hide();
   };
 
@@ -56,12 +50,7 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
         <h1>Sbanken</h1>
       </div>
       <div className="onboarding__row">
-        <TextInput
-          id="sbankenClientId"
-          label="Client ID"
-          value={sbankenClientId}
-          setValue={setSbankenClientId}
-        />
+        <TextInput id="sbankenClientId" label="Client ID" value={sbankenClientId} setValue={setSbankenClientId} />
       </div>
       <div className="onboarding__row">
         <TextInput
@@ -84,20 +73,10 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
         <h1>YNAB</h1>
       </div>
       <div className="onboarding__row">
-        <TextInput
-          id="ynabAccessToken"
-          label="Access Token"
-          value={ynabAccessToken}
-          setValue={updateYnabAccessToken}
-        />
+        <TextInput id="ynabAccessToken" label="Access Token" value={ynabAccessToken} setValue={updateYnabAccessToken} />
       </div>
       <div className="onboarding__row">
-        <TextInput
-          id="ynabBudgetId"
-          label="Budget ID"
-          value={ynabBudgetId}
-          setValue={updateYnabBudgetId}
-        />
+        <TextInput id="ynabBudgetId" label="Budget ID" value={ynabBudgetId} setValue={updateYnabBudgetId} />
       </div>
       <div className="onboarding__divider" />
       <div className="onboarding__row onboarding__buttons">
@@ -108,11 +87,10 @@ const Onboarding: FunctionComponent<OnboardingProps> = ({
   );
 };
 
-const mapStateToProps = (state: any): OnboardingStateProps =>  {
-  const {
-    clientId: savedSbankenClientId,
-    clientSecret: savedSbankenClientSecret,
-  } = unwrapClientCredentials(state.sbanken.credentials);
+const mapStateToProps = (state: any): OnboardingStateProps => {
+  const { clientId: savedSbankenClientId, clientSecret: savedSbankenClientSecret } = unwrapClientCredentials(
+    state.sbanken.credentials
+  );
   return {
     savedSbankenClientId,
     savedSbankenClientSecret,
@@ -126,4 +104,7 @@ const mapDispatchToProps: OnboardingDispatchProps = {
   storeOnboardingSettings,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Onboarding);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Onboarding);

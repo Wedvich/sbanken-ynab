@@ -1,9 +1,5 @@
 import React from 'react';
 
-const YnabSettings = () => (
-  <div>
-    YNAB settings
-  </div>
-);
+const YnabSettings = () => <div>YNAB settings</div>;
 
 export default YnabSettings;

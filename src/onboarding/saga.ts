@@ -19,15 +19,8 @@ function* storeSettingsSaga({
   ynabAccessToken,
   ynabBudgetId,
 }: StoreOnboardingSettingsAction) {
-  yield put(sbankenActions.updateSbankenCredentials(
-    sbankenClientId,
-    sbankenClientSecret,
-    sbankenCustomerId,
-  ));
-  yield put(ynabActions.updateYnabAccessToken(
-    ynabAccessToken,
-    ynabBudgetId,
-  ));
+  yield put(sbankenActions.updateSbankenCredentials(sbankenClientId, sbankenClientSecret, sbankenCustomerId));
+  yield put(ynabActions.updateYnabAccessToken(ynabAccessToken, ynabBudgetId));
 
   const cachedSettings: CachedSettings = {
     sbankenCredentials: wrapClientCredentials(sbankenClientId, sbankenClientSecret),
@@ -47,9 +40,12 @@ function* loadCachedSettingsSaga() {
     const cachedSettings = yield call([localStorage, localStorage.getItem], CACHED_SETTINGS_KEY);
     if (!cachedSettings) return;
     const settings = JSON.parse(cachedSettings) as CachedSettings;
-    const { clientId: sbankenClientId, clientSecret: sbankenClientSecret } =
-      unwrapClientCredentials(settings.sbankenCredentials);
-    yield put(sbankenActions.updateSbankenCredentials(sbankenClientId, sbankenClientSecret, settings.sbankenCustomerId));
+    const { clientId: sbankenClientId, clientSecret: sbankenClientSecret } = unwrapClientCredentials(
+      settings.sbankenCredentials
+    );
+    yield put(
+      sbankenActions.updateSbankenCredentials(sbankenClientId, sbankenClientSecret, settings.sbankenCustomerId)
+    );
     yield put(ynabActions.updateYnabAccessToken(settings.ynabAccessToken, settings.ynabBudgetId));
   } catch (e) {
     console.error(e);

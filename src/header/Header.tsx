@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import './style.scss';
 
 const Header = () => (
-  <header className="header" role="navigation" >
+  <header className="header" role="navigation">
     <NavLink to="/settings/sbanken" activeClassName="active">
       <span>Sbanken</span>
     </NavLink>

@@ -11,13 +11,16 @@ export enum SbankenActionTypes {
   UpdateCredentials = 'sbanken/update-credentials',
 }
 
-export interface GetSbankenTokenRequestAction
-  extends Action<SbankenActionTypes.GetTokenRequest> {
-    credentials: string;
-    customerId: string;
-  }
+export interface GetSbankenTokenRequestAction extends Action<SbankenActionTypes.GetTokenRequest> {
+  credentials: string;
+  customerId: string;
+}
 
-const getSbankenTokenRequest = (clientId: string, clientSecret: string, customerId: string): GetSbankenTokenRequestAction => {
+const getSbankenTokenRequest = (
+  clientId: string,
+  clientSecret: string,
+  customerId: string
+): GetSbankenTokenRequestAction => {
   const credentials = wrapClientCredentials(clientId, clientSecret);
   return {
     type: SbankenActionTypes.GetTokenRequest,
@@ -26,11 +29,10 @@ const getSbankenTokenRequest = (clientId: string, clientSecret: string, customer
   };
 };
 
-export interface GetSbankenTokenSuccessAction
-  extends Action<SbankenActionTypes.GetTokenSuccess> {
-    token: string;
-    tokenExpiry: number;
-  }
+export interface GetSbankenTokenSuccessAction extends Action<SbankenActionTypes.GetTokenSuccess> {
+  token: string;
+  tokenExpiry: number;
+}
 
 const getSbankenTokenSuccess = (token: string, tokenExpiry: number): GetSbankenTokenSuccessAction => {
   return {
@@ -40,10 +42,9 @@ const getSbankenTokenSuccess = (token: string, tokenExpiry: number): GetSbankenT
   };
 };
 
-export interface GetSbankenTokenFailureAction
-  extends Action<SbankenActionTypes.GetTokenFailure> {
-    errorMessage: string;
-  }
+export interface GetSbankenTokenFailureAction extends Action<SbankenActionTypes.GetTokenFailure> {
+  errorMessage: string;
+}
 
 const getSbankenTokenFailure = (error: Error): GetSbankenTokenFailureAction => {
   return {
@@ -52,13 +53,13 @@ const getSbankenTokenFailure = (error: Error): GetSbankenTokenFailureAction => {
   };
 };
 
-export type LoadSbankenCachedCredentialsAction = Action<SbankenActionTypes.LoadCachedCredentials>
+export type LoadSbankenCachedCredentialsAction = Action<SbankenActionTypes.LoadCachedCredentials>;
 
 const loadSbankenCachedCredentials = (): LoadSbankenCachedCredentialsAction => ({
   type: SbankenActionTypes.LoadCachedCredentials,
 });
 
-export type RefreshSbankenTokenAction = Action<SbankenActionTypes.RefreshToken> 
+export type RefreshSbankenTokenAction = Action<SbankenActionTypes.RefreshToken>;
 
 const refreshSbankenToken = (): RefreshSbankenTokenAction => ({
   type: SbankenActionTypes.RefreshToken,
@@ -72,7 +73,7 @@ export interface UpdateSbankenCredentialsAction extends Action<SbankenActionType
 export const updateSbankenCredentials = (
   clientId: string,
   clientSecret: string,
-  customerId: string,
+  customerId: string
 ): UpdateSbankenCredentialsAction => ({
   type: SbankenActionTypes.UpdateCredentials,
   credentials: wrapClientCredentials(clientId, clientSecret),
@@ -89,9 +90,9 @@ export const actions = {
 };
 
 export type SbankenAction =
-  GetSbankenTokenRequestAction |
-  GetSbankenTokenSuccessAction |
-  GetSbankenTokenFailureAction |
-  LoadSbankenCachedCredentialsAction |
-  RefreshSbankenTokenAction |
-  UpdateSbankenCredentialsAction
+  | GetSbankenTokenRequestAction
+  | GetSbankenTokenSuccessAction
+  | GetSbankenTokenFailureAction
+  | LoadSbankenCachedCredentialsAction
+  | RefreshSbankenTokenAction
+  | UpdateSbankenCredentialsAction;

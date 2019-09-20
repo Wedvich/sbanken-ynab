@@ -41,10 +41,10 @@ export class SbankenApi extends Api {
   getAccounts(): Promise<AxiosResponse<SbankenListResult<SbankenAccount>>> {
     return this.instance.get('/bank/api/v1/Accounts');
   }
-    
+
   getTransactions(accountId: string): Promise<AxiosResponse<SbankenListResult<{}>>> {
     return this.instance.get(`/bank/api/v1/Transactions/${accountId}`);
-  } 
+  }
 }
 
 export const api = new SbankenApi();

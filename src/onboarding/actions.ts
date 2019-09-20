@@ -17,7 +17,7 @@ export const storeOnboardingSettings = (
   sbankenClientSecret: string,
   sbankenCustomerId: string,
   ynabAccessToken: string,
-  ynabBudgetId: string,
+  ynabBudgetId: string
 ): StoreOnboardingSettingsAction => ({
   type: OnboardingActionTypes.StoreSettings,
   sbankenClientId,
@@ -31,5 +31,4 @@ export const actions = {
   storeOnboardingSettings,
 };
 
-export type OnboardingAction =
-  StoreOnboardingSettingsAction
+export type OnboardingAction = StoreOnboardingSettingsAction;

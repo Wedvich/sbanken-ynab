@@ -6,9 +6,7 @@ export const Mappings = () => {
 
   return (
     <div className="settings-page">
-      <div className="title">
-        Koblinger
-      </div>
+      <div className="title">Koblinger</div>
       <div className="main wizard">
         <div className="temp-wizard">
           <div>
@@ -29,9 +27,15 @@ export const Mappings = () => {
             )}
           </div>
           <div className="temp-wizard-steps">
-            <div className="step" id="step-1" onClick={() => setStep(1)}>1</div>
-            <div className="step" id="step-2" onClick={() => setStep(2)}>2</div>
-            <div className="step" id="step-3" onClick={() => setStep(3)}>3</div>
+            <div className="step" id="step-1" onClick={() => setStep(1)}>
+              1
+            </div>
+            <div className="step" id="step-2" onClick={() => setStep(2)}>
+              2
+            </div>
+            <div className="step" id="step-3" onClick={() => setStep(3)}>
+              3
+            </div>
           </div>
         </div>
       </div>

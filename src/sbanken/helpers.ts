@@ -8,7 +8,9 @@ export const unwrapClientCredentials = (clientCredentials: string | null) => {
       clientSecret: '',
     };
   }
-  const [clientId, clientSecret] = atob(clientCredentials).split(':').map(p => decodeURIComponent(p));
+  const [clientId, clientSecret] = atob(clientCredentials)
+    .split(':')
+    .map(p => decodeURIComponent(p));
   return {
     clientId,
     clientSecret,

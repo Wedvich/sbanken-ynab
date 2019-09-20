@@ -1,16 +1,15 @@
 module.exports = api => {
   api.cache.never();
 
-  const presets = [
-    '@babel/typescript',
-    '@babel/env',
-    '@babel/react',
-  ];
+  const presets = ['@babel/typescript', '@babel/env', '@babel/react'];
 
   const plugins = [
-    ['@babel/transform-runtime', {
-      corejs: 3,
-    }],
+    [
+      '@babel/transform-runtime',
+      {
+        corejs: 3,
+      },
+    ],
     '@babel/proposal-class-properties',
     'redux-saga',
     '@babel/syntax-dynamic-import',

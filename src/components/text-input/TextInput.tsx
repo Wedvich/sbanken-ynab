@@ -7,15 +7,9 @@ export type TextInputProps = {
   label: string;
   value: string;
   setValue: (value: any) => any;
-} & HTMLAttributes<HTMLInputElement>
+} & HTMLAttributes<HTMLInputElement>;
 
-export const TextInput: FunctionComponent<TextInputProps> = ({
-  id,
-  label,
-  value,
-  setValue,
-  ...rest
-}) => {
+export const TextInput: FunctionComponent<TextInputProps> = ({ id, label, value, setValue, ...rest }) => {
   return (
     <div className="text-input">
       <label htmlFor={id}>{label}</label>

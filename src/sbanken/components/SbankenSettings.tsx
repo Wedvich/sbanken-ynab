@@ -17,13 +17,7 @@ const SbankenSettings = () => {
   const [clientSecret, setClientSecret] = useState(credentials.clientSecret);
   const [customerId, setCustomerId] = useState(state.customerId || '');
 
-  const saveClicked = () => dispatch(storeOnboardingSettings(
-    clientId,
-    clientSecret,
-    customerId,
-    '',
-    '',
-  ));
+  const saveClicked = () => dispatch(storeOnboardingSettings(clientId, clientSecret, customerId, '', ''));
 
   return (
     <div className="settings-page">
@@ -34,28 +28,13 @@ const SbankenSettings = () => {
       </div>
       <div className="main">
         <div className="setting">
-          <TextInput
-            id="sbanken-client-id"
-            label="Applikasjonsnøkkel"
-            value={clientId}
-            setValue={setClientId}
-          />
+          <TextInput id="sbanken-client-id" label="Applikasjonsnøkkel" value={clientId} setValue={setClientId} />
         </div>
         <div className="setting">
-          <TextInput
-            id="sbanken-client-secret"
-            label="Passord"
-            value={clientSecret}
-            setValue={setClientSecret}
-          />
+          <TextInput id="sbanken-client-secret" label="Passord" value={clientSecret} setValue={setClientSecret} />
         </div>
         <div className="setting">
-          <TextInput
-            id="sbanken-customer-id"
-            label="Fødselsnummer"
-            value={customerId}
-            setValue={setCustomerId}
-          />
+          <TextInput id="sbanken-customer-id" label="Fødselsnummer" value={customerId} setValue={setCustomerId} />
         </div>
         <div className="setting">
           <Button onClick={saveClicked}>Save</Button>

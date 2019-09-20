@@ -1,7 +1,7 @@
-import { call, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, select, take, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
 
-import { GetSbankenTokenRequestAction, actions, SbankenActionTypes, SbankenAction, UpdateSbankenCredentialsAction } from './actions';
+import { GetSbankenTokenRequestAction, actions, SbankenActionTypes, SbankenAction } from './actions';
 import { unwrapClientCredentials } from './helpers';
 
 const SBANKEN_STS_URL = 'https://auth.sbanken.no/identityserver/connect/token';
@@ -29,8 +29,7 @@ function* getSbankenTokenSaga(action: GetSbankenTokenRequestAction) {
  * Trigger a refresh of the Sbanken token.
  */
 function* refreshTokenSaga() {
-  const { credentials, customerId }: { credentials: string; customerId: string } =
-    yield select(s => s.sbanken);
+  const { credentials, customerId }: { credentials: string; customerId: string } = yield select(s => s.sbanken);
 
   if (!credentials || !customerId) {
     // TODO: Reset onboarding
@@ -41,7 +40,7 @@ function* refreshTokenSaga() {
   yield put(actions.getSbankenTokenRequest(clientId, clientSecret, customerId));
 
   const result = (yield take([
-    SbankenActionTypes.GetTokenSuccess, 
+    SbankenActionTypes.GetTokenSuccess,
     SbankenActionTypes.GetTokenFailure,
   ])) as SbankenAction;
 
