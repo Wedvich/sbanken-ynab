@@ -1,4 +1,4 @@
-@import '../colors.scss';
+@import '../globals.scss';
 
 .header {
   align-items: center;
@@ -26,14 +26,9 @@
 
     &:focus {
       outline: none;
-
-      span {
-        background: rgba(255, 255, 255, .5);
-      }
     }
 
-    &.active,
-    &:active {
+    &.active {
       background: none;
       border-color: $primary-color-dark;
     }

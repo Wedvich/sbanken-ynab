@@ -12,7 +12,7 @@ const Header = () => (
       <span>YNAB</span>
     </NavLink>
     <NavLink to="/settings/mappings" activeClassName="active">
-      <span>Mappings</span>
+      <span>Koblinger</span>
     </NavLink>
   </header>
 );

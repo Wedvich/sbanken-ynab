@@ -1,19 +1,18 @@
-@import '../../colors.scss';
+@import '../../globals.scss';
 
 .text-input {
   label {
     color: $text-color-2;
     display: block;
-    font-weight: bold;
     font-size: 0.9em;
     text-transform: uppercase;
     width: 100%;
   }
 
   input {
-    border: 1px solid $border-color-1;
+    border: 1px solid adjust-color($bg-color-medium, $lightness: -10%);
     border-radius: .2em;
-    color: $text-color-1;
+    color: $text-color;
     display: block;
     font-family: 'Fira Code', 'Courier New', Courier, monospace;
     margin-top: 5px;
@@ -25,15 +24,15 @@
     width: 100%;
 
     &:focus {
-      color: $text-color-1;
+      color: $text-color;
       border-color: $primary-color;
       box-shadow: 0 0 .5em adjust-color($primary-color, $lightness: 30%);
       outline: none;
     }
 
     &::placeholder {
-      color: change-color($text-color-1, $alpha: 0.5);
-      font-family: 'Lato', sans-serif;
+      color: change-color($text-color, $alpha: 0.5);
+      font-family: $primary-font;
     }
   }
 }
