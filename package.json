@@ -16,9 +16,8 @@
     "start": "webpack-dev-server"
   },
   "dependencies": {
-    "webpack": "^5.0.0-beta.3",
+    "webpack": "^5.0.0-beta.11",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0"
-  },
-  "devDependencies": {}
+    "webpack-dev-server": "^3.10.1"
+  }
 }
