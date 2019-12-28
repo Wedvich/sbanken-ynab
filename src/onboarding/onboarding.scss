@@ -1,3 +1,5 @@
+@import '../shared/colors.scss';
+
 .sby-onboarding {
   align-items: center;
   display: flex;
@@ -6,20 +8,24 @@
   justify-content: center;
 }
 
+.sby-onboarding-account-lists {
+  display: flex;
+}
+
 .sby-onboarding-accounts {
   list-style: none;
   margin: 0;
   padding: 0;
 
   li {
-    border-bottom: thin solid gray;
-    border-left: thin solid gray;
-    border-right: thin solid gray;
+    border-bottom: thin solid $sby-color-medium-gray;
+    border-left: thin solid $sby-color-medium-gray;
+    border-right: thin solid $sby-color-medium-gray;
     padding: 0.5rem 1rem;
     width: 100%;
 
     &:first-child {
-      border-top: thin solid gray;
+      border-top: thin solid $sby-color-medium-gray;
       border-top-left-radius: 2px;
       border-top-right-radius: 2px;
     }

@@ -1,7 +1,8 @@
 import { Reducer } from 'redux';
-import { SbankenAccessToken, transformAccessToken, SbankenAccount } from './api';
+import { transformAccessToken, SbankenAccount } from './api';
 import { getTokenRequest, getTokenResponse } from './api/get-token';
 import { getAccountsRequest, getAccountsResponse } from './api/get-accounts';
+import { getStoredAccessToken, getStoredCustomerId } from './utils';
 
 export enum SbankenActionType {
   SetCredentials = 'sbanken/set-credentials',
@@ -32,9 +33,9 @@ export const sbankenStateKey = 'sbanken';
 const initialState = {
   authenticating: false,
   credentials: null as string | null,
-  customerId: null as string | null,
+  customerId: getStoredCustomerId(),
   error: null as string | null,
-  token: null as SbankenAccessToken | null,
+  token: getStoredAccessToken(),
   loading: false,
   accounts: [] as SbankenAccount[],
 };

@@ -1,8 +1,13 @@
 import { Reducer } from 'redux';
+import { YnabAccount } from './api';
+import { getAccountsRequest, getAccountsResponse } from './api/get-accounts';
+import { getStoredServerKnowledge } from './utils';
 
 export enum YnabActionType {
   SetToken = 'ynab/set-token',
   SetBudget = 'ynab/set-budget',
+  GetAccountsRequest = 'ynab/get-accounts-request',
+  GetAccountsResponse = 'ynab/get-accounts-response',
 }
 
 const setToken = (token: string) => ({
@@ -18,6 +23,8 @@ const setBudget = (budgetId: string) => ({
 export const actions = {
   setToken,
   setBudget,
+  getAccountsRequest,
+  getAccountsResponse,
 };
 
 export type YnabAction = ReturnType<typeof actions[keyof typeof actions]>
@@ -27,6 +34,9 @@ export const ynabStateKey = 'ynab';
 const initialState = {
   budgetId: null as string | null,
   personalAccessToken: null as string | null,
+  serverKnowledge: getStoredServerKnowledge(),
+  accounts: [] as YnabAccount[],
+  loading: false,
 };
 
 export type YnabState = typeof initialState;
@@ -42,6 +52,18 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
       return {
         ...state,
         budgetId: action.budgetId,
+      };
+    case YnabActionType.GetAccountsRequest:
+      return {
+        ...state,
+        loading: true,
+      };
+    case YnabActionType.GetAccountsResponse:
+      return {
+        ...state,
+        loading: false,
+        accounts: action.accounts,
+        serverKnowledge: action.serverKnowledge,
       };
     default:
       return state;
