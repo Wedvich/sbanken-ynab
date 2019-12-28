@@ -1,8 +1,13 @@
 import React from 'react';
+import cx from 'classnames';
 import './loader.scss';
 
-const Loader = () => (
-  <div className="sk-flow">
+interface LoaderProps {
+  inverted?: boolean;
+}
+
+const Loader = ({ inverted }: LoaderProps) => (
+  <div className={cx('sk-flow', { 'inverted': inverted })}>
     <div className="sk-flow-dot"></div>
     <div className="sk-flow-dot"></div>
     <div className="sk-flow-dot"></div>

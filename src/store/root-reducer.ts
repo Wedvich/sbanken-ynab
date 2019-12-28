@@ -1,9 +1,13 @@
 import { combineReducers } from 'redux';
 import sbankenReducer, { sbankenStateKey } from '../sbanken/reducer';
+import ynabReducer, { ynabStateKey } from '../ynab/reducer';
 import * as utils from '../shared/utils';
+import accountsReducer, { accountsStateKey } from '../accounts/reducer';
 
 let reducerMap = {
+  [accountsStateKey]: accountsReducer,
   [sbankenStateKey]: sbankenReducer,
+  [ynabStateKey]: ynabReducer,
 };
 
 let rootReducer = combineReducers(reducerMap);

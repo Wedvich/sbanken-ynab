@@ -1,12 +1,13 @@
-import { takeLatest, put, delay } from 'redux-saga/effects';
+import { takeLatest, put } from 'redux-saga/effects';
 import { SbankenActionType, actions } from './reducer';
-
-function* getTokenSaga() {
-  yield put(actions.getTokenRequest());
-  yield delay(1500);
-  yield put(actions.getTokenResponse(undefined, 'Oops!'));
-}
+import { getTokenSaga } from './api/get-token';
+import { getAccountsSaga } from './api/get-accounts';
 
 export default function* () {
-  yield takeLatest(SbankenActionType.SetCredentials, getTokenSaga);
+  yield takeLatest(SbankenActionType.SetCredentials, function* () {
+    yield put(actions.getTokenRequest());
+  });
+
+  yield takeLatest(SbankenActionType.GetTokenRequest, getTokenSaga);
+  yield takeLatest(SbankenActionType.GetAccountsRequest, getAccountsSaga);
 }

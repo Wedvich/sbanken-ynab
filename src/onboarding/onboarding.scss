@@ -5,3 +5,32 @@
   height: 100%;
   justify-content: center;
 }
+
+.sby-onboarding-accounts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    border-bottom: thin solid gray;
+    border-left: thin solid gray;
+    border-right: thin solid gray;
+    padding: 0.5rem 1rem;
+    width: 100%;
+
+    &:first-child {
+      border-top: thin solid gray;
+      border-top-left-radius: 2px;
+      border-top-right-radius: 2px;
+    }
+
+    &:last-child {
+      border-bottom-left-radius: 2px;
+      border-bottom-right-radius: 2px;
+    }
+  }
+
+  h3 {
+    margin: 0;
+  }
+}

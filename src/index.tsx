@@ -1,17 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 import Root from './root';
 import createStore from './store';
 
-const store = createStore();
+const history = createBrowserHistory();
+const store = createStore(history);
 
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
+    <Router history={history}>
       <Root />
-    </BrowserRouter>
+    </Router>
   </Provider>,
   document.getElementById('sby')
 );
