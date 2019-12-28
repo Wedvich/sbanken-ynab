@@ -26,9 +26,13 @@ module.exports = {
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-empty-function': 'warn',
+    '@typescript-eslint/no-explicit-any': 'off',
     'arrow-parens': ['error', 'always'],
     'comma-dangle': ['error','always-multiline'],
-    'indent': ['error', 2],
+    'indent': ['error', 2,
+      {
+        'SwitchCase': 1,
+      }],
     'jsx-quotes': [ 'error', 'prefer-double'],
     'no-multiple-empty-lines': [
       'error',

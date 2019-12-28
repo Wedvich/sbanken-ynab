@@ -49,9 +49,14 @@ body {
     padding: 0.375rem 1rem;
 
     &:focus,
-    &:active {
+    &:active:not(:disabled) {
       box-shadow: 0 0 0 0.2rem $sby-color-light-pink;
       outline: none;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.75;
     }
   }
 }

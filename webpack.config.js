@@ -1,8 +1,11 @@
+require('dotenv').config();
+
 process.env.NODE_ENV = 'development';
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { DefinePlugin } = require('webpack');
 
 module.exports = (env, argv) => {
   return {
@@ -50,6 +53,13 @@ module.exports = (env, argv) => {
       ],
     },
     plugins: [
+      new DefinePlugin({
+        'process.env': {
+          NODE_ENV: `'${process.env.NODE_ENV}'`,
+          SBANKEN_CLIENT_ID: `'${process.env.SBANKEN_CLIENT_ID || ''}'`,
+          SBANKEN_CLIENT_SECRET: `'${process.env.SBANKEN_CLIENT_SECRET || ''}'`,
+        },
+      }),
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, 'src/index.html'),
       }),

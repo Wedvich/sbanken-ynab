@@ -1,0 +1,31 @@
+// https://github.com/tobiasahlin/SpinKit/blob/master/spinkit.css
+
+ .sk-flow {
+  align-items: center;
+  display: inline-flex;
+  height: 1rem;
+  justify-content: space-between;
+  line-height: 1rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  width: 1rem;
+}
+
+.sk-flow-dot {
+  width: 25%;
+  height: 25%;
+  background-color: white;
+  border-radius: 50%;
+  animation: sk-flow 1.4s cubic-bezier(0.455, 0.03, 0.515, 0.955) 0s infinite both;
+}
+
+.sk-flow-dot:nth-child(1) { animation-delay: -0.30s; }
+.sk-flow-dot:nth-child(2) { animation-delay: -0.15s; }
+
+@keyframes sk-flow {
+  0%, 80%, 100% {
+    transform: scale(0.3); }
+  40% {
+    transform: scale(1);
+  }
+}
