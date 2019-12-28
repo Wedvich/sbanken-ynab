@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import './onboarding.scss';
 import { RootState } from '../store/root-reducer';
 import Loader from '../shared/loader';
 import { SbankenState } from '../sbanken/reducer';
 import { YnabState } from '../ynab/reducer';
+import './onboarding.scss';
 
 const AccountsOnboarding = () => {
   const {
@@ -29,7 +29,7 @@ const AccountsOnboarding = () => {
               {sbankenAccounts.map((account) => (
                 <li key={account.accountId}>
                   <h3>{account.name}</h3>
-                  <div>{account.accountNumber}</div>
+                  <div className="account-id">{account.accountNumber}</div>
                 </li>
               ))}
             </ul>
@@ -43,7 +43,7 @@ const AccountsOnboarding = () => {
               {ynabAccounts.map((account) => (
                 <li key={account.id}>
                   <h3>{account.name}</h3>
-                  <div>{account.id}</div>
+                  <div className="account-id">{account.id}</div>
                 </li>
               ))}
             </ul>
@@ -54,4 +54,4 @@ const AccountsOnboarding = () => {
   );
 };
 
-export default AccountsOnboarding;
+export default React.memo(AccountsOnboarding);

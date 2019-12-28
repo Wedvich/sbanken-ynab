@@ -1,10 +1,13 @@
 import { Reducer } from 'redux';
+import { Account } from './';
+
+export enum AccountsActionType {
+
+}
 
 export const accountsStateKey = 'accounts';
 
-const initialState = {
-
-};
+const initialState: Account[] = [];
 
 export type AccountsState = typeof initialState;
 

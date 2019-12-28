@@ -2,7 +2,7 @@ import { SbankenActionType, SbankenState } from '../reducer';
 import { SbankenTokenResponse, transformAccessToken } from '.';
 import { select, put, call } from 'redux-saga/effects';
 import { RootState } from '../../store/root-reducer';
-import { SbankenStorageKey } from '../utils';
+import { storeAccessToken } from '../utils';
 
 export const getTokenRequest = () => ({
   type: SbankenActionType.GetTokenRequest as SbankenActionType.GetTokenRequest,
@@ -33,11 +33,7 @@ export function* getTokenSaga() {
     }
     const tokenResponse: SbankenTokenResponse = yield call([response, response.json]);
     yield put(getTokenResponse(tokenResponse));
-    yield call(
-      [sessionStorage, sessionStorage.setItem],
-      SbankenStorageKey.AccessToken,
-      JSON.stringify(transformAccessToken(tokenResponse))
-    );
+    yield call(storeAccessToken, transformAccessToken(tokenResponse));
   } catch (e) {
     yield put(getTokenResponse(undefined, (e as Error).message));
   }
