@@ -1,13 +1,16 @@
 import { Reducer } from 'redux';
-import { Account } from './';
+import { getStoredAccountSources } from './utils';
 
 export enum AccountsActionType {
-
 }
+
+export const actions = {};
+
+export type AccountsAction = ReturnType<typeof actions[keyof typeof actions]>
 
 export const accountsStateKey = 'accounts';
 
-const initialState: Account[] = [];
+const initialState = getStoredAccountSources();
 
 export type AccountsState = typeof initialState;
 

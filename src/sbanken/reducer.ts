@@ -1,8 +1,9 @@
 import { Reducer } from 'redux';
-import { transformAccessToken, SbankenAccount } from './api';
+import { transformAccessToken, SbankenAccount, SbankenTransaction } from './api';
 import { getTokenRequest, getTokenResponse } from './api/get-token';
 import { getAccountsRequest, getAccountsResponse } from './api/get-accounts';
 import { getStoredAccessToken, getStoredCustomerId } from './utils';
+import { getTransactionsRequest, getTransactionsResponse } from './api/get-transactions';
 
 export enum SbankenActionType {
   SetCredentials = 'sbanken/set-credentials',
@@ -10,6 +11,8 @@ export enum SbankenActionType {
   GetTokenResponse = 'sbanken/get-token-response',
   GetAccountsRequest = 'sbanken/get-accounts-request',
   GetAccountsResponse = 'sbanken/get-accounts-response',
+  GetTransactionsRequest = 'sbanken/get-transactions-request',
+  GetTransactionsResponse = 'sbanken/get-transactions-response',
 }
 
 const setCredentials = (clientId: string, clientSecret: string, customerId: string) => ({
@@ -24,6 +27,8 @@ export const actions = {
   getTokenResponse,
   getAccountsRequest,
   getAccountsResponse,
+  getTransactionsRequest,
+  getTransactionsResponse,
 };
 
 export type SbankenAction = ReturnType<typeof actions[keyof typeof actions]>
@@ -37,7 +42,8 @@ const initialState = {
   error: null as string | null,
   token: getStoredAccessToken(),
   loading: false,
-  accounts: [] as SbankenAccount[],
+  accounts: { } as { [key: string]: SbankenAccount },
+  transactions: [] as SbankenTransaction[],
 };
 
 export type SbankenState = typeof initialState;
@@ -50,11 +56,13 @@ const reducer: Reducer<SbankenState, SbankenAction> = (state = initialState, act
         credentials: action.credentials,
         customerId: action.customerId,
       };
+
     case SbankenActionType.GetTokenRequest:
       return {
         ...state,
         authenticating: true,
       };
+
     case SbankenActionType.GetTokenResponse:
       return {
         ...state,
@@ -62,17 +70,36 @@ const reducer: Reducer<SbankenState, SbankenAction> = (state = initialState, act
         error: action.error ?? '',
         token: action.response ? transformAccessToken(action.response) : null,
       };
+
     case SbankenActionType.GetAccountsRequest:
       return {
         ...state,
         loading: true,
       };
+
     case SbankenActionType.GetAccountsResponse:
       return {
         ...state,
         loading: false,
-        accounts: action.accounts,
+        accounts: action.accounts.reduce((accounts, account) => {
+          accounts[account.accountId] = account;
+          return accounts;
+        }, {}),
       };
+
+    case SbankenActionType.GetTransactionsRequest:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case SbankenActionType.GetTransactionsResponse:
+      return {
+        ...state,
+        loading: false,
+        transactions: action.transactions,
+      };
+
     default:
       return state;
   }

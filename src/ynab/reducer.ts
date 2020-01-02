@@ -2,12 +2,15 @@ import { Reducer } from 'redux';
 import { YnabAccount } from './api';
 import { getAccountsRequest, getAccountsResponse } from './api/get-accounts';
 import { getStoredServerKnowledge, getStoredBudgetId, getStoredToken } from './utils';
+import { getTransactionsRequest, getTransactionsResponse } from './api/get-transactions';
 
 export enum YnabActionType {
   SetToken = 'ynab/set-token',
   SetBudget = 'ynab/set-budget',
   GetAccountsRequest = 'ynab/get-accounts-request',
   GetAccountsResponse = 'ynab/get-accounts-response',
+  GetTransactionsRequest = 'ynab/get-transactions-request',
+  GetTransactionsResponse = 'ynab/get-transactions-response',
 }
 
 const setToken = (token: string) => ({
@@ -25,6 +28,8 @@ export const actions = {
   setBudget,
   getAccountsRequest,
   getAccountsResponse,
+  getTransactionsRequest,
+  getTransactionsResponse,
 };
 
 export type YnabAction = ReturnType<typeof actions[keyof typeof actions]>
@@ -35,7 +40,7 @@ const initialState = {
   budgetId: getStoredBudgetId(),
   personalAccessToken: getStoredToken(),
   serverKnowledge: getStoredServerKnowledge(),
-  accounts: [] as YnabAccount[],
+  accounts: { } as { [key: string]: YnabAccount },
   loading: false,
 };
 
@@ -48,23 +53,44 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
         ...state,
         personalAccessToken: action.token,
       };
+
     case YnabActionType.SetBudget:
       return {
         ...state,
         budgetId: action.budgetId,
       };
+
     case YnabActionType.GetAccountsRequest:
       return {
         ...state,
         loading: true,
       };
+
     case YnabActionType.GetAccountsResponse:
       return {
         ...state,
         loading: false,
-        accounts: action.accounts,
+        accounts: action.accounts.reduce((accounts, account) => {
+          accounts[account.id] = account;
+          return accounts;
+        }, {}),
         serverKnowledge: action.serverKnowledge,
       };
+
+    case YnabActionType.GetTransactionsRequest:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case YnabActionType.GetTransactionsResponse:
+      return {
+        ...state,
+        loading: false,
+        transactions: action.transactions,
+        serverKnowledge: action.serverKnowledge,
+      };
+
     default:
       return state;
   }

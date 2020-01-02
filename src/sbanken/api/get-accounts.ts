@@ -1,7 +1,7 @@
 import { put, call, select } from 'redux-saga/effects';
 import { SbankenActionType, SbankenState } from '../reducer';
 import { RootState } from '../../store/root-reducer';
-import { SbankenAccount } from '.';
+import { SbankenAccount, sbankenApiBaseUrl } from '.';
 
 export const getAccountsRequest = () => ({
   type: SbankenActionType.GetAccountsRequest as SbankenActionType.GetAccountsRequest,
@@ -16,7 +16,7 @@ export function* getAccountsSaga() {
   // TODO: Ensure token is valid
   const { token, customerId }: SbankenState = yield select((state: RootState) => state.sbanken);
 
-  const response = yield call(fetch, 'https://api.sbanken.no/exec.bank/api/v1/accounts', {
+  const response = yield call(fetch, `${sbankenApiBaseUrl}/accounts`, {
     headers: new Headers({
       'Accept': 'application/json',
       'Authorization': `Bearer ${token.token}`,

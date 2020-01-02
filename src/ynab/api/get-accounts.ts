@@ -1,5 +1,5 @@
 import { YnabActionType, YnabState } from '../reducer';
-import { YnabAccount } from './';
+import { YnabAccount, ynabApiBaseUrl } from './';
 import { select, call, put } from 'redux-saga/effects';
 import { RootState } from '../../store/root-reducer';
 
@@ -18,7 +18,7 @@ export function* getAccountsSaga() {
   const response = yield call(
     fetch,
     // FIXME: ?last_knowledge_of_server=${serverKnowledge},
-    `https://api.youneedabudget.com/v1/budgets/${budgetId}/accounts`,
+    `${ynabApiBaseUrl}/budgets/${budgetId}/accounts`,
     {
       headers: new Headers({
         'Accept': 'application/json',

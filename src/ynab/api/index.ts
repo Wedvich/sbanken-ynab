@@ -1,3 +1,5 @@
+export const ynabApiBaseUrl = 'https://api.youneedabudget.com/v1';
+
 export interface YnabAccount {
   balance: number;
   cleared_balance: number;
@@ -10,4 +12,9 @@ export interface YnabAccount {
   transfer_payee_id: string;
   type: string;
   uncleared_balance: number;
+}
+
+// TODO: Fill interface with fields
+export interface YnabTransaction {
+  id: string;
 }

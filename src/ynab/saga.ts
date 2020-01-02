@@ -2,6 +2,7 @@ import { takeLatest, takeEvery, call } from 'redux-saga/effects';
 import { YnabActionType } from './reducer';
 import { getAccountsSaga } from './api/get-accounts';
 import { storeServerKnowledge, storeToken, storeBudgetId } from './utils';
+import { getTransactionsSaga } from './api/get-transactions';
 
 export default function* () {
   yield takeLatest(YnabActionType.GetAccountsRequest, getAccountsSaga);
@@ -17,4 +18,6 @@ export default function* () {
   yield takeEvery(YnabActionType.SetBudget, function* ({ budgetId }: any) {
     yield call(storeBudgetId, budgetId);
   });
+
+  yield takeLatest(YnabActionType.GetTransactionsRequest, getTransactionsSaga);
 }

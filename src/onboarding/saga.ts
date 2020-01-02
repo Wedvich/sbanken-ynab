@@ -22,7 +22,7 @@ export default function* (history: History) {
     ]);
   }
 
-  history.replace('/onboarding/accounts');
+  history.replace('/');
   yield all([
     put(sbankenActions.getAccountsRequest()),
     put(ynabActions.getAccountsRequest()),
