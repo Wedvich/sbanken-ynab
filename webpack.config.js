@@ -20,7 +20,7 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.[jt]sx?$/,
+          test: /\.[jt]sx?$/i,
           exclude: /node_modules/,
           use: [
             require.resolve('babel-loader'),
@@ -28,7 +28,7 @@ module.exports = (env, argv) => {
           ],
         },
         {
-          test: /\.s?css$/,
+          test: /\.s?css$/i,
           use: [
             {
               loader: MiniCssExtractPlugin.loader,
@@ -52,6 +52,10 @@ module.exports = (env, argv) => {
               },
             },
           ],
+        },
+        {
+          test: /\.svg$/i,
+          loader: 'file-loader',
         },
       ],
     },

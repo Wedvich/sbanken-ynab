@@ -9,12 +9,6 @@ interface BalanceProps {
 const currencyFormatter = new Intl.NumberFormat('no-nb', { style: 'currency', currency: 'NOK' });
 
 const Balance = ({ account }: BalanceProps) => {
-  const clearedDiff = account.clearedBudgetBalance - account.clearedBankBalance;
-  const unclearedDiff = account.unclearedBudgetBalance - account.unclearedBankBalance;
-  const workingDiff = account.workingBudgetBalance - account.workingBankBalance;
-
-  const hasDiff = clearedDiff !== 0 || unclearedDiff !== 0 || workingDiff !== 0;
-
   return (
     <table className="sby-balance">
       <tr>
@@ -53,19 +47,19 @@ const Balance = ({ account }: BalanceProps) => {
           {currencyFormatter.format(account.workingBudgetBalance)}
         </td>
       </tr>
-      {hasDiff && (
+      {account.diffs && (
         <tr>
           <th scope="row">Ynab diff</th>
-          <td className={clearedDiff >= 0 ? 'positive' : 'negative'}>
-            {currencyFormatter.format(clearedDiff)}
+          <td className={account.diffs.cleared >= 0 ? 'positive' : 'negative'}>
+            {currencyFormatter.format(account.diffs.cleared)}
           </td>
           <td className="operator">+</td>
-          <td className={unclearedDiff >= 0 ? 'positive' : 'negative'}>
-            {currencyFormatter.format(unclearedDiff)}
+          <td className={account.diffs.uncleared >= 0 ? 'positive' : 'negative'}>
+            {currencyFormatter.format(account.diffs.uncleared)}
           </td>
           <td className="operator">=</td>
-          <td className={workingDiff >= 0 ? 'positive' : 'negative'}>
-            {currencyFormatter.format(workingDiff)}
+          <td className={account.diffs.working >= 0 ? 'positive' : 'negative'}>
+            {currencyFormatter.format(account.diffs.working)}
           </td>
         </tr>
       )}

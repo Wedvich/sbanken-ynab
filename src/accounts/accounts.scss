@@ -22,8 +22,10 @@
   }
 
   a {
+    align-items: center;
     color: $sby-color-dark-pink;
-    display: block;
+    display: flex;
+    justify-content: space-between;
     padding: 1em;
     position: relative;
     text-decoration: none;
@@ -45,6 +47,11 @@
         top: 0;
         width: 0.375rem;
       }
+    }
+
+    img {
+      height: 1.5rem;
+      width: 1.5rem;
     }
   }
 }
