@@ -37,7 +37,6 @@
 
     &:hover,
     &.active {
-
       &::before {
         background: $sby-color-light-pink;
         bottom: 0;
@@ -47,11 +46,6 @@
         top: 0;
         width: 0.375rem;
       }
-    }
-
-    img {
-      height: 1.5rem;
-      width: 1.5rem;
     }
   }
 }

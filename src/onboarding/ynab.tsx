@@ -1,12 +1,14 @@
 import React, { useRef, FormEvent } from 'react';
 import useFocusTrap from '../shared/use-focus-trap';
-import { actions as ynabActions } from '../ynab/reducer';
-import { useDispatch } from 'react-redux';
+import { actions as ynabActions, YnabState } from '../ynab/reducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store/root-reducer';
 
 const YnabOnboarding = () => {
   const formRef = useRef<HTMLFormElement>();
   useFocusTrap(formRef);
   const dispatch = useDispatch();
+  const state = useSelector<RootState, YnabState>((state) => state.ynab);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -25,7 +27,8 @@ const YnabOnboarding = () => {
           type="text"
           id="ynabPersonalAccessToken"
           className="sby-text-input"
-          defaultValue={process.env.YNAB_PERSONAL_ACCESS_TOKEN}
+          defaultValue={state.personalAccessToken || process.env.YNAB_PERSONAL_ACCESS_TOKEN}
+          size={32}
         />
       </div>
       <div className="sby-input-group">
@@ -34,7 +37,8 @@ const YnabOnboarding = () => {
           type="text"
           id="ynabBudgetId"
           className="sby-text-input"
-          defaultValue={process.env.YNAB_BUDGET_ID}
+          defaultValue={state.budgetId || process.env.YNAB_BUDGET_ID}
+          size={32}
         />
       </div>
       <div className="sby-button-group">
