@@ -70,5 +70,9 @@ body {
       cursor: default;
       opacity: 0.75;
     }
+
+    &:not(:first-child) {
+      margin-left: 0.5rem;
+    }
   }
 }

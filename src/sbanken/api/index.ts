@@ -24,7 +24,7 @@ export const transformAccessToken = (response: SbankenTokenResponse) => {
 export interface SbankenAccount {
   accountId: string;
   accountNumber: string;
-  accountType: string;
+  accountType: SbankenAccountType;
   available: number;
   balance: number;
   creditLimit: number;
@@ -47,4 +47,9 @@ export interface SbankenTransaction {
   };
   text: string;
   transactionDetailSpecified: boolean;
+}
+
+export enum SbankenAccountType {
+  Standard = 'Standard account',
+  CreditCard = 'Creditcard account'
 }

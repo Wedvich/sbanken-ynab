@@ -25,6 +25,7 @@
     color: $sby-color-dark-pink;
     display: block;
     padding: 1em;
+    position: relative;
     text-decoration: none;
 
     &:hover {
@@ -34,7 +35,6 @@
 
     &:hover,
     &.active {
-      position: relative;
 
       &::before {
         background: $sby-color-light-pink;
@@ -63,13 +63,22 @@
   }
 
   h1 {
-    margin: 0 0 1em 0;
+    margin: 0 0 1rem 0;
   }
 
-  .balance {
-    background: rgba($sby-color-light-pink, 0.5);
-    line-height: 2em;
-    margin: 0 0.5em;
-    padding: 0.25em 0.5em;
+  .sby-balance {
+    margin-bottom: 1rem;
+  }
+}
+
+.sby-balance {
+  th[scope="row"] {
+    text-align: right;
+  }
+
+  td {
+    font-weight: 600;
+    font-size: 1.5em;
+    text-align: right;
   }
 }

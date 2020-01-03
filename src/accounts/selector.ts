@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { RootState } from '../store/root-reducer';
 import { ConnectedAccount } from './types';
 import { createCompoundId, convertAmountFromYnab } from './utils';
+import { SbankenAccountType } from '../sbanken/api';
 
 export default createSelector(
   (state: RootState) => state.accounts,
@@ -9,19 +10,38 @@ export default createSelector(
   (state: RootState) => state.ynab.accounts,
   (connectedAccounts, sbankenAccounts, ynabAccounts) => {
     return connectedAccounts.map((source) => {
-      if (!sbankenAccounts[source.sbankenId] || !ynabAccounts[source.ynabId]) return null;
+      const sbankenAccount = sbankenAccounts[source.sbankenId];
+      const ynabAccount = ynabAccounts[source.ynabId];
 
-      const connectedAccount: ConnectedAccount = {
+      if (!sbankenAccount || !ynabAccounts[source.ynabId]) return null;
+
+      const workingBankBalance = sbankenAccount.accountType === SbankenAccountType.CreditCard
+        ? -(sbankenAccount.creditLimit - sbankenAccount.available)
+        : sbankenAccount.available;
+
+      const connectedAccount: Partial<ConnectedAccount> = {
         ...source,
-        creditLimit: sbankenAccounts[source.sbankenId].creditLimit ?? 0,
+        creditLimit: sbankenAccount.creditLimit ?? 0,
         compoundId: createCompoundId(source),
-        clearedBankBalance: sbankenAccounts[source.sbankenId].balance,
-        clearedBudgetBalance: convertAmountFromYnab(ynabAccounts[source.ynabId].cleared_balance),
-        unclearedBankBalance: sbankenAccounts[source.sbankenId].available,
-        unclearedBudgetBalance: convertAmountFromYnab(ynabAccounts[source.ynabId].balance),
+        clearedBankBalance: sbankenAccount.balance,
+        clearedBudgetBalance: convertAmountFromYnab(ynabAccount.cleared_balance),
+        unclearedBankBalance: workingBankBalance - sbankenAccount.balance,
+        unclearedBudgetBalance: convertAmountFromYnab(ynabAccount.uncleared_balance),
+        workingBankBalance,
+        workingBudgetBalance: convertAmountFromYnab(ynabAccount.balance),
       };
 
-      return connectedAccount;
+      const diffs = {
+        cleared: connectedAccount.clearedBudgetBalance - connectedAccount.clearedBankBalance,
+        uncleared: connectedAccount.unclearedBudgetBalance - connectedAccount.unclearedBankBalance,
+        working: connectedAccount.workingBudgetBalance - connectedAccount.workingBankBalance,
+      };
+
+      connectedAccount.diffs = Object.values(diffs).some(((value) => value !== 0))
+        ? diffs
+        : null;
+
+      return connectedAccount as ConnectedAccount;
     }).filter(Boolean);
   }
 );

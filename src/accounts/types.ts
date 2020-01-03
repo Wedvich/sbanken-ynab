@@ -9,6 +9,13 @@ export interface ConnectedAccount extends ConnectedAccountSource {
   compoundId: string;
   clearedBankBalance: number;
   clearedBudgetBalance: number;
+  diffs: {
+    cleared: number;
+    uncleared: number;
+    working: number;
+  } | null;
   unclearedBankBalance: number;
   unclearedBudgetBalance: number;
+  workingBankBalance: number;
+  workingBudgetBalance: number;
 }

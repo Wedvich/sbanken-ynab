@@ -1,0 +1,30 @@
+@import '../../shared/colors.scss';
+
+.sby-balance {
+  th[scope='col'] {
+    font-style: italic;
+    font-weight: normal;
+  }
+
+  th[scope='row'] {
+    padding-right: 1em;
+    text-align: right;
+  }
+
+  td {
+    font-family: 'Lato', sans-serif;
+    font-weight: normal;
+
+    &.positive {
+      color: $sby-color-medium-green;
+    }
+
+    &.negative {
+      color: $sby-color-medium-red;
+    }
+  }
+
+  .operator {
+    padding: 0 1em;
+  }
+}

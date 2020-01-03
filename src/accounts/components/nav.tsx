@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
-import connectedAccountsSelector from './selector';
+import connectedAccountsSelector from '../selector';
 import { Link, useParams } from 'react-router-dom';
 
 const Nav = () => {
