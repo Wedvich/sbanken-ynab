@@ -41,3 +41,22 @@ export const getStoredCredentials = () =>
 
 export const storeCredentials = (credentials: string) =>
   localStorage.setItem(SbankenStorageKey.Credentials, credentials);
+
+export const encodeCredentials = (clientId: string, clientSecret: string) =>
+  btoa(`${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`);
+
+export const decodeCredentials =
+  (credentials: string): { clientId: string; clientSecret: string } | null => {
+    if (!credentials) return null;
+    try {
+      const [clientId, clientSecret] =
+        atob(credentials).split(':').map((part) => decodeURIComponent(part));
+      console.log(clientId, clientSecret);
+      return {
+        clientId,
+        clientSecret,
+      };
+    } catch {
+      return null;
+    }
+  };

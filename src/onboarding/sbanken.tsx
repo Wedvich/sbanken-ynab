@@ -1,16 +1,18 @@
 import React, { useRef, FormEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useFocusTrap from '../shared/use-focus-trap';
-import { actions as sbankenActions } from '../sbanken/reducer';
+import { actions as sbankenActions, SbankenState } from '../sbanken/reducer';
 import { RootState } from '../store/root-reducer';
 import Loader from '../shared/loader';
 import './onboarding.scss';
+import { decodeCredentials } from '../sbanken/utils';
 
 const SbankenOnboarding = () => {
   const formRef = useRef<HTMLFormElement>();
   useFocusTrap(formRef);
   const dispatch = useDispatch();
-  const authenticating = useSelector<RootState, boolean>((state) => state.sbanken.authenticating);
+  const state = useSelector<RootState, SbankenState>((state) => state.sbanken);
+  const existingCredentials = decodeCredentials(state.credentials);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -29,8 +31,8 @@ const SbankenOnboarding = () => {
           type="text"
           id="sbankenClientId"
           className="sby-text-input"
-          defaultValue={process.env.SBANKEN_CLIENT_ID}
-          disabled={authenticating}
+          defaultValue={existingCredentials?.clientId || process.env.SBANKEN_CLIENT_ID}
+          disabled={state.authenticating}
           size={32}
         />
       </div>
@@ -40,8 +42,8 @@ const SbankenOnboarding = () => {
           type="text"
           id="sbankenClientSecret"
           className="sby-text-input"
-          defaultValue={process.env.SBANKEN_CLIENT_SECRET}
-          disabled={authenticating}
+          defaultValue={existingCredentials?.clientSecret || process.env.SBANKEN_CLIENT_SECRET}
+          disabled={state.authenticating}
           size={32}
         />
       </div>
@@ -51,14 +53,14 @@ const SbankenOnboarding = () => {
           type="text"
           id="sbankenCustomerId"
           className="sby-text-input"
-          defaultValue={process.env.SBANKEN_CUSTOMER_ID}
-          disabled={authenticating}
+          defaultValue={state.customerId || process.env.SBANKEN_CUSTOMER_ID}
+          disabled={state.authenticating}
           size={32}
         />
       </div>
       <div className="sby-button-group">
-        <button type="submit" disabled={authenticating}>
-          {authenticating && <Loader inverted />}
+        <button type="submit" disabled={state.authenticating}>
+          {state.authenticating && <Loader inverted />}
           <span>Fortsett</span>
         </button>
       </div>

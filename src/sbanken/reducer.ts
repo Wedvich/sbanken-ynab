@@ -2,7 +2,7 @@ import { Reducer } from 'redux';
 import { transformAccessToken, SbankenAccount, SbankenTransaction } from './api';
 import { getTokenRequest, getTokenResponse } from './api/get-token';
 import { getAccountsRequest, getAccountsResponse } from './api/get-accounts';
-import { getStoredAccessToken, getStoredCustomerId } from './utils';
+import { getStoredAccessToken, getStoredCustomerId, encodeCredentials, getStoredCredentials } from './utils';
 import { getTransactionsRequest, getTransactionsResponse } from './api/get-transactions';
 
 export enum SbankenActionType {
@@ -17,7 +17,7 @@ export enum SbankenActionType {
 
 const setCredentials = (clientId: string, clientSecret: string, customerId: string) => ({
   type: SbankenActionType.SetCredentials as SbankenActionType.SetCredentials,
-  credentials: btoa(`${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`),
+  credentials: encodeCredentials(clientId, clientSecret),
   customerId,
 });
 
@@ -37,7 +37,7 @@ export const sbankenStateKey = 'sbanken';
 
 const initialState = {
   authenticating: false,
-  credentials: null as string | null,
+  credentials: getStoredCredentials(),
   customerId: getStoredCustomerId(),
   error: null as string | null,
   token: getStoredAccessToken(),
