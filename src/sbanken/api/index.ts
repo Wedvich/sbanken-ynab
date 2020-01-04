@@ -37,9 +37,23 @@ export interface SbankenAccount {
   ownerCustomerId: string;
 }
 
+export interface SbankenCardDetails {
+  cardNumber?: string;
+  currencyAmount: number;
+  currencyRate: number;
+  merchantCategoryCode?: string;
+  merchantCategoryDescription?: string;
+  merchantCity?: string;
+  merchantName?: string;
+  originalCurrencyCode?: string;
+  purchaseDate: string;
+  transactionId?: string;
+}
+
 export interface SbankenTransaction {
   accountingDate: string;
   amount: number;
+  cardDetails?: SbankenCardDetails;
   cardDetailsSpecified: boolean;
   interestDate: string;
   isReservation: boolean;
@@ -53,7 +67,30 @@ export interface SbankenTransaction {
   transactionTypeText: string;
 }
 
-export interface SbankenTransactionWithIds extends SbankenTransaction {
+export interface SbankenTransactionEnriched extends SbankenTransaction {
   accountId: string;
+  date: string;
   id: string;
 }
+
+export const patchDate = (accountingDate: string, text: string, purchaseDate?: string) => {
+  if (!purchaseDate) {
+    const textDateFragments = /^(\d{2})\.(\d{2})/.exec(text);
+    if (!textDateFragments) return accountingDate;
+
+    const textDate = DateTime.fromObject({
+      'day': Number.parseInt(textDateFragments[1]),
+      'month': Number.parseInt(textDateFragments[2]),
+    });
+
+    if (!textDate.isValid) return accountingDate;
+
+    const accountingDateTime = DateTime.fromISO(accountingDate);
+    return textDate.set({ 'year': accountingDateTime.get('year') }).toISO();
+  }
+
+  const purchaseDateTime = DateTime.fromISO(purchaseDate);
+  const accountingDateTime = DateTime.fromISO(accountingDate);
+
+  return purchaseDateTime.set({ 'year': accountingDateTime.get('year') }).toISO();
+};

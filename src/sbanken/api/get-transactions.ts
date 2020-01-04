@@ -1,7 +1,7 @@
 import { SbankenActionType, SbankenState } from '../reducer';
 import { select, call, put } from 'redux-saga/effects';
 import { RootState } from '../../store/root-reducer';
-import { sbankenApiBaseUrl, SbankenTransaction, SbankenTransactionWithIds } from '.';
+import { sbankenApiBaseUrl, SbankenTransaction, SbankenTransactionEnriched, patchDate } from '.';
 import { computeTransactionId } from '../utils';
 
 export const getTransactionsRequest = (accountId: string) => ({
@@ -9,18 +9,24 @@ export const getTransactionsRequest = (accountId: string) => ({
   accountId,
 });
 
-export const getTransactionsResponse = (transactions: SbankenTransactionWithIds[]) => ({
+export const getTransactionsResponse = (transactions: SbankenTransactionEnriched[]) => ({
   type: SbankenActionType.GetTransactionsResponse as SbankenActionType.GetTransactionsResponse,
   transactions,
 });
 
-const enrichWithIds = async (transactions: SbankenTransaction[], accountId: string) => {
+const enrichTransactions = async (transactions: SbankenTransaction[], accountId: string) => {
   const transactionsWithIds = await Promise.all(transactions.map(async (transaction) => {
     return {
       ...transaction,
+      date: patchDate(
+        transaction.accountingDate,
+        transaction.text,
+        transaction.cardDetails?.purchaseDate
+      ),
       accountId,
-      id: await computeTransactionId(transaction),
-    } as SbankenTransactionWithIds;
+      id: transaction.cardDetails?.transactionId
+        ?? await computeTransactionId(transaction),
+    } as SbankenTransactionEnriched;
   }));
 
   const idCounts = (transactionsWithIds.reduce((counts, transaction, i) => {
@@ -53,7 +59,7 @@ export function* getTransactionsSaga({ accountId }) {
   });
 
   const { items } = yield call([response, response.json]);
-  const transactions = yield call(enrichWithIds, items, accountId);
+  const transactions = yield call(enrichTransactions, items, accountId);
 
   yield put(getTransactionsResponse(transactions));
 }

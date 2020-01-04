@@ -23,7 +23,7 @@ const Transactions = () => {
 
   return (
     <section className="sby-transactions">
-      <h2>Mulige transaksjoner</h2>
+      <h2>Ukoblede transaksjoner</h2>
       <table>
         <thead>
           <tr>

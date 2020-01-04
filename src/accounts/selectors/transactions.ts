@@ -15,7 +15,7 @@ const transactionsSelector = createSelector(
       connectedAccountId: accounts.find(
         (account) => account.sbankenId === sbankenTransaction.accountId)
         .compoundId,
-      date: DateTime.fromISO(sbankenTransaction.accountingDate),
+      date: DateTime.fromISO(sbankenTransaction.date),
       id: sbankenTransaction.id,
       payee: sbankenTransaction.text,
       source: TransactionSource.Sbanken,
