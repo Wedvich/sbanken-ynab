@@ -1,0 +1,60 @@
+@import '../../shared/colors.scss';
+
+.sby-transactions {
+  table {
+    border-spacing: 0;
+    margin: 1rem 0;
+    width: 100%;
+  }
+
+  th,
+  td {
+    background: white;
+    padding: 0.5rem;
+    text-align: left;
+  }
+
+  th {
+    background: $sby-color-light-gray;
+    border-bottom: thin solid $sby-color-medium-gray;
+    border-right: thin solid $sby-color-medium-gray;
+    border-top: thin solid $sby-color-medium-gray;
+
+    &:first-child {
+      border-left: thin solid $sby-color-medium-gray;
+      border-top-left-radius: 2px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 2px;
+    }
+  }
+
+  td {
+    border-bottom: thin solid $sby-color-medium-gray;
+    border-right: thin solid $sby-color-medium-gray;
+
+    &:first-child {
+      border-left: thin solid $sby-color-medium-gray;
+    }
+
+    &.date {
+      font-family: 'Lato', sans-serif;
+    }
+
+    &.currency {
+      font-family: 'Lato', sans-serif;
+      text-align: right;
+    }
+  }
+
+  tr:last-child td {
+    &:first-child {
+      border-bottom-left-radius: 2px;
+    }
+
+    &:last-child {
+      border-bottom-right-radius: 2px;
+    }
+  }
+}

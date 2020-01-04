@@ -2,12 +2,12 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { Link, useParams } from 'react-router-dom';
-import connectedAccountsSelector from '../selector';
+import { accountsSelector } from '../selectors';
 import Icon from '../../shared/icon';
-import checkCircleIcon from '@coreui/icons/svg/free/cil-check-circle.svg';
+import balanceScaleIcon from '@coreui/icons/svg/free/cil-balance-scale.svg';
 
 const Nav = () => {
-  const connectedAccounts = useSelector(connectedAccountsSelector);
+  const connectedAccounts = useSelector(accountsSelector);
   const { accountId } = useParams<{ accountId?: string }>();
 
   return (
@@ -18,7 +18,7 @@ const Nav = () => {
           {account.displayName}
           {account.diffs === null && (
             <Icon
-              src={checkCircleIcon}
+              src={balanceScaleIcon}
               title="Ingen differanse mellom Sbanken og Ynab"
             />
           )}

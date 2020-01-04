@@ -19,3 +19,16 @@ export interface ConnectedAccount extends ConnectedAccountSource {
   workingBankBalance: number;
   workingBudgetBalance: number;
 }
+
+export enum TransactionSource {
+  Sbanken = 'sbanken',
+  Ynab = 'ynab',
+}
+
+export interface Transaction {
+  connectedAccountId?: string;
+  date: string;
+  amount: number;
+  payee: string | null;
+  source: TransactionSource;
+}

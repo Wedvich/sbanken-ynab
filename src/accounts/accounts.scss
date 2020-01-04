@@ -47,6 +47,10 @@
         width: 0.375rem;
       }
     }
+
+    .sby-icon {
+      fill: $sby-color-medium-gray;
+    }
   }
 }
 
@@ -55,6 +59,7 @@
   grid-column: 2;
   height: 100%;
   padding: 1rem;
+  overflow-y: auto;
 
   &.empty {
     align-items: center;

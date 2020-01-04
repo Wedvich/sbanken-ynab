@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { YnabAccount } from './api';
+import { YnabAccount, YnabTransaction } from './api';
 import { getAccountsRequest, getAccountsResponse } from './api/get-accounts';
 import { getStoredServerKnowledge, getStoredBudgetId, getStoredToken } from './utils';
 import { getTransactionsRequest, getTransactionsResponse } from './api/get-transactions';
@@ -42,6 +42,7 @@ const initialState = {
   serverKnowledge: getStoredServerKnowledge(),
   accounts: { } as { [key: string]: YnabAccount },
   loading: false,
+  transactions: [] as YnabTransaction[],
 };
 
 export type YnabState = typeof initialState;
@@ -67,6 +68,7 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
       };
 
     case YnabActionType.GetAccountsResponse:
+    {
       return {
         ...state,
         loading: false,
@@ -74,8 +76,8 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
           accounts[account.id] = account;
           return accounts;
         }, {}),
-        serverKnowledge: action.serverKnowledge,
       };
+    }
 
     case YnabActionType.GetTransactionsRequest:
       return {
@@ -88,7 +90,6 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
         ...state,
         loading: false,
         transactions: action.transactions,
-        serverKnowledge: action.serverKnowledge,
       };
 
     default:

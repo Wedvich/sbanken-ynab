@@ -14,7 +14,24 @@ export interface YnabAccount {
   uncleared_balance: number;
 }
 
-// TODO: Fill interface with fields
 export interface YnabTransaction {
+  account_id: string;
+  account_name: string;
+  amount: number;
+  approved: boolean;
+  category_id: string | null;
+  category_name: string | null;
+  cleared: string;
+  date: string;
+  deleted: boolean;
+  flag_color: string | null;
   id: string;
+  import_id: string | null;
+  matched_transaction_id: string | null;
+  memo: string;
+  payee_id: string | null;
+  payee_name: string | null;
+  subtransactions: [];
+  transfer_account_id: string | null;
+  transfer_transaction_id: string | null;
 }

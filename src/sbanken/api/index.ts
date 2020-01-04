@@ -21,6 +21,11 @@ export const transformAccessToken = (response: SbankenTokenResponse) => {
   } as SbankenAccessToken;
 };
 
+export enum SbankenAccountType {
+  Standard = 'Standard account',
+  CreditCard = 'Creditcard account'
+}
+
 export interface SbankenAccount {
   accountId: string;
   accountNumber: string;
@@ -32,24 +37,18 @@ export interface SbankenAccount {
   ownerCustomerId: string;
 }
 
-// TODO: Flesh out interface
 export interface SbankenTransaction {
+  accountingDate: string;
   amount: number;
-  transactionDetail?: {
-    amountDescription: string;
-    cid: string;
-    formattedAccountNumber:	string;
-    numericReference: number;
-    payerName: string;
-    receiverName: string;
-    registrationDate: string;
-    transactionId: number;
-  };
+  cardDetailsSpecified: boolean;
+  interestDate: string;
+  isReservation: boolean;
+  otherAccountNumberSpecified: boolean;
+  reservationType: string | null;
+  source: string;
   text: string;
   transactionDetailSpecified: boolean;
-}
-
-export enum SbankenAccountType {
-  Standard = 'Standard account',
-  CreditCard = 'Creditcard account'
+  transactionType: string;
+  transactionTypeCode: number;
+  transactionTypeText: string;
 }

@@ -74,6 +74,10 @@ body {
     &:not(:first-child) {
       margin-left: 0.5rem;
     }
+
+    &:hover:not(:disabled) {
+      text-decoration: underline;
+    }
   }
 }
 

@@ -1,10 +1,11 @@
 import { createSelector } from 'reselect';
+import { DateTime } from 'luxon';
 import { RootState } from '../store/root-reducer';
-import { ConnectedAccount } from './types';
+import { ConnectedAccount, Transaction, TransactionSource } from './types';
 import { createCompoundId, convertAmountFromYnab } from './utils';
 import { SbankenAccountType } from '../sbanken/api';
 
-export default createSelector(
+export const accountsSelector = createSelector(
   (state: RootState) => state.accounts,
   (state: RootState) => state.sbanken.accounts,
   (state: RootState) => state.ynab.accounts,
@@ -43,5 +44,23 @@ export default createSelector(
 
       return connectedAccount as ConnectedAccount;
     }).filter(Boolean);
+  }
+);
+
+export const transactionsSelector = createSelector(
+  (state: RootState) => state.sbanken.transactions,
+  (state: RootState) => state.ynab.transactions,
+  (sbankenTransactions, ynabTransactions) => {
+    return sbankenTransactions.map((sbankenTransaction) => ({
+      amount: sbankenTransaction.amount,
+      date: DateTime.fromISO(sbankenTransaction.accountingDate).toFormat('yyyy-MM-dd'),
+      payee: sbankenTransaction.text,
+      source: TransactionSource.Sbanken,
+    } as Transaction)).concat(ynabTransactions.map((ynabTransaction) => ({
+      amount: convertAmountFromYnab(ynabTransaction.amount),
+      date: ynabTransaction.date,
+      payee: ynabTransaction.payee_name,
+      source: TransactionSource.Ynab,
+    } as Transaction)));
   }
 );
