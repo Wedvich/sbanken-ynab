@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { Link, useParams } from 'react-router-dom';
-import { accountsSelector } from '../selectors';
+import accountsSelector from '../selectors/accounts';
 import Icon, { IconType } from '../../shared/icon';
 
 const Nav = () => {

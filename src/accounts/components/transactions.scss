@@ -9,7 +9,6 @@
 
   th,
   td {
-    background: white;
     padding: 0.5rem;
     text-align: left;
   }
@@ -30,31 +29,35 @@
     }
   }
 
-  td {
-    border-bottom: thin solid $sby-color-medium-gray;
-    border-right: thin solid $sby-color-medium-gray;
+  .currency {
+    font-family: 'Lato', sans-serif;
+    text-align: right;
+  }
 
-    &:first-child {
-      border-left: thin solid $sby-color-medium-gray;
+  tbody {
+    td {
+      background: white;
+      border-bottom: thin solid $sby-color-medium-gray;
+      border-right: thin solid $sby-color-medium-gray;
+
+      &:first-child {
+        border-left: thin solid $sby-color-medium-gray;
+      }
+
+      &.date {
+        font-family: 'Lato', sans-serif;
+      }
     }
 
-    &.date {
-      font-family: 'Lato', sans-serif;
-    }
+    tr:last-child td {
+      &:first-child {
+        border-bottom-left-radius: 2px;
+      }
 
-    &.currency {
-      font-family: 'Lato', sans-serif;
-      text-align: right;
+      &:last-child {
+        border-bottom-right-radius: 2px;
+      }
     }
   }
 
-  tr:last-child td {
-    &:first-child {
-      border-bottom-left-radius: 2px;
-    }
-
-    &:last-child {
-      border-bottom-right-radius: 2px;
-    }
-  }
 }

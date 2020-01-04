@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import Nav from './components/nav';
 import './accounts.scss';
-import { accountsSelector } from './selectors';
+import accountsSelector from './selectors/accounts';
 import NoAccounts from './components/no-accounts';
 import SelectedAccount from './components/selected-account';
 import Transactions from './components/transactions';

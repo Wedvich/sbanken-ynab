@@ -1,11 +1,10 @@
 import { createSelector } from 'reselect';
-import { DateTime } from 'luxon';
-import { RootState } from '../store/root-reducer';
-import { ConnectedAccount, Transaction, TransactionSource } from './types';
-import { createCompoundId, convertAmountFromYnab } from './utils';
-import { SbankenAccountType } from '../sbanken/api';
+import { RootState } from '../../store/root-reducer';
+import { ConnectedAccount } from '../types';
+import { createCompoundId, convertAmountFromYnab } from '../utils';
+import { SbankenAccountType } from '../../sbanken/api';
 
-export const accountsSelector = createSelector(
+const accountsSelector = createSelector(
   (state: RootState) => state.accounts,
   (state: RootState) => state.sbanken.accounts,
   (state: RootState) => state.ynab.accounts,
@@ -47,29 +46,4 @@ export const accountsSelector = createSelector(
   }
 );
 
-export const transactionsSelector = createSelector(
-  (state: RootState) => state.sbanken.transactions,
-  (state: RootState) => state.ynab.transactions,
-  accountsSelector,
-  (sbankenTransactions, ynabTransactions, accounts) => {
-    return sbankenTransactions.map((sbankenTransaction) => ({
-      amount: sbankenTransaction.amount,
-      connectedAccountId: accounts.find(
-        (account) => account.sbankenId === sbankenTransaction.accountId)
-        .compoundId,
-      date: DateTime.fromISO(sbankenTransaction.accountingDate),
-      id: sbankenTransaction.id,
-      payee: sbankenTransaction.text,
-      source: TransactionSource.Sbanken,
-    } as Transaction)).concat(ynabTransactions.map((ynabTransaction) => ({
-      amount: convertAmountFromYnab(ynabTransaction.amount),
-      connectedAccountId: accounts.find(
-        (account) => account.ynabId === ynabTransaction.account_id)
-        .compoundId,
-      date: DateTime.fromISO(ynabTransaction.date),
-      id: ynabTransaction.id,
-      payee: ynabTransaction.payee_name,
-      source: TransactionSource.Ynab,
-    } as Transaction)));
-  }
-);
+export default accountsSelector;

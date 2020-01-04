@@ -27,11 +27,16 @@ export enum TransactionSource {
   Ynab = 'ynab',
 }
 
-export interface Transaction {
+export interface NormalizedTransaction {
   amount: number;
   connectedAccountId?: string;
   date: DateTime;
   id?: string;
   payee: string | null;
   source: TransactionSource;
+}
+
+export interface MatchedTransaction {
+  sbankenTransaction: NormalizedTransaction;
+  ynabTransaction: NormalizedTransaction;
 }
