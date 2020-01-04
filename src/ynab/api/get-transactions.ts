@@ -8,9 +8,10 @@ export const getTransactionsRequest = (accountId: string) => ({
   accountId,
 });
 
-export const getTransactionsResponse = (transactions: YnabTransaction[], serverKnowledge: number) => ({
+export const getTransactionsResponse = (transactions: YnabTransaction[], accountId: string, serverKnowledge: number) => ({
   type: YnabActionType.GetTransactionsResponse as YnabActionType.GetTransactionsResponse,
   transactions,
+  accountId,
   serverKnowledge,
 });
 
@@ -20,7 +21,7 @@ export function* getTransactionsSaga({ accountId }) {
   const url = [
     `${ynabApiBaseUrl}/budgets/${budgetId}/accounts/${accountId}/transactions`,
     '?since_date=2019-12-30',
-    `&last_knowledge_of_server=${serverKnowledge[YnabActionType.GetTransactionsRequest] ?? 0}`,
+    `&last_knowledge_of_server=${serverKnowledge[`${YnabActionType.GetTransactionsRequest}/${accountId}`] ?? 0}`,
   ];
   const response = yield call(
     fetch,
@@ -37,5 +38,5 @@ export function* getTransactionsSaga({ accountId }) {
 
   const { transactions, server_knowledge: nextServerKnowledge } = transactionsResponse.data;
 
-  yield put(getTransactionsResponse(transactions, nextServerKnowledge));
+  yield put(getTransactionsResponse(transactions, accountId, nextServerKnowledge));
 }

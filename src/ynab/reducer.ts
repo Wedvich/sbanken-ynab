@@ -99,7 +99,8 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
         transactions: state.transactions.concat(action.transactions),
         serverKnowledge: {
           ...state.serverKnowledge,
-          [YnabActionType.GetTransactionsRequest]: action.serverKnowledge,
+          [`${YnabActionType.GetTransactionsRequest}/${action.accountId}`]:
+            action.serverKnowledge,
         },
       };
 

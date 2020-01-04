@@ -1,5 +1,6 @@
 import { ConnectedAccountSource } from './types';
 import { DateTime } from 'luxon';
+import { useParams } from 'react-router-dom';
 
 export enum AccountsStorageKey {
   Sources = 'accounts/sources',
@@ -32,3 +33,8 @@ export const formatCurrency = (amount: number) =>
 
 export const formatDate = (date: DateTime) =>
   date.toFormat('yyyy-MM-dd');
+
+export const useAccountId = () => {
+  const { accountId } = useParams<{ accountId?: string }>();
+  return accountId;
+};

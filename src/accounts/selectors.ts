@@ -50,7 +50,8 @@ export const accountsSelector = createSelector(
 export const transactionsSelector = createSelector(
   (state: RootState) => state.sbanken.transactions,
   (state: RootState) => state.ynab.transactions,
-  (sbankenTransactions, ynabTransactions) => {
+  accountsSelector,
+  (sbankenTransactions, ynabTransactions, accounts) => {
     return sbankenTransactions.map((sbankenTransaction) => ({
       amount: sbankenTransaction.amount,
       date: DateTime.fromISO(sbankenTransaction.accountingDate),
@@ -59,6 +60,8 @@ export const transactionsSelector = createSelector(
       source: TransactionSource.Sbanken,
     } as Transaction)).concat(ynabTransactions.map((ynabTransaction) => ({
       amount: convertAmountFromYnab(ynabTransaction.amount),
+      connectedAccountId: accounts.find(
+        (account) => account.ynabId === ynabTransaction.account_id).compoundId,
       date: DateTime.fromISO(ynabTransaction.date),
       id: ynabTransaction.id,
       payee: ynabTransaction.payee_name,

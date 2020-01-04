@@ -1,11 +1,15 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { formatCurrency, formatDate  } from '../utils';
+import { formatCurrency, formatDate, useAccountId  } from '../utils';
 import { transactionsSelector } from '../selectors';
 import './transactions.scss';
 
 const Transactions = () => {
   const transactions = useSelector(transactionsSelector);
+  const accountId = useAccountId();
+
+  const accountTransactions = transactions.filter(
+    (transaction) => transaction.connectedAccountId === accountId);
 
   return (
     <section className="sby-transactions">
@@ -21,7 +25,7 @@ const Transactions = () => {
           </tr>
         </thead>
         <tbody>
-          {transactions.map((transaction) => (
+          {accountTransactions.map((transaction) => (
             <tr key={transaction.id}>
               <td>{transaction.source}</td>
               <td className="date">{formatDate(transaction.date)}</td>
