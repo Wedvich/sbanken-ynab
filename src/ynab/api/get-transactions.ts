@@ -16,11 +16,15 @@ export const getTransactionsResponse = (transactions: YnabTransaction[], serverK
 
 // TODO: Typed action maybe?
 export function* getTransactionsSaga({ accountId }) {
-  const { personalAccessToken, budgetId }: YnabState = yield select((state: RootState) => state.ynab);
+  const { personalAccessToken, budgetId, serverKnowledge }: YnabState = yield select((state: RootState) => state.ynab);
+  const url = [
+    `${ynabApiBaseUrl}/budgets/${budgetId}/accounts/${accountId}/transactions`,
+    '?since_date=2019-12-30',
+    `&last_knowledge_of_server=${serverKnowledge[YnabActionType.GetTransactionsRequest] ?? 0}`,
+  ];
   const response = yield call(
     fetch,
-    // FIXME: ?last_knowledge_of_server=${serverKnowledge},
-    `${ynabApiBaseUrl}/budgets/${budgetId}/accounts/${accountId}/transactions?since_date=2019-12-30`,
+    url.join(''),
     {
       headers: new Headers({
         'Accept': 'application/json',

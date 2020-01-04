@@ -34,13 +34,11 @@ export const getStoredServerKnowledge = () => {
 
       return serverKnowledge;
     }, {});
-    // const storedServerKnowledge = Number.parseInt(localStorage.getItem(YnabStorageKey.ServerKnowledge));
-    // return !Number.isNaN(storedServerKnowledge) ? storedServerKnowledge : 0;
   } catch {
     localStorage.removeItem(YnabStorageKey.ServerKnowledge);
     return {};
   }
 };
 
-export const storeServerKnowledge = (serverKnowledge: number) =>
-  localStorage.setItem(YnabStorageKey.ServerKnowledge, serverKnowledge.toString());
+export const storeServerKnowledge = (serverKnowledge: YnabServerKnowledge) =>
+  localStorage.setItem(YnabStorageKey.ServerKnowledge, JSON.stringify(serverKnowledge));

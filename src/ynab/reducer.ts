@@ -72,10 +72,17 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
       return {
         ...state,
         loading: false,
-        accounts: action.accounts.reduce((accounts, account) => {
-          accounts[account.id] = account;
-          return accounts;
-        }, {}),
+        accounts: {
+          ...state.accounts,
+          ...action.accounts.reduce((accounts, account) => {
+            accounts[account.id] = account;
+            return accounts;
+          }, {}),
+        },
+        serverKnowledge: {
+          ...state.serverKnowledge,
+          [YnabActionType.GetAccountsRequest]: action.serverKnowledge,
+        },
       };
     }
 
@@ -89,7 +96,11 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
       return {
         ...state,
         loading: false,
-        transactions: action.transactions,
+        transactions: state.transactions.concat(action.transactions),
+        serverKnowledge: {
+          ...state.serverKnowledge,
+          [YnabActionType.GetTransactionsRequest]: action.serverKnowledge,
+        },
       };
 
     default:

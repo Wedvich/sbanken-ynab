@@ -14,11 +14,10 @@ export const getAccountsResponse = (accounts: YnabAccount[], serverKnowledge: nu
 });
 
 export function* getAccountsSaga() {
-  const { personalAccessToken, budgetId }: YnabState = yield select((state: RootState) => state.ynab);
+  const { personalAccessToken, budgetId, serverKnowledge }: YnabState = yield select((state: RootState) => state.ynab);
   const response = yield call(
     fetch,
-    // FIXME: ?last_knowledge_of_server=${serverKnowledge},
-    `${ynabApiBaseUrl}/budgets/${budgetId}/accounts`,
+    `${ynabApiBaseUrl}/budgets/${budgetId}/accounts?last_knowledge_of_server=${serverKnowledge[YnabActionType.GetAccountsRequest] ?? 0}`,
     {
       headers: new Headers({
         'Accept': 'application/json',

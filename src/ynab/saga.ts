@@ -1,15 +1,16 @@
 import { takeLatest, takeEvery, call } from 'redux-saga/effects';
 import { YnabActionType } from './reducer';
 import { getAccountsSaga } from './api/get-accounts';
-import { storeServerKnowledge, storeToken, storeBudgetId } from './utils';
+import { storeToken, storeBudgetId } from './utils';
 import { getTransactionsSaga } from './api/get-transactions';
 
 export default function* () {
   yield takeLatest(YnabActionType.GetAccountsRequest, getAccountsSaga);
 
-  yield takeEvery(YnabActionType.GetAccountsResponse, function* ({ serverKnowledge }: any) {
-    yield call(storeServerKnowledge, serverKnowledge);
-  });
+  // yield takeEvery(YnabActionType.GetAccountsResponse, function* () {
+  //   const { serverKnowledge } = yield select((state: RootState) => state.ynab);
+  //   yield call(storeServerKnowledge, serverKnowledge);
+  // });
 
   yield takeEvery(YnabActionType.SetToken, function* ({ token }: any) {
     yield call(storeToken, token);
