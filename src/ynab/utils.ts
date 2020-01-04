@@ -4,6 +4,10 @@ export enum YnabStorageKey {
   ServerKnowledge = 'ynab/server-knowledge'
 }
 
+export interface YnabServerKnowledge {
+  [key: string]: number | null;
+}
+
 export const getStoredToken = () =>
   localStorage.getItem(YnabStorageKey.PersonalAccessToken) || null;
 
@@ -18,10 +22,23 @@ export const storeBudgetId = (budgetId: string) =>
 
 export const getStoredServerKnowledge = () => {
   try {
-    const storedServerKnowledge = Number.parseInt(localStorage.getItem(YnabStorageKey.ServerKnowledge));
-    return !Number.isNaN(storedServerKnowledge) ? storedServerKnowledge : 0;
+    const storedServerKnowledge = JSON.parse(localStorage.getItem(YnabStorageKey.ServerKnowledge));
+    return Object.keys(storedServerKnowledge).reduce((serverKnowledge, key) => {
+      try {
+        const serverKnowledgeValue = Number.parseInt(storedServerKnowledge[key]);
+        if (!Number.isNaN(serverKnowledgeValue)) {
+          serverKnowledge[key] = serverKnowledgeValue;
+        }
+      // eslint-disable-next-line no-empty
+      } catch {}
+
+      return serverKnowledge;
+    }, {});
+    // const storedServerKnowledge = Number.parseInt(localStorage.getItem(YnabStorageKey.ServerKnowledge));
+    // return !Number.isNaN(storedServerKnowledge) ? storedServerKnowledge : 0;
   } catch {
-    return 0;
+    localStorage.removeItem(YnabStorageKey.ServerKnowledge);
+    return {};
   }
 };
 

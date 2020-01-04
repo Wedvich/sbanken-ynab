@@ -3,8 +3,7 @@ import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { Link, useParams } from 'react-router-dom';
 import { accountsSelector } from '../selectors';
-import Icon from '../../shared/icon';
-import balanceScaleIcon from '@coreui/icons/svg/free/cil-balance-scale.svg';
+import Icon, { IconType } from '../../shared/icon';
 
 const Nav = () => {
   const connectedAccounts = useSelector(accountsSelector);
@@ -14,14 +13,16 @@ const Nav = () => {
     <nav className="sby-accounts-nav">
       <h3>Kontoer</h3>
       {connectedAccounts.map((account) => (
-        <Link key={account.compoundId} to={`/accounts/${account.compoundId}`} className={cx({ 'active': accountId === account.compoundId })}>
+        <Link
+          key={account.compoundId}
+          to={`/accounts/${account.compoundId}`}
+          className={cx({
+            'active': accountId === account.compoundId,
+            'has-diffs': account.diffs,
+          })}
+        >
           {account.displayName}
-          {account.diffs === null && (
-            <Icon
-              src={balanceScaleIcon}
-              title="Ingen differanse mellom Sbanken og Ynab"
-            />
-          )}
+          <Icon type={account.diffs ? IconType.Alert : IconType.Success} />
         </Link>
       ))}
       {/* <li>

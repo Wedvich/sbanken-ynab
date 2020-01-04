@@ -797,11 +797,6 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@coreui/icons@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@coreui/icons/-/icons-1.0.0.tgz#72ad7f98d387fe62572b6a8fe3d7ca7fafb2ef56"
-  integrity sha512-a5zbcmnlYqZkPen2iJvd0G1VGAK4S+40pV6KIJgLt1H04ALyqVoaVPiIEx3VOOmxlrxAHvIaua8Qq0+/hA+AGQ==
-
 "@hot-loader/react-dom@^16.11.0":
   version "16.11.0"
   resolved "https://registry.yarnpkg.com/@hot-loader/react-dom/-/react-dom-16.11.0.tgz#c0b483923b289db5431516f56ee2a69448ebf9bd"

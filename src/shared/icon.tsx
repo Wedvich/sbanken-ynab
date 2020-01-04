@@ -1,19 +1,21 @@
 import React from 'react';
 
-interface IconProps {
-  src: string;
-  title: string;
+export enum IconType {
+  Alert = 'alert',
+  Error = 'error',
+  Success = 'success',
 }
 
-const Icon = ({ src, title }: IconProps) => {
-  const sanitizedHtml = src.replace(/<title>.+?<\/title>/gi, '');
-  return (
-    <div
-      className="sby-icon"
-      dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
-      title={title}
-    />
-  );
-};
+interface IconProps {
+  type: IconType;
+  title?: string;
+}
+
+const Icon = ({ type, title }: IconProps) => (
+  <svg className="sby-icon">
+    {title && <title>{title}</title>}
+    <use xlinkHref={`#${type}`} />
+  </svg>
+);
 
 export default React.memo(Icon);
