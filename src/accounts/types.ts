@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 export interface ConnectedAccountSource {
   displayName: string;
   sbankenId: string;
@@ -26,9 +28,10 @@ export enum TransactionSource {
 }
 
 export interface Transaction {
-  connectedAccountId?: string;
-  date: string;
   amount: number;
+  connectedAccountId?: string;
+  date: DateTime;
+  id?: string;
   payee: string | null;
   source: TransactionSource;
 }

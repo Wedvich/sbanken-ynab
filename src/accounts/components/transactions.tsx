@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { formatCurrency  } from '../utils';
+import { formatCurrency, formatDate  } from '../utils';
 import { transactionsSelector } from '../selectors';
 import './transactions.scss';
 
@@ -9,7 +9,7 @@ const Transactions = () => {
 
   return (
     <section className="sby-transactions">
-      <h2>Nye transaksjoner</h2>
+      <h2>Mulige transaksjoner</h2>
       <table>
         <thead>
           <tr>
@@ -24,7 +24,7 @@ const Transactions = () => {
           {transactions.map((transaction) => (
             <tr key={transaction.id}>
               <td>{transaction.source}</td>
-              <td className="date">{transaction.date}</td>
+              <td className="date">{formatDate(transaction.date)}</td>
               <td>{transaction.payee}</td>
               <td className="currency">
                 {transaction.amount <= 0 ? formatCurrency(-transaction.amount) : ''}

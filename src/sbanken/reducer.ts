@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { transformAccessToken, SbankenAccount, SbankenTransaction } from './api';
+import { transformAccessToken, SbankenAccount, SbankenTransactionWithId } from './api';
 import { getTokenRequest, getTokenResponse } from './api/get-token';
 import { getAccountsRequest, getAccountsResponse } from './api/get-accounts';
 import { getStoredAccessToken, getStoredCustomerId, encodeCredentials, getStoredCredentials } from './utils';
@@ -43,7 +43,7 @@ const initialState = {
   token: getStoredAccessToken(),
   loading: false,
   accounts: { } as { [key: string]: SbankenAccount },
-  transactions: [] as SbankenTransaction[],
+  transactions: [] as SbankenTransactionWithId[],
 };
 
 export type SbankenState = typeof initialState;

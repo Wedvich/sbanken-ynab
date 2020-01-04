@@ -52,3 +52,7 @@ export interface SbankenTransaction {
   transactionTypeCode: number;
   transactionTypeText: string;
 }
+
+export interface SbankenTransactionWithId extends SbankenTransaction {
+  id: string;
+}

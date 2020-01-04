@@ -1,4 +1,5 @@
 import { ConnectedAccountSource } from './types';
+import { DateTime } from 'luxon';
 
 export enum AccountsStorageKey {
   Sources = 'accounts/sources',
@@ -28,3 +29,6 @@ const currencyConverter = new Intl.NumberFormat('no-nb', { style: 'currency', cu
 
 export const formatCurrency = (amount: number) =>
   currencyConverter.format(amount);
+
+export const formatDate = (date: DateTime) =>
+  date.toFormat('yyyy-MM-dd');

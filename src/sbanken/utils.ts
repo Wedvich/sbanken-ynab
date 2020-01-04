@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { SbankenAccessToken } from './api';
+import { SbankenAccessToken, SbankenTransaction } from './api';
 
 export enum SbankenStorageKey {
   AccessToken = 'sbanken/access-token',
@@ -60,3 +60,13 @@ export const decodeCredentials =
       return null;
     }
   };
+
+const encoder = new TextEncoder();
+
+export const computeTransactionId = async (transaction: SbankenTransaction) => {
+  const data = encoder.encode(JSON.stringify(transaction));
+  const hash = await window.crypto.subtle.digest('sha-1', data);
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+};

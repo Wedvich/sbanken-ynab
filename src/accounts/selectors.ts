@@ -53,12 +53,14 @@ export const transactionsSelector = createSelector(
   (sbankenTransactions, ynabTransactions) => {
     return sbankenTransactions.map((sbankenTransaction) => ({
       amount: sbankenTransaction.amount,
-      date: DateTime.fromISO(sbankenTransaction.accountingDate).toFormat('yyyy-MM-dd'),
+      date: DateTime.fromISO(sbankenTransaction.accountingDate),
+      id: sbankenTransaction.id,
       payee: sbankenTransaction.text,
       source: TransactionSource.Sbanken,
     } as Transaction)).concat(ynabTransactions.map((ynabTransaction) => ({
       amount: convertAmountFromYnab(ynabTransaction.amount),
-      date: ynabTransaction.date,
+      date: DateTime.fromISO(ynabTransaction.date),
+      id: ynabTransaction.id,
       payee: ynabTransaction.payee_name,
       source: TransactionSource.Ynab,
     } as Transaction)));
