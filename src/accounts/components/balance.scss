@@ -1,4 +1,5 @@
 @import '../../shared/colors.scss';
+@import '../../shared/fonts.scss';
 
 .sby-balance {
   th[scope='col'] {
@@ -12,7 +13,7 @@
   }
 
   td {
-    font-family: 'Lato', sans-serif;
+    font-family: $sby-font-numbers;
     font-weight: normal;
 
     &.positive {
@@ -25,6 +26,7 @@
   }
 
   .operator {
+    color: $sby-color-dark-gray;
     padding: 0 1em;
   }
 }

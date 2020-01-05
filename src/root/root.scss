@@ -1,10 +1,12 @@
 @import '../../node_modules/normalize.css/normalize';
 @import '../shared/colors.scss';
+@import '../shared/fonts.scss';
 
 * {
   box-sizing: border-box;
   color: inherit;
   font-family: inherit;
+  // text-rendering: optimizeLegibility;
 }
 
 html, body, #sby, .sby-root {
@@ -12,7 +14,7 @@ html, body, #sby, .sby-root {
 }
 
 body {
-  font-family: 'Kulim Park', sans-serif;
+  font-family: $sby-font-default;
   font-size: 16px;
 }
 

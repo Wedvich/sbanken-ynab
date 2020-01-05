@@ -38,3 +38,6 @@ export const useAccountId = () => {
   const { accountId } = useParams<{ accountId?: string }>();
   return accountId;
 };
+
+export const getNumberClass = (amount: number) =>
+  amount > 0 ? 'positive' : amount < 0 ? 'negative' : 'neutral';

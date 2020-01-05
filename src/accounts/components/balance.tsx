@@ -1,13 +1,11 @@
 import React from 'react';
 import { ConnectedAccount } from '../types';
-import { formatCurrency } from '../utils';
+import { formatCurrency, getNumberClass } from '../utils';
 import './balance.scss';
 
 interface BalanceProps {
   account: ConnectedAccount;
 }
-
-const getNumberClass = (amount: number) => amount > 0 ? 'positive' : amount < 0 ? 'negative' : 'neutral';
 
 const Balance = ({ account }: BalanceProps) => {
   return (
@@ -38,7 +36,7 @@ const Balance = ({ account }: BalanceProps) => {
           </td>
         </tr>
         <tr>
-          <th scope="row">Ynab</th>
+          <th scope="row">YNAB</th>
           <td className={getNumberClass(account.clearedBudgetBalance)}>
             {formatCurrency(account.clearedBudgetBalance)}
           </td>

@@ -8,6 +8,7 @@ import NoAccounts from './components/no-accounts';
 import SelectedAccount from './components/selected-account';
 import Transactions from './components/transactions';
 import { useAccountId } from './utils';
+import Icon, { IconType } from '../shared/icon';
 
 const Accounts = () => {
   const connectedAccounts = useSelector(accountsSelector);
@@ -23,7 +24,13 @@ const Accounts = () => {
       <div className={cx('sby-accounts-list', { 'empty': noAccounts })}>
         {noAccounts && <NoAccounts />}
         {selectedAccount && <SelectedAccount account={selectedAccount} />}
-        {selectedAccount && <Transactions />}
+        {selectedAccount?.diffs && <Transactions />}
+        {selectedAccount && !selectedAccount.diffs && (
+          <h2>
+            Alt ser ut til å være ajour!
+            <Icon type={IconType.Success} />
+          </h2>
+        )}
       </div>
     </div>
   );
