@@ -1,0 +1,77 @@
+@import '../../shared/colors.scss';
+@import '../../shared/fonts.scss';
+
+.sby-accounts-nav {
+  border-right: thin solid $sby-color-medium-gray;
+  grid-column: 1;
+  list-style: none;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0.5rem 1rem;
+  }
+
+  a {
+    align-items: center;
+    color: $sby-color-dark-pink;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    position: relative;
+    text-decoration: none;
+
+    .balance {
+      font-family: $sby-font-numbers;
+      font-size: 0.875rem;
+      text-align: right;
+
+      .positive {
+        color: $sby-color-medium-green;
+      }
+
+      .negative {
+        color: $sby-color-medium-red;
+      }
+
+      span {
+        color: $sby-color-dark-gray;
+        font-family: $sby-font-default;
+        font-weight: 600;
+      }
+    }
+
+    &:hover {
+      background: rgba($sby-color-light-pink, 0.5);
+
+      .label {
+        text-decoration: underline;
+      }
+    }
+
+    &:hover,
+    &.active {
+      &::before {
+        background: $sby-color-light-pink;
+        bottom: 0;
+        content: '';
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 0.375rem;
+      }
+    }
+  }
+
+  .loading-placeholder {
+    padding: 1rem;
+
+    .sk-flow {
+      margin-left: 0.5rem;
+    }
+  }
+}

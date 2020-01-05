@@ -4,10 +4,14 @@ import cx from 'classnames';
 import { Link, useParams } from 'react-router-dom';
 import accountsSelector from '../selectors/accounts';
 import { getNumberClass, formatCurrency } from '../utils';
+import { loadingSelector } from '../../shared/utils';
+import './nav.scss';
+import Loader from '../../shared/loader';
 
 const Nav = () => {
   const connectedAccounts = useSelector(accountsSelector);
   const { accountId } = useParams<{ accountId?: string }>();
+  const loading = useSelector(loadingSelector);
 
   return (
     <nav className="sby-accounts-nav">
@@ -37,6 +41,12 @@ const Nav = () => {
           </Link>
         );
       })}
+      {loading && (
+        <div className="loading-placeholder">
+          Laster inn
+          <Loader />
+        </div>
+      )}
       {/* <li>
       + Legg til kobling
       </li> */}
