@@ -3,7 +3,7 @@ import { hot } from 'react-hot-loader/root';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import Onboarding from '../onboarding';
 import Accounts from '../accounts';
-import icons from '../shared/icons.svg';
+import icons from '../shared/icon/icons.svg';
 import './root.scss';
 
 const Root = () => (

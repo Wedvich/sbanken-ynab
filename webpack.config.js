@@ -5,6 +5,7 @@ process.env.NODE_ENV = 'development';
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const { DefinePlugin } = require('webpack');
 
 module.exports = (env, argv) => {
@@ -77,6 +78,7 @@ module.exports = (env, argv) => {
         template: path.resolve(__dirname, 'src/index.html'),
       }),
       new MiniCssExtractPlugin(),
+      new WatchMissingNodeModulesPlugin(path.join(__dirname, 'node_modules')),
     ],
     resolve: {
       alias: {

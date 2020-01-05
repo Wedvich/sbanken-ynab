@@ -3,6 +3,7 @@ import { YnabAccount, YnabTransaction } from './api';
 import { getAccountsRequest, getAccountsResponse } from './api/get-accounts';
 import { getStoredServerKnowledge, getStoredBudgetId, getStoredToken } from './utils';
 import { getTransactionsRequest, getTransactionsResponse } from './api/get-transactions';
+import { createTransactionRequest, createTransactionResponse } from './api/create-transaction';
 
 export enum YnabActionType {
   SetToken = 'ynab/set-token',
@@ -11,6 +12,8 @@ export enum YnabActionType {
   GetAccountsResponse = 'ynab/get-accounts-response',
   GetTransactionsRequest = 'ynab/get-transactions-request',
   GetTransactionsResponse = 'ynab/get-transactions-response',
+  CreateTransactionRequest = 'ynab/create-transaction-request',
+  CreateTransactionResponse = 'ynab/create-transaction-response',
 }
 
 const setToken = (token: string) => ({
@@ -30,6 +33,8 @@ export const actions = {
   getAccountsResponse,
   getTransactionsRequest,
   getTransactionsResponse,
+  createTransactionRequest,
+  createTransactionResponse,
 };
 
 export type YnabAction = ReturnType<typeof actions[keyof typeof actions]>
@@ -104,8 +109,23 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
         },
       };
 
-    default:
+    case YnabActionType.CreateTransactionRequest:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case YnabActionType.CreateTransactionResponse:
+      return {
+        ...state,
+        loading: false,
+      };
+
+    default: {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _invariant: never = action;
       return state;
+    }
   }
 };
 

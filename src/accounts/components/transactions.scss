@@ -23,7 +23,7 @@
       border-top-left-radius: 2px;
     }
 
-    &:last-child {
+    &:nth-last-child(2) {
       border-top-right-radius: 2px;
     }
   }
@@ -58,11 +58,15 @@
           border-bottom-left-radius: 2px;
         }
 
-        &:last-child {
+        &:nth-last-child(2) {
           border-bottom-right-radius: 2px;
         }
       }
     }
   }
 
+  .actions {
+    border: none;
+    padding: 0 0.5rem;
+  }
 }

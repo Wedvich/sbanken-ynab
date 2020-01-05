@@ -23,7 +23,7 @@ const Transactions = () => {
 
   return (
     <section className="sby-transactions">
-      <h2>Ukoblede transaksjoner</h2>
+      <h2>Manglende transaksjoner</h2>
       <table>
         <thead>
           <tr>
@@ -32,6 +32,7 @@ const Transactions = () => {
             <th>Beskrivelse</th>
             <th>Ut</th>
             <th>Inn</th>
+            <th className="actions" />
           </tr>
         </thead>
         <tbody>
@@ -46,6 +47,9 @@ const Transactions = () => {
               <td className="currency">
                 {transaction.amount > 0 ? formatCurrency(transaction.amount) : ''}
               </td>
+              <td className="sby-button-group actions">
+                <button>Opprett</button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -56,6 +60,7 @@ const Transactions = () => {
             <td />
             <td className="currency">{formatCurrency(sumOut)}</td>
             <td className="currency">{formatCurrency(sumIn)}</td>
+            <td />
           </tr>
         </tfoot>
       </table>

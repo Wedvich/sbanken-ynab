@@ -103,8 +103,11 @@ const reducer: Reducer<SbankenState, SbankenAction> = (state = initialState, act
               (existingTransaction) => transaction.id === existingTransaction.id))),
       };
 
-    default:
+    default: {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _invariant: never = action;
       return state;
+    }
   }
 };
 
