@@ -51,7 +51,6 @@ export const decodeCredentials =
     try {
       const [clientId, clientSecret] =
         atob(credentials).split(':').map((part) => decodeURIComponent(part));
-      console.log(clientId, clientSecret);
       return {
         clientId,
         clientSecret,

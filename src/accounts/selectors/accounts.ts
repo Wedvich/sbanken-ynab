@@ -25,7 +25,7 @@ const accountsSelector = createSelector(
         compoundId: createCompoundId(source),
         clearedBankBalance: sbankenAccount.balance,
         clearedBudgetBalance: convertAmountFromYnab(ynabAccount.cleared_balance),
-        unclearedBankBalance: workingBankBalance - sbankenAccount.balance,
+        unclearedBankBalance: Math.round((workingBankBalance - sbankenAccount.balance) * 100) / 100,
         unclearedBudgetBalance: convertAmountFromYnab(ynabAccount.uncleared_balance),
         workingBankBalance,
         workingBudgetBalance: convertAmountFromYnab(ynabAccount.balance),

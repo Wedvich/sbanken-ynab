@@ -10,7 +10,6 @@ interface BalanceProps {
 const getNumberClass = (amount: number) => amount > 0 ? 'positive' : amount < 0 ? 'negative' : 'neutral';
 
 const Balance = ({ account }: BalanceProps) => {
-  console.log(account, account.diffs);
   return (
     <table className="sby-balance">
       <thead>
