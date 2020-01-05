@@ -9,7 +9,8 @@ const transactionsSelector = createSelector(
   (state: RootState) => state.sbanken.transactions,
   (state: RootState) => state.ynab.transactions,
   accountsSelector,
-  (sbankenTransactions, ynabTransactions, accounts) => {
+  (state: RootState) => DateTime.fromISO(state.transactions.startDate),
+  (sbankenTransactions, ynabTransactions, accounts, startDate) => {
     let normalizedTransactions = sbankenTransactions.map((sbankenTransaction) => ({
       amount: sbankenTransaction.amount,
       connectedAccountId: accounts.find(
@@ -60,7 +61,8 @@ const transactionsSelector = createSelector(
 
     return normalizedTransactions
       .filter((transaction) => !matchedTransactionIds.includes(transaction.id))
-      .concat(unmatchedTransactions);
+      .concat(unmatchedTransactions)
+      .filter((transaction) => transaction.date >= startDate);
   }
 );
 

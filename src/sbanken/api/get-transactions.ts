@@ -3,6 +3,7 @@ import { select, call, put } from 'redux-saga/effects';
 import { RootState } from '../../store/root-reducer';
 import { sbankenApiBaseUrl, SbankenTransaction, SbankenTransactionEnriched, patchDate } from '.';
 import { computeTransactionId } from '../utils';
+import { TransactionsState } from '../../transactions/reducer';
 
 export const getTransactionsRequest = (accountId: string) => ({
   type: SbankenActionType.GetTransactionsRequest as SbankenActionType.GetTransactionsRequest,
@@ -49,8 +50,14 @@ const enrichTransactions = async (transactions: SbankenTransaction[], accountId:
 // TODO: Typed action
 export function* getTransactionsSaga({ accountId }) {
   const { token, customerId }: SbankenState = yield select((state: RootState) => state.sbanken);
+  const { startDate }: TransactionsState = yield select((state: RootState) => state.transactions);
 
-  const response = yield call(fetch, `${sbankenApiBaseUrl}/transactions/${accountId}?startDate=2019-12-30`, {
+  const url = [
+    `${sbankenApiBaseUrl}/transactions/${accountId}`,
+    `?startDate=${startDate}`,
+  ];
+
+  const response = yield call(fetch, url.join(''), {
     headers: new Headers({
       'Accept': 'application/json',
       'Authorization': `Bearer ${token.token}`,

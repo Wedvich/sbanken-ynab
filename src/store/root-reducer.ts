@@ -3,10 +3,12 @@ import sbankenReducer, { sbankenStateKey } from '../sbanken/reducer';
 import ynabReducer, { ynabStateKey } from '../ynab/reducer';
 import * as utils from '../shared/utils';
 import accountsReducer, { accountsStateKey } from '../accounts/reducer';
+import transactionsReducer, { transactionsStateKey } from '../transactions/reducer';
 
 let reducerMap = {
   [accountsStateKey]: accountsReducer,
   [sbankenStateKey]: sbankenReducer,
+  [transactionsStateKey]: transactionsReducer,
   [ynabStateKey]: ynabReducer,
 };
 
