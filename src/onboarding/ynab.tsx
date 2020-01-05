@@ -21,6 +21,15 @@ const YnabOnboarding = () => {
   return (
     <form className="sby-onboarding" ref={formRef} onSubmit={onSubmit}>
       <h1>YNAB</h1>
+      <p>
+        Du må gå til <a href="https://app.youneedabudget.com/settings/developer" target="_blank" rel="noopener noreferrer">utviklerinnstillingene</a> og opprette en Personal Access Token.
+        <br />
+        <br />
+        Deretter finner du budsjett-ID&apos;en din i URL&apos;en når du er inne i YNAB. Eksempel:
+        <br />
+        <br />
+        <span className="example">https://app.youneedabudget.com/<strong>aca193c6-edd5-484f-b045-b3721c46d9b6</strong>/budget</span>
+      </p>
       <div className="sby-input-group">
         <label htmlFor="ynabPersonalAccessToken">Personal Access Token</label>
         <input

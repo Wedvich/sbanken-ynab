@@ -6,57 +6,42 @@
   flex-direction: column;
   height: 100%;
   justify-content: center;
-}
 
-.sby-onboarding-account-lists {
-  display: flex;
-}
+  h1 {
+    margin: 0 0 1rem 0;
+  }
 
-.sby-onboarding-accounts {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  p {
+    margin: 0 0 1rem 0;
+    max-width: 900px;
+    text-align: left;
 
-  li {
-    border-bottom: thin solid $sby-color-medium-gray;
-    border-left: thin solid $sby-color-medium-gray;
-    border-right: thin solid $sby-color-medium-gray;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: 1.5fr 1fr;
-    padding: 0.5rem 1rem;
-    width: 100%;
-
-    &:first-child {
-      border-top: thin solid $sby-color-medium-gray;
-      border-top-left-radius: 2px;
-      border-top-right-radius: 2px;
-    }
-
-    &:last-child {
-      border-bottom-left-radius: 2px;
-      border-bottom-right-radius: 2px;
+    &:last-of-type {
+      margin-bottom: 2rem;
     }
   }
 
-  h3 {
-    grid-column: 1;
-    grid-row: 1;
-    margin: 0;
+  a {
+    color: $sby-color-dark-pink;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
-  .account-id {
-    grid-column: 1;
-    grid-row: 2;
+  label {
+    font-weight: 600;
   }
 
-  .link-button {
-    grid-column: 2;
-    grid-row: span 2;
-  }
-}
+  .example {
+    background: rgba($sby-color-light-pink, 0.2);
+    color: $sby-color-dark-gray;
+    padding: 0.25rem;
 
-.sby-onboarding-not-current {
-  background-color: $sby-color-medium-gray;
-  pointer-events: none;
+    strong {
+      color: black;
+      font-weight: normal;
+    }
+  }
 }

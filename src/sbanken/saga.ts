@@ -14,5 +14,5 @@ export default function* () {
 
   yield takeLatest(SbankenActionType.GetTokenRequest, getTokenSaga);
   yield takeLatest(SbankenActionType.GetAccountsRequest, getAccountsSaga);
-  yield takeLatest(SbankenActionType.GetTransactionsRequest, getTransactionsSaga);
+  yield takeLatest(SbankenActionType.GetTransactionsRequest as any, getTransactionsSaga);
 }
