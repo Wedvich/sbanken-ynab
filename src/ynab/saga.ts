@@ -3,6 +3,7 @@ import { YnabActionType } from './reducer';
 import { getAccountsSaga } from './api/get-accounts';
 import { storeToken, storeBudgetId } from './utils';
 import { getTransactionsSaga } from './api/get-transactions';
+import { createTransactionSaga } from './api/create-transaction';
 
 export default function* () {
   yield takeLatest(YnabActionType.GetAccountsRequest, getAccountsSaga);
@@ -20,5 +21,7 @@ export default function* () {
     yield call(storeBudgetId, budgetId);
   });
 
-  yield takeLatest(YnabActionType.GetTransactionsRequest, getTransactionsSaga);
+  yield takeLatest(YnabActionType.GetTransactionsRequest as any, getTransactionsSaga);
+
+  yield takeLatest(YnabActionType.CreateTransactionRequest as any, createTransactionSaga);
 }

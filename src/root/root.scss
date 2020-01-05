@@ -78,5 +78,14 @@ body {
     &:hover:not(:disabled) {
       text-decoration: underline;
     }
+
+    &.danger {
+      background: $sby-color-medium-red;
+
+      &:focus,
+      &:active:not(:disabled) {
+        box-shadow: 0 0 0 0.2rem rgba($sby-color-medium-red, 0.5);
+      }
+    }
   }
 }

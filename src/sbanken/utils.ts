@@ -68,5 +68,6 @@ export const computeTransactionId = async (transaction: SbankenTransaction) => {
   const hash = await window.crypto.subtle.digest('sha-1', data);
   return Array.from(new Uint8Array(hash))
     .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+    .join('')
+    .slice(0, 32);
 };

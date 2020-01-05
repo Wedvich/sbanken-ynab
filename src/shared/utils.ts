@@ -19,3 +19,8 @@ export const loadingSelector = createSelector(
   (state: RootState) => state.ynab.loading,
   (sbankenLoading, ynabLoading) => sbankenLoading || ynabLoading
 );
+
+export enum HttpMethod {
+  GET = 'GET',
+  POST = 'POST',
+}

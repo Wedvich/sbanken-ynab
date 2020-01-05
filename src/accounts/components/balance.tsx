@@ -7,7 +7,10 @@ interface BalanceProps {
   account: ConnectedAccount;
 }
 
+const getNumberClass = (amount: number) => amount > 0 ? 'positive' : amount < 0 ? 'negative' : 'neutral';
+
 const Balance = ({ account }: BalanceProps) => {
+  console.log(account, account.diffs);
   return (
     <table className="sby-balance">
       <thead>
@@ -23,44 +26,44 @@ const Balance = ({ account }: BalanceProps) => {
       <tbody>
         <tr>
           <th scope="row">Sbanken</th>
-          <td className={account.clearedBankBalance >= 0 ? 'positive' : 'negative'}>
+          <td className={getNumberClass(account.clearedBankBalance)}>
             {formatCurrency(account.clearedBankBalance)}
           </td>
           <td className="operator">+</td>
-          <td className={account.unclearedBankBalance >= 0 ? 'positive' : 'negative'}>
+          <td className={getNumberClass(account.unclearedBankBalance)}>
             {formatCurrency(account.unclearedBankBalance)}
           </td>
           <td className="operator">=</td>
-          <td className={account.workingBankBalance >= 0 ? 'positive' : 'negative'}>
+          <td className={getNumberClass(account.workingBankBalance)}>
             {formatCurrency(account.workingBankBalance)}
           </td>
         </tr>
         <tr>
           <th scope="row">Ynab</th>
-          <td className={account.clearedBudgetBalance >= 0 ? 'positive' : 'negative'}>
+          <td className={getNumberClass(account.clearedBudgetBalance)}>
             {formatCurrency(account.clearedBudgetBalance)}
           </td>
           <td className="operator">+</td>
-          <td className={account.unclearedBudgetBalance >= 0 ? 'positive' : 'negative'}>
+          <td className={getNumberClass(account.unclearedBudgetBalance)}>
             {formatCurrency(account.unclearedBudgetBalance)}
           </td>
           <td className="operator">=</td>
-          <td className={account.workingBudgetBalance >= 0 ? 'positive' : 'negative'}>
+          <td className={getNumberClass(account.workingBudgetBalance)}>
             {formatCurrency(account.workingBudgetBalance)}
           </td>
         </tr>
         {account.diffs && (
           <tr>
             <th scope="row">Ynab diff</th>
-            <td className={account.diffs.cleared >= 0 ? 'positive' : 'negative'}>
+            <td className={getNumberClass(account.diffs.cleared)}>
               {formatCurrency(account.diffs.cleared)}
             </td>
             <td className="operator">+</td>
-            <td className={account.diffs.uncleared >= 0 ? 'positive' : 'negative'}>
+            <td className={getNumberClass(account.diffs.uncleared)}>
               {formatCurrency(account.diffs.uncleared)}
             </td>
             <td className="operator">=</td>
-            <td className={account.diffs.working >= 0 ? 'positive' : 'negative'}>
+            <td className={getNumberClass(account.diffs.working)}>
               {formatCurrency(account.diffs.working)}
             </td>
           </tr>

@@ -1,9 +1,11 @@
 import { Reducer } from 'redux';
+import { DateTime } from 'luxon';
+import { formatDate } from '../accounts/utils';
 
 export const transactionsStateKey = 'transactions';
 
 const initialState = {
-  startDate: '2019-12-30',
+  startDate: formatDate(DateTime.local().minus({ days: 7 })),
 };
 
 export type TransactionsState = typeof initialState;

@@ -30,5 +30,8 @@ export function* getAccountsSaga() {
 
   const { accounts, server_knowledge: nextServerKnowledge } = accountsResponse.data;
 
-  yield put(getAccountsResponse(accounts, nextServerKnowledge));
+  yield put(getAccountsResponse(
+    accounts.filter((account: YnabAccount) => !account.deleted && !account.closed),
+    nextServerKnowledge
+  ));
 }

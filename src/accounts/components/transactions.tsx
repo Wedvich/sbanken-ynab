@@ -1,12 +1,17 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { formatCurrency, formatDate, useAccountId  } from '../utils';
 import transactionsSelector from '../selectors/transactions';
+import { loadingSelector } from '../../shared/utils';
+import { actions as ynabActions } from '../../ynab/reducer';
+import { TransactionSource } from '../types';
 import './transactions.scss';
 
 const Transactions = () => {
   const transactions = useSelector(transactionsSelector);
   const accountId = useAccountId();
+  const loading = useSelector(loadingSelector);
+  const dispatch = useDispatch();
 
   const accountTransactions = transactions.filter(
     (transaction) => transaction.connectedAccountId === accountId);
@@ -48,7 +53,13 @@ const Transactions = () => {
                 {transaction.amount > 0 ? formatCurrency(transaction.amount) : ''}
               </td>
               <td className="sby-button-group actions">
-                <button>Opprett</button>
+                {transaction.source === TransactionSource.Sbanken && (
+                  <button disabled={loading} onClick={() => {
+                    dispatch(ynabActions.createTransactionRequest(transaction.id));
+                  }}>
+                    Opprett
+                  </button>
+                )}
               </td>
             </tr>
           ))}
