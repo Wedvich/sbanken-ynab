@@ -56,8 +56,8 @@ const Transactions = () => {
                 {transaction.source === TransactionSource.Sbanken && (
                   <button disabled={loading} onClick={() => {
                     dispatch(ynabActions.createTransactionRequest(transaction.id));
-                  }}>
-                    Opprett
+                  }} title="Opprett i YNAB">
+                    +
                   </button>
                 )}
               </td>

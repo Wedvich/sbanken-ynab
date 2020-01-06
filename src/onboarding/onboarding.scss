@@ -11,14 +11,10 @@
     margin: 0 0 1rem 0;
   }
 
-  p {
-    margin: 0 0 1rem 0;
+  .sby-onboarding-instructions {
+    margin: 0 0 2rem 0;
     max-width: 900px;
     text-align: left;
-
-    &:last-of-type {
-      margin-bottom: 2rem;
-    }
   }
 
   a {
@@ -28,10 +24,6 @@
     &:hover {
       text-decoration: underline;
     }
-  }
-
-  label {
-    font-weight: 600;
   }
 
   .example {

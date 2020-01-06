@@ -18,6 +18,7 @@ const Balance = ({ account }: BalanceProps) => {
           <th scope="col">Uncleared balance</th>
           <th scope="col" />
           <th scope="col">Working balance</th>
+          <th width="100%" />
         </tr>
       </thead>
       <tbody>

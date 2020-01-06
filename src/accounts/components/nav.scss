@@ -8,6 +8,7 @@
   height: 100%;
   margin: 0;
   padding: 0;
+  position: relative;
 
   h3 {
     font-size: 1rem;
@@ -83,6 +84,42 @@
 
     .sk-flow {
       margin-left: 0.5rem;
+    }
+  }
+
+  .sby-delete-settings {
+    align-items: center;
+    background: none;
+    border: none;
+    border-radius: 2px;
+    bottom: 0.5rem;
+    display: flex;
+    justify-content: center;
+    left: 0.5rem;
+    height: 52px;
+    position: absolute;
+    transition: background-color 0.15s;
+    width: 52px;
+
+    .sby-icon {
+      fill: $sby-color-medium-red;
+      transition: fill 0.15s;
+    }
+
+    &:not(:disabled) {
+      cursor: pointer;
+    }
+
+    .hover {
+      display: none;
+    }
+
+    &:hover {
+      background: $sby-color-medium-red;
+
+      .sby-icon {
+        fill: white;
+      }
     }
   }
 }

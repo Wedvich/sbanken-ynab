@@ -23,11 +23,12 @@ body {
 
   label {
     display: inline-block;
+    font-weight: 600;
     margin-bottom: 0.5rem;
   }
 
   input[type='text'] {
-    background-color: $sby-color-light-gray;
+    background-color: white;
     border-radius: 2px;
     border: thin solid $sby-color-medium-gray;
     display: block;
@@ -44,6 +45,12 @@ body {
 
     &::selection {
       background: $sby-color-light-pink;
+    }
+
+    &:disabled,
+    &:read-only {
+      background-color: $sby-color-light-gray;
+      color: $sby-color-dark-gray;
     }
   }
 }
@@ -99,8 +106,4 @@ body {
       padding: 0 0.5rem;
     }
   }
-}
-
-.sby-modal {
-
 }

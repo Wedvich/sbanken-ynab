@@ -1,0 +1,25 @@
+@import '../colors.scss';
+
+.sby-external-link {
+  .sby-icon {
+    height: 1em;
+    margin-left: 0.25em;
+    position: relative;
+    top: 0.1875em;
+    width: 1em;
+
+    &.hover {
+      display: none;
+    }
+  }
+
+  &:hover .sby-icon {
+    &.not-hover {
+      display: none;
+    }
+
+    &.hover {
+      display: inline-block;
+    }
+  }
+}

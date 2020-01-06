@@ -1,0 +1,44 @@
+@import '../../shared/colors.scss';
+
+.sby-add-account {
+  background: #fafbfc;
+  grid-column: 2;
+  height: 100%;
+  overflow-y: auto;
+  padding: 1rem;
+
+  h1 {
+    margin: 0 0 1rem 0;
+  }
+
+  .account-lists {
+    display: flex;
+
+    ul {
+      list-style: none;
+      margin: 0 1rem 0.5rem 0;
+      padding: 0;
+    }
+
+    .heading {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    label {
+      padding-left: 0.5rem;
+
+      &.disabled {
+        color: $sby-color-dark-gray;
+      }
+    }
+  }
+
+  .sby-input-group input[type="text"] {
+    width: unset;
+
+    &::placeholder {
+      color: $sby-color-dark-gray;
+    }
+  }
+}

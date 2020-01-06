@@ -45,6 +45,7 @@ module.exports = {
     ],
     'no-trailing-spaces': 'error',
     'quotes': ['error', 'single'],
+    'require-yield': 'warn',
     'semi': ['error', 'always'],
   },
   settings: {

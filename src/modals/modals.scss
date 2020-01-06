@@ -66,5 +66,15 @@ $transition-time: 0.3s;
 	padding: 1rem;
 	position: relative;
   width: 50%;
-	z-index: 5;
+  z-index: 5;
+
+  header {
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .modal-buttons {
+    text-align: right;
+  }
 }

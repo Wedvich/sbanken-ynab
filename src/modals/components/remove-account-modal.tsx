@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CreateAccountModal = () => {
+const RemoveAccountModal = () => {
   return (
     <>
       Kontoer fra Sbanken
@@ -9,4 +9,4 @@ const CreateAccountModal = () => {
   );
 };
 
-export default React.memo(CreateAccountModal);
+export default React.memo(RemoveAccountModal);

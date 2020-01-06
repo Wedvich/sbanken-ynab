@@ -7,7 +7,7 @@
   height: 100%;
 }
 
-.sby-accounts-list {
+.sby-accounts-page {
   background: $sby-color-light-gray;
   grid-column: 2;
   height: 100%;
@@ -19,6 +19,10 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+
+    span {
+      margin-bottom: 0.5rem;
+    }
   }
 
   h1 {
@@ -29,9 +33,28 @@
     font-weight: normal;
 
     .sby-icon {
-      margin-left: 1rem;
+      margin-left: 0.5rem;
       position: relative;
-      top: 3px;
+      top: 0.1875rem;
+    }
+  }
+
+  .sby-link-group {
+    margin-bottom: 1rem;
+
+    a {
+      color: $sby-color-dark-pink;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .separator {
+      color: $sby-color-dark-gray;
+      content: '•';
+      margin: 0 0.5rem;
     }
   }
 

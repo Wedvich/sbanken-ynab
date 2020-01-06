@@ -1,13 +1,13 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import cx from 'classnames';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
 import accountsSelector from '../selectors/accounts';
 import { getNumberClass, formatCurrency } from '../utils';
 import { loadingSelector } from '../../shared/utils';
-import Icon, { IconType } from '../../shared/icon';
 import './nav.scss';
 import Loader from '../../shared/loader';
+import Icon, { IconType, IconStyle, IconSize } from '../../shared/icon';
 import { actions as modalActions } from '../../modals/reducer';
 import { ModalId } from '../../modals/types';
 
@@ -15,6 +15,7 @@ const Nav = () => {
   const connectedAccounts = useSelector(accountsSelector);
   const { accountId } = useParams<{ accountId?: string }>();
   const loading = useSelector(loadingSelector);
+  const location = useLocation();
   const dispatch = useDispatch();
 
   return (
@@ -45,18 +46,23 @@ const Nav = () => {
           </Link>
         );
       })}
-      <div className="sby-button-group">
-        <button className="link" onClick={() => { dispatch(modalActions.openModal(ModalId.CreateAccount)); }}>
-          <Icon type={IconType.Plus} />
-          Legg til
-        </button>
-      </div>
-      {loading && (
+      <Link
+        to={'/accounts/add'}
+        className={cx({ active: location.pathname === '/accounts/add'})}
+      >
+        <span className="label">+ Legg til kobling</span>
+      </Link>
+      {loading && connectedAccounts.length === 0 && (
         <div className="loading-placeholder">
           Laster inn
           <Loader />
         </div>
       )}
+      <button className="sby-delete-settings" title="Slett alle innstillinger" onClick={() => {
+        dispatch(modalActions.openModal(ModalId.DeleteSettings));
+      }}>
+        <Icon type={IconType.Trash} size={IconSize.Big} />
+      </button>
     </nav>
   );
 };

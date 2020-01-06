@@ -2,9 +2,15 @@
 @import '../../shared/fonts.scss';
 
 .sby-balance {
+  border-bottom: thin dashed $sby-color-medium-gray;
+  border-top: thin dashed $sby-color-medium-gray;
+  margin: 0 -1rem;
+  padding: 0.5rem 1rem;
+
   th[scope='col'] {
     font-style: italic;
     font-weight: normal;
+    white-space: nowrap;
   }
 
   th[scope='row'] {

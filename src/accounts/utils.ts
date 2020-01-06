@@ -41,3 +41,6 @@ export const useAccountId = () => {
 
 export const getNumberClass = (amount: number) =>
   amount > 0 ? 'positive' : amount < 0 ? 'negative' : 'neutral';
+
+export const compareConnectedAccountSource = (a: ConnectedAccountSource, b: ConnectedAccountSource) =>
+  a.displayName === b.displayName && a.sbankenId === b.sbankenId && a.ynabId === b.ynabId;

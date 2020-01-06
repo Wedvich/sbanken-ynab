@@ -4,8 +4,9 @@ import useFocusTrap from '../shared/use-focus-trap';
 import { actions as sbankenActions, SbankenState } from '../sbanken/reducer';
 import { RootState } from '../store/root-reducer';
 import Loader from '../shared/loader';
-import './onboarding.scss';
 import { decodeCredentials } from '../sbanken/utils';
+import ExternalLink from '../shared/external-link';
+import './onboarding.scss';
 
 const SbankenOnboarding = () => {
   const formRef = useRef<HTMLFormElement>();
@@ -25,14 +26,14 @@ const SbankenOnboarding = () => {
   return (
     <form className="sby-onboarding" ref={formRef} onSubmit={onSubmit}>
       <h1>Sbanken</h1>
-      <p>
-        Du må gå til <a href="https://secure.sbanken.no/Personal/ApiBeta/Info/" target="_blank" rel="noopener noreferrer">Utviklerportalen</a> og opprette en applikasjon med følgende tilganger:
+      <div className="sby-onboarding-instructions">
+        Du må gå til <ExternalLink href="https://secure.sbanken.no/Personal/ApiBeta/Info/">Utviklerportalen</ExternalLink> og opprette en applikasjon med følgende tilganger:
         <ul>
           <li>Grants access to perform read operations on the Accounts service.</li>
           <li>Grants access to perform read operations on the Transactions service.</li>
         </ul>
         Dette gir deg applikasjonsnøkkelen og passordet.
-      </p>
+      </div>
       <div className="sby-input-group">
         <label htmlFor="sbankenClientId">Applikasjonsnøkkel</label>
         <input

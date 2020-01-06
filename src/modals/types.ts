@@ -1,3 +1,4 @@
 export enum ModalId {
-  CreateAccount = 'modals/create-account'
+  RemoveAccount = 'modals/remove-account',
+  DeleteSettings = 'modals/delete-settings'
 }

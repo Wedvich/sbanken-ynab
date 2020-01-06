@@ -6,12 +6,11 @@ import './accounts.scss';
 import accountsSelector from './selectors/accounts';
 import NoAccounts from './components/no-accounts';
 import SelectedAccount from './components/selected-account';
-import Transactions from './components/transactions';
 import { useAccountId } from './utils';
-import Icon, { IconType } from '../shared/icon';
 import { loadingSelector } from '../shared/utils';
 import Loader from '../shared/loader';
-import { useHistory } from 'react-router-dom';
+import AddAccount from './components/add-account';
+import { useHistory, Switch, Route } from 'react-router-dom';
 
 const Accounts = () => {
   const connectedAccounts = useSelector(accountsSelector);
@@ -29,17 +28,18 @@ const Accounts = () => {
   return (
     <div className="sby-accounts" role="main">
       <Nav />
-      <div className={cx('sby-accounts-list', { 'empty': noAccounts })}>
-        {noAccounts && (loading ? <Loader /> : <NoAccounts />)}
-        {selectedAccount && <SelectedAccount account={selectedAccount} />}
-        {selectedAccount?.diffs && <Transactions />}
-        {selectedAccount && !selectedAccount.diffs && (
-          <h2>
-            Alt ser ut til å være ajour!
-            <Icon type={IconType.Success} />
-          </h2>
-        )}
-      </div>
+      <Switch>
+        <Route exact path="/accounts/add">
+          <AddAccount />
+        </Route>
+        <Route>
+          <div className={cx('sby-accounts-page', { 'empty': noAccounts })}>
+            {noAccounts && (loading ? <Loader /> : <NoAccounts />)}
+            {selectedAccount && <SelectedAccount account={selectedAccount} />}
+          </div>
+        </Route>
+      </Switch>
+
     </div>
   );
 };
