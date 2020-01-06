@@ -39,6 +39,7 @@ const YnabOnboarding = () => {
           className="sby-text-input"
           defaultValue={state.personalAccessToken || process.env.YNAB_PERSONAL_ACCESS_TOKEN}
           size={32}
+          autoComplete="off"
         />
       </div>
       <div className="sby-input-group">
@@ -49,6 +50,7 @@ const YnabOnboarding = () => {
           className="sby-text-input"
           defaultValue={state.budgetId || process.env.YNAB_BUDGET_ID}
           size={32}
+          autoComplete="off"
         />
       </div>
       <div className="sby-button-group">

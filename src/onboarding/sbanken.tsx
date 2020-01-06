@@ -43,6 +43,7 @@ const SbankenOnboarding = () => {
           defaultValue={existingCredentials?.clientId || process.env.SBANKEN_CLIENT_ID}
           disabled={state.authenticating}
           size={32}
+          autoComplete="off"
         />
       </div>
       <div className="sby-input-group">
@@ -54,6 +55,7 @@ const SbankenOnboarding = () => {
           defaultValue={existingCredentials?.clientSecret || process.env.SBANKEN_CLIENT_SECRET}
           disabled={state.authenticating}
           size={32}
+          autoComplete="off"
         />
       </div>
       <div className="sby-input-group">
@@ -65,6 +67,7 @@ const SbankenOnboarding = () => {
           defaultValue={state.customerId || process.env.SBANKEN_CUSTOMER_ID}
           disabled={state.authenticating}
           size={32}
+          autoComplete="off"
         />
       </div>
       <div className="sby-button-group">

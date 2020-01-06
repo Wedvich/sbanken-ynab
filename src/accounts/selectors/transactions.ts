@@ -5,6 +5,8 @@ import { TransactionSource, NormalizedTransaction, MatchedTransaction } from '..
 import { convertAmountFromYnab } from '../utils';
 import accountsSelector from './accounts';
 
+// TODO: This needs to be cleaned up and commented a bit
+
 const transactionsSelector = createSelector(
   (state: RootState) => state.sbanken.transactions,
   (state: RootState) => state.ynab.transactions,
@@ -17,6 +19,7 @@ const transactionsSelector = createSelector(
         (account) => account.sbankenId === sbankenTransaction.accountId)
         .compoundId,
       date: DateTime.fromISO(sbankenTransaction.date),
+      description: sbankenTransaction.text,
       id: sbankenTransaction.id,
       payee: sbankenTransaction.text,
       source: TransactionSource.Sbanken,
@@ -32,6 +35,7 @@ const transactionsSelector = createSelector(
           (account) => account.ynabId === ynabTransaction.account_id)
           .compoundId,
         date: DateTime.fromISO(ynabTransaction.date),
+        description: ynabTransaction.memo,
         id: ynabTransaction.id,
         payee: ynabTransaction.payee_name,
         source: TransactionSource.Ynab,

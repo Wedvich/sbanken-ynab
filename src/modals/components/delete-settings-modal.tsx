@@ -13,19 +13,20 @@ const DeleteSettingsModal = () => {
     e.preventDefault();
     sessionStorage.clear();
     localStorage.clear();
-    window.location.reload(true);
+    window.location.reload();
   };
 
   return (
     <div className="delete-settings-modal" role="dialog">
       <header>
-        <h2>Bekreft sletting</h2>
+        <h2>Fjern alle data?</h2>
       </header>
       <form onSubmit={onSubmit} ref={formRef}>
-        <p>Er du sikker på at du vil slette innstillingene? Dette vil fjerne alle tokens og data i appen.</p>
+        <p>Dette vil permanent slette all data og innloggingsinformasjon som ligger lagret lokalt i denne appen, og sende deg tilbake til startsiden.</p>
+        <p>Ingenting blir slettet i Sbanken eller You Need A Budget.</p>
         <div className="sby-button-group modal-buttons">
           <button type="button" onClick={() => dispatch(actions.closeModal(ModalId.DeleteSettings))}>Avbryt</button>
-          <button type="submit" className="danger">Slett</button>
+          <button type="submit" className="danger">Fjern data</button>
         </div>
       </form>
     </div>

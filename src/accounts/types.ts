@@ -31,6 +31,7 @@ export interface NormalizedTransaction {
   amount: number;
   connectedAccountId?: string;
   date: DateTime;
+  description: string;
   id: string;
   payee: string | null;
   source: TransactionSource;

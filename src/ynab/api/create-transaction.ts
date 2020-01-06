@@ -4,7 +4,7 @@ import { RootState } from '../../store/root-reducer';
 import transactionsSelector from '../../accounts/selectors/transactions';
 import { NormalizedTransaction, ConnectedAccount } from '../../accounts/types';
 import accountsSelector from '../../accounts/selectors/accounts';
-import { ynabApiBaseUrl } from '.';
+import { ynabApiBaseUrl, YnabTransaction } from '.';
 import { getTransactionsResponse } from './get-transactions';
 import { getAccountsRequest } from './get-accounts';
 import { HttpMethod } from '../../shared/utils';
@@ -33,7 +33,8 @@ export function* createTransactionSaga({ transactionId }) {
     date: transaction.date.toISO(),
     // eslint-disable-next-line @typescript-eslint/camelcase
     import_id: transaction.id,
-  };
+    memo: `[Sbanken-YNAB]: ${transaction.description}`,
+  } as YnabTransaction;
 
   const response = yield call(
     fetch,
@@ -65,7 +66,6 @@ export function* createTransactionSaga({ transactionId }) {
       [createdTransaction],
       account.ynabId,
       nextServerKnowledge,
-      {}
     )),
     put(getAccountsRequest()),
   ]);
