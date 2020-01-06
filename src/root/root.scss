@@ -89,5 +89,18 @@ body {
         box-shadow: 0 0 0 0.2rem rgba($sby-color-medium-red, 0.5);
       }
     }
+
+    &.link {
+      background: none;
+      border: none;
+      color: black;
+      font-size: 1rem;
+      font-weight: normal;
+      padding: 0 0.5rem;
+    }
   }
+}
+
+.sby-modal {
+
 }

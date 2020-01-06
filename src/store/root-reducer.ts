@@ -4,9 +4,11 @@ import ynabReducer, { ynabStateKey } from '../ynab/reducer';
 import * as utils from '../shared/utils';
 import accountsReducer, { accountsStateKey } from '../accounts/reducer';
 import transactionsReducer, { transactionsStateKey } from '../transactions/reducer';
+import modalsReducer, { modalsStateKey } from '../modals/reducer';
 
 let reducerMap = {
   [accountsStateKey]: accountsReducer,
+  [modalsStateKey]: modalsReducer,
   [sbankenStateKey]: sbankenReducer,
   [transactionsStateKey]: transactionsReducer,
   [ynabStateKey]: ynabReducer,

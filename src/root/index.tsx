@@ -4,6 +4,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import Onboarding from '../onboarding';
 import Accounts from '../accounts';
 import icons from '../shared/icon/icons.svg';
+import Modals from '../modals';
 import './root.scss';
 
 const Root = () => (
@@ -22,6 +23,7 @@ const Root = () => (
         <Redirect to="/accounts" />
       </Route>
     </Switch>
+    <Modals />
   </div>
 );
 

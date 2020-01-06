@@ -67,6 +67,17 @@
     }
   }
 
+  .sby-button-group {
+    padding: 0.5rem;
+
+    .sby-icon {
+      margin-right: 0.5rem;
+      position: relative;
+      top: -2px;
+      vertical-align: middle;
+    }
+  }
+
   .loading-placeholder {
     padding: 1rem;
 
