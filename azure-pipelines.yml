@@ -1,8 +1,25 @@
-trigger:
-- master
-
-pool:
-  vmImage: 'ubuntu-latest'
-
 variables:
   buildConfiguration: 'Release'
+
+jobs:
+- job: frontend
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - task: UseNode@1
+      inputs:
+        version: 12.x
+    - script: yarn install --frozen-lockfile
+    - script: yarn eslint
+    - script: yarn stylelint
+    - script: yarn typecheck
+    - script: yarn build
+    - task: CopyFiles@2
+      inputs:
+        contents: |
+          wwwroot/**/*
+        targetFolder: $(Build.ArtifactStagingDirectory)
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: $(Build.ArtifactStagingDirectory)
+        artifactName: client
