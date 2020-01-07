@@ -1,6 +1,3 @@
-variables:
-  buildConfiguration: 'Release'
-
 jobs:
 - job: frontend
   pool:
@@ -22,4 +19,4 @@ jobs:
     - task: PublishBuildArtifacts@1
       inputs:
         pathToPublish: $(Build.ArtifactStagingDirectory)
-        artifactName: client
+        artifactName: frontend

@@ -1,13 +1,14 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const { DefinePlugin } = require('webpack');
 const WebpackBar = require('webpackbar');
 
+const isDev = process.env.NODE_ENV === 'development';
+
 module.exports = {
   entry: {
-    'app': ['react-hot-loader/patch', path.resolve(__dirname, 'src/index.tsx')],
+    'app': [path.resolve(__dirname, 'src/index.tsx')],
   },
   module: {
     rules: [
@@ -25,22 +26,22 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              hmr: true,
-              reloadAll: true,
-              sourceMap: true,
+              hmr: isDev,
+              reloadAll: isDev,
+              sourceMap: isDev,
             },
           },
           {
             loader: 'css-loader',
             options: {
               importLoaders: 1,
-              sourceMap: true,
+              sourceMap: isDev,
             },
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true,
+              sourceMap: isDev,
             },
           },
         ],
@@ -73,16 +74,12 @@ module.exports = {
       template: path.resolve(__dirname, 'src/index.html'),
     }),
     new MiniCssExtractPlugin(),
-    new WatchMissingNodeModulesPlugin(path.join(__dirname, 'node_modules')),
     new WebpackBar({
       color: 'hotpink',
       name: 'Sbanken → YNAB',
     }),
   ],
   resolve: {
-    alias: {
-      'react-dom': require.resolve('@hot-loader/react-dom'),
-    },
     extensions: ['.js', '.ts', '.tsx', '.d.ts'],
   },
   stats: {
