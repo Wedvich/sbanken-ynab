@@ -13,6 +13,6 @@
     ".eslintrc.js",
     ".stylelintrc.js",
     "babel.config.js",
-    "webpack.config.js"
+    "webpack.config.*.js"
   ],
 }

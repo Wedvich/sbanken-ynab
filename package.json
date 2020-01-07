@@ -13,10 +13,11 @@
   },
   "homepage": "https://github.com/Wedvich/sbanken-ynab#readme",
   "scripts": {
-    "start": "webpack-dev-server --hot",
+    "start": "webpack-dev-server --config webpack.config.dev.js --hot",
     "eslint": "eslint . --fix",
     "stylelint": "stylelint src/**/*.scss --fix",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "build": "webpack --config webpack.config.prod.js"
   },
   "dependencies": {
     "@babel/core": "^7.7.7",
@@ -39,6 +40,7 @@
     "@typescript-eslint/parser": "^2.13.0",
     "babel-loader": "^8.0.6",
     "classnames": "^2.2.6",
+    "copy-webpack-plugin": "^5.1.1",
     "core-js": "3",
     "css-loader": "^3.4.0",
     "dotenv": "^8.2.0",
@@ -74,6 +76,8 @@
     "typescript": "^3.7.4",
     "webpack": "^4.41.4",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.1"
+    "webpack-dev-server": "^3.10.1",
+    "webpack-merge": "^4.2.2",
+    "webpackbar": "^4.0.0"
   }
 }

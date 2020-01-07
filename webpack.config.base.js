@@ -1,22 +1,14 @@
-require('dotenv').config();
-
-process.env.NODE_ENV = 'development';
-
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const { DefinePlugin } = require('webpack');
+const WebpackBar = require('webpackbar');
 
 module.exports = {
-  devServer: {
-    historyApiFallback: true,
-  },
-  devtool: 'eval-source-map',
   entry: {
     'app': ['react-hot-loader/patch', path.resolve(__dirname, 'src/index.tsx')],
   },
-  mode: 'development',
   module: {
     rules: [
       {
@@ -82,6 +74,10 @@ module.exports = {
     }),
     new MiniCssExtractPlugin(),
     new WatchMissingNodeModulesPlugin(path.join(__dirname, 'node_modules')),
+    new WebpackBar({
+      color: 'hotpink',
+      name: 'Sbanken → YNAB',
+    }),
   ],
   resolve: {
     alias: {
