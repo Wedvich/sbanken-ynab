@@ -50,6 +50,10 @@ export interface SbankenCardDetails {
   transactionId?: string;
 }
 
+export enum SbankenTransactionType {
+  Transfer = 'OVFNETTB'
+}
+
 export interface SbankenTransaction {
   accountingDate: string;
   amount: number;
@@ -62,7 +66,7 @@ export interface SbankenTransaction {
   source: string;
   text: string;
   transactionDetailSpecified: boolean;
-  transactionType: string;
+  transactionType: SbankenTransactionType;
   transactionTypeCode: number;
   transactionTypeText: string;
 }
@@ -73,24 +77,24 @@ export interface SbankenTransactionEnriched extends SbankenTransaction {
   id: string;
 }
 
-export const patchDate = (accountingDate: string, text: string, purchaseDate?: string) => {
+export const patchDate = (date: string, text: string, purchaseDate?: string) => {
   if (!purchaseDate) {
     const textDateFragments = /^(\d{2})\.(\d{2})/.exec(text);
-    if (!textDateFragments) return accountingDate;
+    if (!textDateFragments) return date;
 
     const textDate = DateTime.fromObject({
       'day': Number.parseInt(textDateFragments[1]),
       'month': Number.parseInt(textDateFragments[2]),
     });
 
-    if (!textDate.isValid) return accountingDate;
+    if (!textDate.isValid) return date;
 
-    const accountingDateTime = DateTime.fromISO(accountingDate);
-    return textDate.set({ 'year': accountingDateTime.get('year') }).toISO();
+    const dateTime = DateTime.fromISO(date);
+    return textDate.set({ 'year': dateTime.get('year') }).toISO();
   }
 
   const purchaseDateTime = DateTime.fromISO(purchaseDate);
-  const accountingDateTime = DateTime.fromISO(accountingDate);
+  const dateTime = DateTime.fromISO(date);
 
-  return purchaseDateTime.set({ 'year': accountingDateTime.get('year') }).toISO();
+  return purchaseDateTime.set({ 'year': dateTime.get('year') }).toISO();
 };
