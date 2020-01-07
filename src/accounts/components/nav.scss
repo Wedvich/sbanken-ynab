@@ -1,8 +1,8 @@
-@import '../../shared/colors.scss';
-@import '../../shared/fonts.scss';
+@use '../../shared/colors';
+@use '../../shared/fonts';
 
 .sby-accounts-nav {
-  border-right: thin solid $sby-color-medium-gray;
+  border-right: thin solid colors.$medium-gray;
   grid-column: 1;
   list-style: none;
   height: 100%;
@@ -19,7 +19,7 @@
 
   a {
     align-items: center;
-    color: $sby-color-dark-pink;
+    color: colors.$dark-pink;
     display: flex;
     justify-content: space-between;
     padding: 1rem;
@@ -27,27 +27,27 @@
     text-decoration: none;
 
     .balance {
-      font-family: $sby-font-numbers;
+      font-family: fonts.$numbers;
       font-size: 0.875rem;
       text-align: right;
 
       .positive {
-        color: $sby-color-medium-green;
+        color: colors.$medium-green;
       }
 
       .negative {
-        color: $sby-color-medium-red;
+        color: colors.$medium-red;
       }
 
       span {
-        color: $sby-color-dark-gray;
-        font-family: $sby-font-default;
+        color: colors.$dark-gray;
+        font-family: fonts.$default;
         font-weight: 600;
       }
     }
 
     &:hover {
-      background: rgba($sby-color-light-pink, 0.5);
+      background: rgba(colors.$light-pink, 0.5);
 
       .label {
         text-decoration: underline;
@@ -57,7 +57,7 @@
     &:hover,
     &.active {
       &::before {
-        background: $sby-color-light-pink;
+        background: colors.$light-pink;
         bottom: 0;
         content: '';
         left: 0;
@@ -102,7 +102,7 @@
     width: 52px;
 
     .sby-icon {
-      fill: $sby-color-medium-red;
+      fill: colors.$medium-red;
       transition: fill 0.15s;
     }
 
@@ -115,7 +115,7 @@
     }
 
     &:hover {
-      background: $sby-color-medium-red;
+      background: colors.$medium-red;
 
       .sby-icon {
         fill: white;

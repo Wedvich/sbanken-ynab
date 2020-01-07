@@ -1,5 +1,5 @@
-@import '../../shared/colors.scss';
-@import '../../shared/fonts.scss';
+@use '../../shared/colors';
+@use '../../shared/fonts';
 
 .sby-transactions {
   table {
@@ -14,13 +14,13 @@
   }
 
   th {
-    background: $sby-color-light-gray;
-    border-bottom: thin solid $sby-color-medium-gray;
-    border-right: thin solid $sby-color-medium-gray;
-    border-top: thin solid $sby-color-medium-gray;
+    background: colors.$light-gray;
+    border-bottom: thin solid colors.$medium-gray;
+    border-right: thin solid colors.$medium-gray;
+    border-top: thin solid colors.$medium-gray;
 
     &:first-child {
-      border-left: thin solid $sby-color-medium-gray;
+      border-left: thin solid colors.$medium-gray;
       border-top-left-radius: 2px;
     }
 
@@ -30,28 +30,28 @@
   }
 
   .currency {
-    font-family: $sby-font-numbers;
+    font-family: fonts.$numbers;
     text-align: right;
   }
 
   tbody {
     td {
       background: white;
-      border-bottom: thin solid $sby-color-medium-gray;
-      border-right: thin solid $sby-color-medium-gray;
+      border-bottom: thin solid colors.$medium-gray;
+      border-right: thin solid colors.$medium-gray;
 
       &:first-child {
-        border-left: thin solid $sby-color-medium-gray;
+        border-left: thin solid colors.$medium-gray;
       }
 
       &.date {
-        font-family: $sby-font-numbers;
+        font-family: fonts.$numbers;
       }
     }
 
     tr {
       &:hover td:not(:last-child) {
-        background: rgba($sby-color-light-pink, 0.1);
+        background: rgba(colors.$light-pink, 0.1);
       }
 
       &:last-child td {

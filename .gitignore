@@ -69,3 +69,6 @@ typings/
 *.key
 *.pem
 *.srl
+
+# VS Code settings
+.vscode

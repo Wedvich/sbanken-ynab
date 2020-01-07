@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import Icon, { IconStyle, IconType } from '../icon';
+
 import './external-link.scss';
 
 export interface ExternalLinkProps {

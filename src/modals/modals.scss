@@ -1,4 +1,4 @@
-@import '../shared/colors.scss';
+@use '../shared/colors';
 
 $transition-time: 0.3s;
 
@@ -18,6 +18,37 @@ $transition-time: 0.3s;
   left: 0;
   top: 0;
   width: 100%;
+}
+
+.sby-modal-overlay {
+	background: rgba(colors.$dark-gray, 0.9);
+	opacity: 0;
+	position: absolute;
+	transition: opacity $transition-time;
+	z-index: 1;
+}
+
+.sby-modal-content {
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 0 1rem colors.$dark-gray;
+	max-width: 560px;
+	min-width: 290px;
+	opacity: 0;
+	padding: 1rem;
+	position: relative;
+  width: 50%;
+  z-index: 5;
+
+  header {
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .modal-buttons {
+    text-align: right;
+  }
 }
 
 .sby-modals-root {
@@ -45,36 +76,5 @@ $transition-time: 0.3s;
     animation-duration: 0.3s;
     animation-fill-mode: forwards;
     animation-name: anim-close;
-  }
-}
-
-.sby-modal-overlay {
-	background: rgba($sby-color-dark-gray, 0.9);
-	opacity: 0;
-	position: absolute;
-	transition: opacity $transition-time;
-	z-index: 1;
-}
-
-.sby-modal-content {
-  background: #fff;
-  border-radius: 2px;
-  box-shadow: 0 0 1rem $sby-color-dark-gray;
-	max-width: 560px;
-	min-width: 290px;
-	opacity: 0;
-	padding: 1rem;
-	position: relative;
-  width: 50%;
-  z-index: 5;
-
-  header {
-    h2 {
-      margin: 0;
-    }
-  }
-
-  .modal-buttons {
-    text-align: right;
   }
 }

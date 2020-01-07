@@ -5,6 +5,7 @@ import transactionsSelector from '../selectors/transactions';
 import { loadingSelector } from '../../shared/utils';
 import { actions as ynabActions } from '../../ynab/reducer';
 import { TransactionSource } from '../types';
+
 import './transactions.scss';
 
 const Transactions = () => {

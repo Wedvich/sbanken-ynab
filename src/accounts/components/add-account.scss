@@ -1,4 +1,4 @@
-@import '../../shared/colors.scss';
+@use '../../shared/colors';
 
 .sby-add-account {
   background: #fafbfc;
@@ -29,7 +29,7 @@
       padding-left: 0.5rem;
 
       &.disabled {
-        color: $sby-color-dark-gray;
+        color: colors.$dark-gray;
       }
     }
   }
@@ -38,7 +38,7 @@
     width: unset;
 
     &::placeholder {
-      color: $sby-color-dark-gray;
+      color: colors.$dark-gray;
     }
   }
 }

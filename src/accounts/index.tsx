@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
+import { useHistory, Switch, Route } from 'react-router-dom';
 import Nav from './components/nav';
-import './accounts.scss';
 import accountsSelector from './selectors/accounts';
 import NoAccounts from './components/no-accounts';
 import SelectedAccount from './components/selected-account';
@@ -10,7 +10,8 @@ import { useAccountId } from './utils';
 import { loadingSelector } from '../shared/utils';
 import Loader from '../shared/loader';
 import AddAccount from './components/add-account';
-import { useHistory, Switch, Route } from 'react-router-dom';
+
+import './accounts.scss';
 
 const Accounts = () => {
   const connectedAccounts = useSelector(accountsSelector);

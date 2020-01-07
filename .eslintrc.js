@@ -7,8 +7,10 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:import/errors',
-    'plugin:react/recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'plugin:react/recommended',
     'plugin:jsx-a11y/recommended',
   ],
   overrides: [
@@ -20,6 +22,9 @@ module.exports = {
     },
   ],
   parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.json',
+  },
   plugins: [
     'react-hooks',
     'jsx-a11y',
@@ -28,6 +33,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-empty-function': 'warn',
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/unbound-method': 'off',
     'arrow-parens': ['error', 'always'],
     'comma-dangle': ['error','always-multiline'],
     'indent': ['error', 2,

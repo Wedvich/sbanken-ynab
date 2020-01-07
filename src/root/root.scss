@@ -1,12 +1,10 @@
-@import '../../node_modules/normalize.css/normalize';
-@import '../shared/colors.scss';
-@import '../shared/fonts.scss';
+@use '../shared/colors';
+@use '../shared/fonts';
 
 * {
   box-sizing: border-box;
   color: inherit;
   font-family: inherit;
-  // text-rendering: optimizeLegibility;
 }
 
 html, body, #sby, .sby-root {
@@ -14,7 +12,7 @@ html, body, #sby, .sby-root {
 }
 
 body {
-  font-family: $sby-font-default;
+  font-family: fonts.$default;
   font-size: 16px;
 }
 
@@ -30,7 +28,7 @@ body {
   input[type='text'] {
     background-color: white;
     border-radius: 2px;
-    border: thin solid $sby-color-medium-gray;
+    border: thin solid colors.$medium-gray;
     display: block;
     font-size: 0.875rem;
     padding: 0.375rem 0.5rem;
@@ -38,26 +36,26 @@ body {
 
     &:focus {
       background-color: white;
-      border-color: $sby-color-dark-pink;
-      box-shadow: 0 0 0 0.2rem $sby-color-light-pink;
+      border-color: colors.$dark-pink;
+      box-shadow: 0 0 0 0.2rem colors.$light-pink;
       outline: none;
     }
 
     &::selection {
-      background: $sby-color-light-pink;
+      background: colors.$light-pink;
     }
 
     &:disabled,
     &:read-only {
-      background-color: $sby-color-light-gray;
-      color: $sby-color-dark-gray;
+      background-color: colors.$light-gray;
+      color: colors.$dark-gray;
     }
   }
 }
 
 .sby-button-group {
   button {
-    background: $sby-color-dark-purple;
+    background: colors.$dark-purple;
     border: none;
     border-radius: 2px;
     color: white;
@@ -69,12 +67,6 @@ body {
     padding: 0.375rem 0.5rem;
     user-select: none;
 
-    &:focus,
-    &:active:not(:disabled) {
-      box-shadow: 0 0 0 0.2rem $sby-color-light-pink;
-      outline: none;
-    }
-
     &:disabled {
       cursor: default;
       opacity: 0.75;
@@ -84,16 +76,22 @@ body {
       margin-left: 0.5rem;
     }
 
+    &:focus,
+    &:active:not(:disabled) {
+      box-shadow: 0 0 0 0.2rem colors.$light-pink;
+      outline: none;
+    }
+
     &:hover:not(:disabled) {
       text-decoration: underline;
     }
 
     &.danger {
-      background: $sby-color-medium-red;
+      background: colors.$medium-red;
 
       &:focus,
       &:active:not(:disabled) {
-        box-shadow: 0 0 0 0.2rem rgba($sby-color-medium-red, 0.5);
+        box-shadow: 0 0 0 0.2rem rgba(colors.$medium-red, 0.5);
       }
     }
 

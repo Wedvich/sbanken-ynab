@@ -5,13 +5,13 @@ import Onboarding from '../onboarding';
 import Accounts from '../accounts';
 import icons from '../shared/icon/icons.svg';
 import Modals from '../modals';
+
+import 'normalize.css/normalize.css';
 import './root.scss';
 
 const Root = () => (
   <div className="sby-root">
-    <div hidden dangerouslySetInnerHTML={{
-      __html: icons.replace(/<title>.+?<\/title>/gi, ''),
-    }} />
+    <div hidden dangerouslySetInnerHTML={{ __html: icons }} />
     <Switch>
       <Route path="/onboarding">
         <Onboarding />

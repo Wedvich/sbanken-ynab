@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "target": "esnext"
+  },
+  "include": [
+    "src/**/*",
+    ".eslintrc.js",
+    ".stylelintrc.js",
+    "babel.config.js",
+    "webpack.config.js"
+  ],
+}

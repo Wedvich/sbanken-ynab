@@ -1,38 +1,46 @@
-@import '../../shared/colors.scss';
-@import '../../shared/fonts.scss';
+@use '../../shared/colors';
+@use '../../shared/fonts';
 
 .sby-balance {
-  border-bottom: thin dashed $sby-color-medium-gray;
-  border-top: thin dashed $sby-color-medium-gray;
+  border-bottom: thin dashed colors.$medium-gray;
+  border-top: thin dashed colors.$medium-gray;
   margin: 0 -1rem;
   padding: 0.5rem 1rem;
+
+  th, td {
+    text-align: right;
+    white-space: nowrap;
+  }
 
   th[scope='col'] {
     font-style: italic;
     font-weight: normal;
-    white-space: nowrap;
   }
 
   th[scope='row'] {
-    padding-right: 1em;
-    text-align: right;
+    padding-right: 1rem;
+  }
+
+  .pull {
+    width: 100%;
   }
 
   td {
-    font-family: $sby-font-numbers;
-    font-weight: normal;
+    font-family: fonts.$numbers;
+    font-size: 1.5rem;
+    text-align: right;
 
     &.positive {
-      color: $sby-color-medium-green;
+      color: colors.$medium-green;
     }
 
     &.negative {
-      color: $sby-color-medium-red;
+      color: colors.$medium-red;
     }
   }
 
   .operator {
-    color: $sby-color-dark-gray;
+    color: colors.$dark-gray;
     padding: 0 1em;
   }
 }

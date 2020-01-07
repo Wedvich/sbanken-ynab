@@ -5,11 +5,12 @@ import { Link, useParams, useLocation } from 'react-router-dom';
 import accountsSelector from '../selectors/accounts';
 import { getNumberClass, formatCurrency } from '../utils';
 import { loadingSelector } from '../../shared/utils';
-import './nav.scss';
 import Loader from '../../shared/loader';
-import Icon, { IconType, IconStyle, IconSize } from '../../shared/icon';
+import Icon, { IconType, IconSize } from '../../shared/icon';
 import { actions as modalActions } from '../../modals/reducer';
 import { ModalId } from '../../modals/types';
+
+import './nav.scss';
 
 const Nav = () => {
   const connectedAccounts = useSelector(accountsSelector);

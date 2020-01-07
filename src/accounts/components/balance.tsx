@@ -1,6 +1,7 @@
 import React from 'react';
 import { ConnectedAccount } from '../types';
 import { formatCurrency, getNumberClass } from '../utils';
+
 import './balance.scss';
 
 interface BalanceProps {
@@ -18,7 +19,7 @@ const Balance = ({ account }: BalanceProps) => {
           <th scope="col">Uncleared balance</th>
           <th scope="col" />
           <th scope="col">Working balance</th>
-          <th width="100%" />
+          <th className="pull" />
         </tr>
       </thead>
       <tbody>

@@ -8,6 +8,7 @@ import { ConnectedAccountSource } from '../types';
 import { compareConnectedAccountSource } from '../utils';
 import { actions } from '../reducer';
 import { loadingSelector } from '../../shared/utils';
+
 import './add-account.scss';
 
 const AddAccount = () => {

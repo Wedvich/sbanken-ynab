@@ -1,4 +1,4 @@
-@import '../shared/colors.scss';
+@use '../shared/colors';
 
 .sby-onboarding {
   align-items: center;
@@ -18,7 +18,7 @@
   }
 
   a {
-    color: $sby-color-dark-pink;
+    color: colors.$dark-pink;
     text-decoration: none;
 
     &:hover {
@@ -27,8 +27,8 @@
   }
 
   .example {
-    background: rgba($sby-color-light-pink, 0.2);
-    color: $sby-color-dark-gray;
+    background: rgba(colors.$light-pink, 0.2);
+    color: colors.$dark-gray;
     padding: 0.25rem;
 
     strong {

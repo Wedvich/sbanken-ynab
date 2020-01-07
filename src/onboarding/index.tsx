@@ -1,8 +1,9 @@
 import React, {  } from 'react';
-import './onboarding.scss';
 import { Switch, Route } from 'react-router-dom';
 import SbankenOnboarding from './sbanken';
 import YnabOnboarding from './ynab';
+
+import './onboarding.scss';
 
 const Onboarding = () => {
   return (

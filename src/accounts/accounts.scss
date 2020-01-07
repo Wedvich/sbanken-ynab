@@ -1,5 +1,5 @@
-@import '../shared/colors.scss';
-@import '../shared/fonts.scss';
+@use '../shared/colors';
+@use '../shared/fonts';
 
 .sby-accounts {
   display: grid;
@@ -8,7 +8,7 @@
 }
 
 .sby-accounts-page {
-  background: $sby-color-light-gray;
+  background: colors.$light-gray;
   grid-column: 2;
   height: 100%;
   padding: 1rem;
@@ -43,7 +43,7 @@
     margin-bottom: 1rem;
 
     a {
-      color: $sby-color-dark-pink;
+      color: colors.$dark-pink;
       text-decoration: none;
 
       &:hover {
@@ -52,7 +52,7 @@
     }
 
     .separator {
-      color: $sby-color-dark-gray;
+      color: colors.$dark-gray;
       content: '•';
       margin: 0 0.5rem;
     }
@@ -60,17 +60,5 @@
 
   .sby-balance {
     margin-bottom: 1rem;
-  }
-}
-
-.sby-balance {
-  th[scope="row"] {
-    text-align: right;
-  }
-
-  td {
-    font-weight: 600;
-    font-size: 1.5em;
-    text-align: right;
   }
 }
