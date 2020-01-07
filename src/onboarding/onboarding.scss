@@ -11,9 +11,15 @@
     margin: 0 0 1rem 0;
   }
 
+  h2 {
+    color: colors.$dark-gray;
+    font-size: 1rem;
+    margin: 0 0 0.5rem 0;
+  }
+
   .sby-onboarding-instructions {
     margin: 0 0 2rem 0;
-    max-width: 900px;
+    max-width: 600px;
     text-align: left;
   }
 

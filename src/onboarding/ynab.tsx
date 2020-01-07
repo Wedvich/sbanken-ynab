@@ -21,6 +21,7 @@ const YnabOnboarding = () => {
 
   return (
     <form className="sby-onboarding" ref={formRef} onSubmit={onSubmit}>
+      <h2>Sbanken → YNAB</h2>
       <h1>You Need A Budget</h1>
       <div className="sby-onboarding-instructions">
         Du må gå til <ExternalLink href="https://app.youneedabudget.com/settings/developer">utviklerinnstillingene</ExternalLink> og opprette en Personal Access Token.

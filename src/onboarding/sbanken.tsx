@@ -1,4 +1,4 @@
-import React, { useRef, FormEvent } from 'react';
+import React, { useRef, FormEvent, useState, ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useFocusTrap from '../shared/use-focus-trap';
 import { actions as sbankenActions, SbankenState } from '../sbanken/reducer';
@@ -6,7 +6,6 @@ import { RootState } from '../store/root-reducer';
 import Loader from '../shared/loader';
 import { decodeCredentials } from '../sbanken/utils';
 import ExternalLink from '../shared/external-link';
-import './onboarding.scss';
 
 const SbankenOnboarding = () => {
   const formRef = useRef<HTMLFormElement>();
@@ -15,16 +14,18 @@ const SbankenOnboarding = () => {
   const state = useSelector<RootState, SbankenState>((state) => state.sbanken);
   const existingCredentials = decodeCredentials(state.credentials);
 
+  const [clientId, setClientId] = useState(existingCredentials?.clientId || process.env.SBANKEN_CLIENT_ID);
+  const [clientSecret, setClientSecret] = useState(existingCredentials?.clientSecret || process.env.SBANKEN_CLIENT_SECRET);
+  const [customerId, setCustomerId] = useState(state.customerId || process.env.SBANKEN_CUSTOMER_ID);
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const clientId = formRef.current.querySelector<HTMLInputElement>('#sbankenClientId').value;
-    const clientSecret = formRef.current.querySelector<HTMLInputElement>('#sbankenClientSecret').value;
-    const customerId = formRef.current.querySelector<HTMLInputElement>('#sbankenCustomerId').value;
     dispatch(sbankenActions.setCredentials(clientId, clientSecret, customerId));
   };
 
   return (
     <form className="sby-onboarding" ref={formRef} onSubmit={onSubmit}>
+      <h2>Sbanken → YNAB</h2>
       <h1>Sbanken</h1>
       <div className="sby-onboarding-instructions">
         Du må gå til <ExternalLink href="https://secure.sbanken.no/Personal/ApiBeta/Info/">Utviklerportalen</ExternalLink> og opprette en applikasjon med følgende tilganger:
@@ -40,7 +41,8 @@ const SbankenOnboarding = () => {
           type="text"
           id="sbankenClientId"
           className="sby-text-input"
-          defaultValue={existingCredentials?.clientId || process.env.SBANKEN_CLIENT_ID}
+          value={clientId}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setClientId(e.target.value)}
           disabled={state.authenticating}
           size={32}
           autoComplete="off"
@@ -52,7 +54,8 @@ const SbankenOnboarding = () => {
           type="text"
           id="sbankenClientSecret"
           className="sby-text-input"
-          defaultValue={existingCredentials?.clientSecret || process.env.SBANKEN_CLIENT_SECRET}
+          value={clientSecret}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setClientSecret(e.target.value)}
           disabled={state.authenticating}
           size={32}
           autoComplete="off"
@@ -64,7 +67,8 @@ const SbankenOnboarding = () => {
           type="text"
           id="sbankenCustomerId"
           className="sby-text-input"
-          defaultValue={state.customerId || process.env.SBANKEN_CUSTOMER_ID}
+          value={customerId}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomerId(e.target.value)}
           disabled={state.authenticating}
           size={32}
           autoComplete="off"
