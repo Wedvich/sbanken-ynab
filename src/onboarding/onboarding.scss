@@ -42,4 +42,39 @@
       font-weight: normal;
     }
   }
+
+  .steps {
+    align-items: center;
+    color: colors.$medium-gray;
+    display: flex;
+    margin: 1rem 0;
+
+    .step {
+      border: thin solid colors.$medium-gray;
+      border-radius: 50%;
+      height: 0.75rem;
+      margin: 0 0.25rem;
+      width: 0.75rem;
+
+      &.active {
+        border: none;
+        background: colors.$light-pink;
+      }
+    }
+
+    .sby-icon {
+      margin-left: 0.25rem;
+    }
+  }
+
+  .sby-error {
+    color: colors.$medium-red;
+    margin-top: 1rem;
+
+    .sby-icon {
+      margin-right: 0.25em;
+      position: relative;
+      top: 0.375em;
+    }
+  }
 }

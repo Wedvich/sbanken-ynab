@@ -1,4 +1,4 @@
-import React, { useRef, FormEvent, useState, ChangeEvent } from 'react';
+import React, { useRef, FormEvent, useState, ChangeEvent, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useFocusTrap from '../shared/use-focus-trap';
 import { actions as sbankenActions, SbankenState } from '../sbanken/reducer';
@@ -6,6 +6,8 @@ import { RootState } from '../store/root-reducer';
 import Loader from '../shared/loader';
 import { decodeCredentials } from '../sbanken/utils';
 import ExternalLink from '../shared/external-link';
+import OnboardingSteps from './steps';
+import Icon, { IconType } from '../shared/icon';
 
 const SbankenOnboarding = () => {
   const formRef = useRef<HTMLFormElement>();
@@ -18,15 +20,23 @@ const SbankenOnboarding = () => {
   const [clientSecret, setClientSecret] = useState(existingCredentials?.clientSecret || process.env.SBANKEN_CLIENT_SECRET);
   const [customerId, setCustomerId] = useState(state.customerId || process.env.SBANKEN_CUSTOMER_ID);
 
-  const onSubmit = (e: FormEvent) => {
+  const validCustomerId = customerId.length === 11;
+
+  const canSubmit = !state.authenticating &&
+    clientId &&
+    clientSecret &&
+    validCustomerId;
+
+  const onSubmit = useCallback((e: FormEvent) => {
     e.preventDefault();
+    if (!canSubmit) return;
     dispatch(sbankenActions.setCredentials(clientId, clientSecret, customerId));
-  };
+  }, [canSubmit, clientId, clientSecret, customerId]);
 
   return (
     <form className="sby-onboarding" ref={formRef} onSubmit={onSubmit}>
       <h2>Sbanken → YNAB</h2>
-      <h1>Sbanken</h1>
+      <h1>Koble til Sbanken</h1>
       <div className="sby-onboarding-instructions">
         Du må gå til <ExternalLink href="https://secure.sbanken.no/Personal/ApiBeta/Info/">Utviklerportalen</ExternalLink> og opprette en applikasjon med følgende tilganger:
         <ul>
@@ -68,18 +78,29 @@ const SbankenOnboarding = () => {
           id="sbankenCustomerId"
           className="sby-text-input"
           value={customerId}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomerId(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomerId(e.target.value.replace(/\D/g, ''))}
           disabled={state.authenticating}
           size={32}
+          maxLength={11}
           autoComplete="off"
         />
       </div>
+      <OnboardingSteps />
       <div className="sby-button-group">
-        <button type="submit" disabled={state.authenticating}>
+        <button type="submit" disabled={!canSubmit}>
           {state.authenticating && <Loader inverted />}
           <span>Fortsett</span>
         </button>
       </div>
+      {state.error && (
+        <div className="sby-error">
+          <Icon type={IconType.Error} />
+          Det oppsto en feil under henting av token.
+          <br />
+          <br />
+          Kanskje du har skrevet feil applikasjonsnøkkel eller passord?
+        </div>
+      )}
     </form>
   );
 };

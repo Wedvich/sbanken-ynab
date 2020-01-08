@@ -1,9 +1,11 @@
 @use '../shared/colors';
 @use '../shared/fonts';
+@use '../shared/variables';
 
 .sby-accounts {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: variables.$nav-width 1fr;
+  grid-template-rows: 1fr auto;
   height: 100%;
 }
 

@@ -11,7 +11,7 @@ const Intro = () => {
         Sbanken er en kjempebra nettbank, og YNAB er et kjempebra budsjetteringsverktøy. Sammen kan de jo ikke bli annet enn kjempebra!
         <br />
         <br />
-        Denne appen gir deg et visuelt grensesnitt for å overføre transaksjoner fra Sbanken til YNAB og holde kontoene ajour.
+        Denne appen gir deg et visuelt grensesnitt for å overføre transaksjoner fra Sbanken til YNAB og holde kontoene ajour. Alle innstillinger lagres kun lokalt i nettleseren din, og appen logger ingen informasjon. Du kan når som helst slette innstilingene.
         <br />
         <br />
         Appen har ingen tilhørighet til verken Sbanken eller You Need A Budget.

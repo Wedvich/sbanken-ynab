@@ -18,9 +18,10 @@ body {
 
 .sby-input-group {
   margin-bottom: 1rem;
+  position: relative;
 
   label {
-    display: inline-block;
+    display: block;
     font-weight: 600;
     margin-bottom: 0.5rem;
   }
@@ -29,7 +30,7 @@ body {
     background-color: white;
     border-radius: 2px;
     border: thin solid colors.$medium-gray;
-    display: block;
+    display: inline-block;
     font-size: 0.875rem;
     padding: 0.375rem 0.5rem;
     width: 100%;

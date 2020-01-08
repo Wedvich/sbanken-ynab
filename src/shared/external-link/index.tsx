@@ -6,9 +6,10 @@ import './external-link.scss';
 export interface ExternalLinkProps {
   href: string;
   children: ReactNode;
+  noIcon?: boolean;
 }
 
-const ExternalLink = ({ href, children }: ExternalLinkProps) => (
+const ExternalLink = ({ href, children, noIcon }: ExternalLinkProps) => (
   <a
     className="sby-external-link"
     href={href}
@@ -16,8 +17,12 @@ const ExternalLink = ({ href, children }: ExternalLinkProps) => (
     rel="noopener noreferrer"
   >
     {children}
-    <Icon className="not-hover" type={IconType.ExternalLink} />
-    <Icon className="hover" type={IconType.ExternalLink} style={IconStyle.Solid} />
+    {!noIcon && (
+      <>
+        <Icon className="not-hover" type={IconType.ExternalLink} />
+        <Icon className="hover" type={IconType.ExternalLink} style={IconStyle.Solid} />
+      </>
+    )}
   </a>
 );
 

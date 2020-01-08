@@ -1,9 +1,11 @@
 @use '../../shared/colors';
 @use '../../shared/fonts';
+@use '../../shared/variables';
 
 .sby-accounts-nav {
   border-right: thin solid colors.$medium-gray;
   grid-column: 1;
+  grid-row: span 2;
   list-style: none;
   height: 100%;
   margin: 0;
@@ -87,19 +89,29 @@
     }
   }
 
+  .sby-nav-footer {
+    align-items: center;
+    border-top: thin dashed colors.$medium-gray;
+    display: flex;
+    height: 3rem;
+    left: 0;
+    justify-content: space-between;
+    bottom: 0;
+    padding: 0 0.5rem;
+    position: fixed;
+    width: variables.$nav-width;
+  }
+
   .sby-delete-settings {
     align-items: center;
     background: none;
     border: none;
     border-radius: 2px;
-    bottom: 0.5rem;
     display: flex;
     justify-content: center;
-    left: 0.5rem;
-    height: 52px;
-    position: absolute;
+    height: 2rem;
     transition: background-color 0.15s;
-    width: 52px;
+    width: 2rem;
 
     .sby-icon {
       fill: colors.$medium-red;

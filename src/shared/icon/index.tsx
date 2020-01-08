@@ -3,26 +3,31 @@ import cx from 'classnames';
 import './icon.scss';
 
 export enum IconType {
-  ExternalLink = 'exit',
-  ThumbsUp = 'like',
-  Trash = 'trash',
+  Error,
+  ExternalLink,
+  ThumbsUp,
+  Trash,
 }
 
 export enum IconSize {
   Small,
   Normal,
-  Big
+  Big,
 }
 
 export enum IconStyle {
   Outline,
-  Solid
+  Solid,
 }
 
 const iconSymbolMap = {
   [IconType.ExternalLink]: {
     [IconStyle.Outline]: 'exit',
     [IconStyle.Solid]: 'exit-1',
+  },
+  [IconType.Error]: {
+    [IconStyle.Outline]: 'close',
+    [IconStyle.Solid]: 'error',
   },
   [IconType.ThumbsUp]: {
     [IconStyle.Outline]: 'like-1',
