@@ -1,5 +1,19 @@
 @use '../shared/colors';
 
+.sby-onboarding-footer {
+  bottom: 0;
+  color: colors.$dark-gray;
+  font-size: 0.875rem;
+  padding: 0.25em;
+  position: fixed;
+  text-align: center;
+  width: 100%;
+
+  a {
+    margin: 0.25em;
+  }
+}
+
 .sby-onboarding {
   align-items: center;
   display: flex;
