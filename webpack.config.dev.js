@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'development';
 const path = require('path');
 const merge = require('webpack-merge');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const baseConfig = require('./webpack.config.base');
 
 module.exports = merge.smart({
@@ -14,9 +15,10 @@ module.exports = merge.smart({
   devServer: {
     historyApiFallback: true,
   },
-  devtool: 'eval-source-map',
+  devtool: 'cheap-module-source-map',
   mode: 'development',
   plugins: [
+    new MiniCssExtractPlugin(),
     new WatchMissingNodeModulesPlugin(path.join(__dirname, 'node_modules')),
   ],
   resolve: {

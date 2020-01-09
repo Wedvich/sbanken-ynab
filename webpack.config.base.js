@@ -73,7 +73,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
     }),
-    new MiniCssExtractPlugin(),
     new WebpackBar({
       color: 'hotpink',
       name: 'Sbanken → YNAB',
