@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const http = require('http');
 const path = require('path');
 
-const port = 8080;
+const port = process.env.PORT || 8000;
 
 const app = express();
 
@@ -34,10 +34,10 @@ app.use(helmet({
   },
 }));
 
-app.use(express.static(path.join(__dirname, 'wwwroot')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'wwwroot/index.html'));
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 const server = http.createServer(app);

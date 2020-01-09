@@ -56,7 +56,7 @@ module.exports = {
     ],
   },
   output: {
-    path: path.join(__dirname, 'wwwroot'),
+    path: path.join(__dirname, 'public'),
     publicPath: '/',
   },
   plugins: [

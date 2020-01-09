@@ -13,7 +13,7 @@ steps:
   - task: CopyFiles@2
     inputs:
       contents: |
-        wwwroot/**/*
+        public/**/*
         package.json
         server.js
         yarn.lock
