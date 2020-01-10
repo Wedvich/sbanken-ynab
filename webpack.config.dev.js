@@ -14,6 +14,7 @@ module.exports = merge.smart({
 }, baseConfig, {
   devServer: {
     historyApiFallback: true,
+    port: process.env.PORT || 8000,
   },
   devtool: 'cheap-module-source-map',
   mode: 'development',

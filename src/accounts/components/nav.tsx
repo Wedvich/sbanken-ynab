@@ -63,7 +63,7 @@ const Nav = () => {
         <button className="sby-delete-settings" title="Fjern alle data" onClick={() => {
           dispatch(modalActions.openModal(ModalId.DeleteSettings));
         }}>
-          <Icon type={IconType.Trash} size={IconSize.Big} />
+          <Icon type={IconType.Trash} size={IconSize.Small} />
         </button>
       </div>
     </nav>
