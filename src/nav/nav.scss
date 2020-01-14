@@ -1,8 +1,8 @@
-@use '../../shared/colors';
-@use '../../shared/fonts';
-@use '../../shared/variables';
+@use '../shared/colors';
+@use '../shared/fonts';
+@use '../shared/variables';
 
-.sby-accounts-nav {
+.sby-nav {
   border-right: thin solid colors.$medium-gray;
   grid-column: 1;
   grid-row: span 2;

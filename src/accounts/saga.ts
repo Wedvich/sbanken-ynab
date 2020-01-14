@@ -7,7 +7,7 @@ import accountsSelector from './selectors/accounts';
 import { ConnectedAccount } from './types';
 
 export default function* (history: History) {
-  yield takeEvery([AccountsActionType.Add, AccountsActionType.Remove], function* ({ type }) {
+  yield takeEvery([AccountsActionType.Add, AccountsActionType.Remove, AccountsActionType.Rename], function* ({ type }) {
     const state: RootState = yield select();
     const { accounts: connectedAccountSources } = state;
     const connectedAccounts: ConnectedAccount[] = yield call(accountsSelector, state);

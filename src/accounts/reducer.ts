@@ -5,6 +5,7 @@ import { ConnectedAccountSource } from './types';
 export enum AccountsActionType {
   Add = 'accounts/add',
   Remove = 'accounts/remove',
+  Rename = 'accounts/rename',
 }
 
 const add = (source: ConnectedAccountSource) => ({
@@ -17,9 +18,16 @@ const remove = (source: ConnectedAccountSource) => ({
   source,
 });
 
+const rename = (source: ConnectedAccountSource, name: string) => ({
+  type: AccountsActionType.Rename as AccountsActionType.Rename,
+  source,
+  name,
+});
+
 export const actions = {
   add,
   remove,
+  rename,
 };
 
 export type AccountsAction = ReturnType<typeof actions[keyof typeof actions]>
@@ -41,6 +49,22 @@ const reducer: Reducer<AccountsState, AccountsAction> = (state = initialState, a
 
     case AccountsActionType.Remove:
       return state.filter((account) => !compareConnectedAccountSource(account, action.source));
+
+    case AccountsActionType.Rename: {
+      const accountIndex = state.findIndex(
+        (connectedAccount) => compareConnectedAccountSource(connectedAccount, action.source));
+
+      if (accountIndex === -1) return state;
+
+      return [
+        ...state.slice(0, accountIndex),
+        {
+          ...state[accountIndex],
+          displayName: action.name,
+        },
+        ...state.slice(accountIndex + 1),
+      ];
+    }
 
     default: {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

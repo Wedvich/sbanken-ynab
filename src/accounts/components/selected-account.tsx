@@ -11,6 +11,7 @@ import Transactions from './transactions';
 import { actions } from '../reducer';
 import { RootState } from '../../store/root-reducer';
 import ExternalLink from '../../shared/external-link';
+import AccountName from './account-name';
 
 interface SelectedAccountProps {
   account: ConnectedAccount;
@@ -23,7 +24,7 @@ const SelectedAccount = ({ account }: SelectedAccountProps) => {
 
   return (
     <>
-      <h1>{account.displayName}</h1>
+      <AccountName account={account} />
       <div className="sby-link-group">
         <ExternalLink href={`https://secure.sbanken.no/Home/AccountStatement?accountId=${account.sbankenId}`}>
           Åpne i Sbanken
