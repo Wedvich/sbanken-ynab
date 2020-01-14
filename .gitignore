@@ -75,3 +75,7 @@ typings/
 
 # Webpack build output
 public
+
+# .NET Core build output
+server/[Bb]in
+server/[Oo]bj
