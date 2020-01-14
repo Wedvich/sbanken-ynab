@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const http = require('http');
 const path = require('path');
 
+const host = process.env.HOST || '0.0.0.0';
 const port = process.env.PORT || 8000;
 
 const app = express();
@@ -49,4 +50,4 @@ server.on('listening', () => {
   console.log('Listening on %s', binding);
 });
 
-server.listen(port);
+server.listen(port, host);
