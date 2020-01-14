@@ -101,7 +101,10 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
       return {
         ...state,
         loading: false,
-        transactions: state.transactions.concat(action.transactions),
+        transactions: state.transactions
+          .filter((existingTransaction) =>
+            !action.transactions.find((transaction) => transaction.id === existingTransaction.id))
+          .concat(action.transactions),
         serverKnowledge: {
           ...state.serverKnowledge,
           [`${YnabActionType.GetTransactionsRequest}/${action.accountId}`]:
