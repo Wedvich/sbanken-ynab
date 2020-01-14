@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { OnboardingActionType } from './utils';
 
-const Intro = () => {
+const OnboardingIntro = () => {
   const dispatch = useDispatch();
   return (
     <div className="sby-onboarding">
@@ -11,7 +11,7 @@ const Intro = () => {
         Sbanken er en kjempebra nettbank, og YNAB er et kjempebra budsjetteringsverktøy. Sammen kan de jo ikke bli annet enn kjempebra!
         <br />
         <br />
-        Denne appen gir deg et visuelt grensesnitt for å overføre transaksjoner fra Sbanken til YNAB og holde kontoene ajour. Alle innstillinger lagres kun lokalt i nettleseren din, og appen logger ingen informasjon. Du kan når som helst slette innstilingene.
+        Denne appen gir deg et visuelt grensesnitt for å overføre transaksjoner fra Sbanken til YNAB og holde kontoene ajour.
         <br />
         <br />
         Appen har ingen tilhørighet til verken Sbanken eller You Need A Budget.
@@ -25,4 +25,4 @@ const Intro = () => {
   );
 };
 
-export default React.memo(Intro);
+export default React.memo(OnboardingIntro);

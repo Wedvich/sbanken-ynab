@@ -4,7 +4,7 @@ import { ConnectedAccountSource } from './types';
 
 export enum AccountsActionType {
   Add = 'accounts/add',
-  Remove = 'accounts/remove'
+  Remove = 'accounts/remove',
 }
 
 const add = (source: ConnectedAccountSource) => ({

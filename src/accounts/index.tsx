@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { useHistory, Switch, Route } from 'react-router-dom';
-import Nav from './components/nav';
+import Nav from '../nav';
 import accountsSelector from './selectors/accounts';
 import NoAccounts from './components/no-accounts';
 import SelectedAccount from './components/selected-account';
@@ -23,9 +23,11 @@ const Accounts = () => {
   const noAccounts = connectedAccounts.length === 0;
   const selectedAccount = connectedAccounts.find((account) => account.compoundId === accountId);
 
-  if (!noAccounts && !accountId) {
-    history.push(`/accounts/${connectedAccounts[0].compoundId}`);
-  }
+  useLayoutEffect(() => {
+    if (!noAccounts && !accountId) {
+      history.push(`/accounts/${connectedAccounts[0].compoundId}`);
+    }
+  }, [connectedAccounts, accountId]);
 
   return (
     <div className="sby-accounts" role="main">

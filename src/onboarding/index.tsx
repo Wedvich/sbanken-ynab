@@ -2,7 +2,7 @@ import React, {  } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import SbankenOnboarding from './sbanken';
 import YnabOnboarding from './ynab';
-import Intro from './intro';
+import OnboardingIntro from './intro';
 import ExternalLink from '../shared/external-link';
 
 import './onboarding.scss';
@@ -18,7 +18,7 @@ const Onboarding = () => {
           <YnabOnboarding />
         </Route>
         <Route>
-          <Intro />
+          <OnboardingIntro />
         </Route>
       </Switch>
       <footer className="sby-onboarding-footer">
