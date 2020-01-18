@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { transformAccessToken, SbankenAccount, SbankenTransactionEnriched } from './api';
+import { SbankenAccount, SbankenTransactionEnriched } from './api';
 import { getTokenRequest, getTokenResponse } from './api/get-token';
 import { getAccountsRequest, getAccountsResponse } from './api/get-accounts';
 import { getStoredAccessToken, getStoredCustomerId, encodeCredentials, getStoredCredentials } from './utils';
@@ -68,7 +68,7 @@ const reducer: Reducer<SbankenState, SbankenAction> = (state = initialState, act
         ...state,
         authenticating: false,
         error: action.error ?? '',
-        token: action.response ? transformAccessToken(action.response) : null,
+        token: action.token || null,
       };
 
     case SbankenActionType.GetAccountsRequest:

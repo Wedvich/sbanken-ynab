@@ -1,18 +1,25 @@
 import { SbankenActionType, SbankenState } from '../reducer';
-import { SbankenTokenResponse, transformAccessToken } from '.';
-import { select, put, call } from 'redux-saga/effects';
+import { SbankenTokenResponse, transformAccessToken, SbankenAccessToken } from '.';
+import { select, put, call, take } from 'redux-saga/effects';
 import { RootState } from '../../store/root-reducer';
-import { storeAccessToken } from '../utils';
+import { storeAccessToken, validateAccessToken } from '../utils';
 
 export const getTokenRequest = () => ({
   type: SbankenActionType.GetTokenRequest as SbankenActionType.GetTokenRequest,
 });
 
-export const getTokenResponse = (response?: SbankenTokenResponse, error?: string) => ({
+export const getTokenResponse = (token?: SbankenAccessToken, error?: string) => ({
   type: SbankenActionType.GetTokenResponse as SbankenActionType.GetTokenResponse,
-  response,
+  token,
   error,
 });
+
+export function* refreshExpiredTokenSaga() {
+  const { token }: SbankenState = yield select((state: RootState) => state.sbanken);
+  if (validateAccessToken(token)) return;
+  yield put(getTokenRequest());
+  yield take(SbankenActionType.GetTokenResponse);
+}
 
 export function* getTokenSaga() {
   const { credentials }: SbankenState = yield select((state: RootState) => state.sbanken);
@@ -32,8 +39,9 @@ export function* getTokenSaga() {
       return yield put(getTokenResponse(undefined, response.statusText));
     }
     const tokenResponse: SbankenTokenResponse = yield call([response, response.json]);
-    yield put(getTokenResponse(tokenResponse));
-    yield call(storeAccessToken, transformAccessToken(tokenResponse));
+    const token = transformAccessToken(tokenResponse);
+    yield put(getTokenResponse(token));
+    yield call(storeAccessToken, token);
   } catch (e) {
     yield put(getTokenResponse(undefined, (e as Error).message));
   }

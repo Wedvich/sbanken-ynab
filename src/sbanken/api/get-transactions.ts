@@ -4,6 +4,7 @@ import { RootState } from '../../store/root-reducer';
 import { sbankenApiBaseUrl, SbankenTransaction, SbankenTransactionEnriched, patchDate, SbankenTransactionType } from '.';
 import { computeTransactionId } from '../utils';
 import { TransactionsState } from '../../transactions/reducer';
+import { refreshExpiredTokenSaga } from './get-token';
 
 export const getTransactionsRequest = (accountId: string) => ({
   type: SbankenActionType.GetTransactionsRequest as SbankenActionType.GetTransactionsRequest,
@@ -54,6 +55,7 @@ const enrichTransactions = async (transactions: SbankenTransaction[], accountId:
 
 // TODO: Typed action
 export function* getTransactionsSaga({ accountId }) {
+  yield call(refreshExpiredTokenSaga);
   const { token, customerId }: SbankenState = yield select((state: RootState) => state.sbanken);
   const { startDate }: TransactionsState = yield select((state: RootState) => state.transactions);
 

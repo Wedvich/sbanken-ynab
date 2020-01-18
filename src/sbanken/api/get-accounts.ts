@@ -2,6 +2,7 @@ import { put, call, select } from 'redux-saga/effects';
 import { SbankenActionType, SbankenState } from '../reducer';
 import { RootState } from '../../store/root-reducer';
 import { SbankenAccount, sbankenApiBaseUrl } from '.';
+import { refreshExpiredTokenSaga } from './get-token';
 
 export const getAccountsRequest = () => ({
   type: SbankenActionType.GetAccountsRequest as SbankenActionType.GetAccountsRequest,
@@ -13,7 +14,7 @@ export const getAccountsResponse = (accounts: SbankenAccount[]) => ({
 });
 
 export function* getAccountsSaga() {
-  // TODO: Ensure token is valid
+  yield call(refreshExpiredTokenSaga);
   const { token, customerId }: SbankenState = yield select((state: RootState) => state.sbanken);
 
   const response = yield call(fetch, `${sbankenApiBaseUrl}/accounts`, {
