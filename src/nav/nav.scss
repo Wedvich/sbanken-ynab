@@ -68,6 +68,11 @@
         width: 0.375rem;
       }
     }
+
+    &.dragging {
+      background: white;
+      box-shadow: 0 0 0.5rem colors.$dark-gray;
+    }
   }
 
   .sby-button-group {

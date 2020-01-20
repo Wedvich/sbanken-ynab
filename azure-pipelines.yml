@@ -9,6 +9,7 @@ steps:
   - script: yarn eslint-ci
   - script: yarn stylelint
   - script: yarn typecheck
+  - script: yarn test-ci
   - script: yarn build
   - task: CopyFiles@2
     inputs:

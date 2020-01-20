@@ -6,6 +6,7 @@ export enum AccountsActionType {
   Add = 'accounts/add',
   Remove = 'accounts/remove',
   Rename = 'accounts/rename',
+  Reorder = 'accounts/reorder',
 }
 
 const add = (source: ConnectedAccountSource) => ({
@@ -24,10 +25,17 @@ const rename = (source: ConnectedAccountSource, name: string) => ({
   name,
 });
 
+const reorder = (sourceIndex: number, destinationIndex: number) => ({
+  type: AccountsActionType.Reorder as AccountsActionType.Reorder,
+  sourceIndex,
+  destinationIndex,
+});
+
 export const actions = {
   add,
   remove,
   rename,
+  reorder,
 };
 
 export type AccountsAction = ReturnType<typeof actions[keyof typeof actions]>
@@ -64,6 +72,13 @@ const reducer: Reducer<AccountsState, AccountsAction> = (state = initialState, a
         },
         ...state.slice(accountIndex + 1),
       ];
+    }
+
+    case AccountsActionType.Reorder: {
+      const nextState = [...state];
+      const [account] = nextState.splice(action.sourceIndex, 1);
+      nextState.splice(action.destinationIndex, 0, account);
+      return nextState;
     }
 
     default: {

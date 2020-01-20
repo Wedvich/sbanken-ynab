@@ -16,8 +16,6 @@ module.exports = (api) => {
 
   const plugins = [
     '@babel/plugin-proposal-class-properties',
-    '@babel/plugin-proposal-optional-chaining',
-    '@babel/plugin-proposal-nullish-coalescing-operator',
     'react-hot-loader/babel',
   ];
 
