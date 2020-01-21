@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NWebsec.AspNetCore.Middleware;
 
 namespace Sby
 {
@@ -49,6 +48,7 @@ namespace Sby
                 .ScriptSources(action => action.Self())
                 .StyleSources(action => action
                     .Self()
+                    .UnsafeInline()
                     .CustomSources("https://fonts.googleapis.com/css"))
             );
 

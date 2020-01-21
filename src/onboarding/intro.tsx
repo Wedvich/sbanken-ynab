@@ -14,6 +14,9 @@ const OnboardingIntro = () => {
         Denne appen gir deg et visuelt grensesnitt for å overføre transaksjoner fra Sbanken til YNAB og holde kontoene ajour.
         <br />
         <br />
+        Data lagres kun lokalt i nettleseren din, og ingenting sendes til serveren. Den ligger for øvrig i Microsoft Azure sitt norske datasenter, så filene og trafikken går alltid innenfor Norges grenser.
+        <br />
+        <br />
         Appen har ingen tilhørighet til verken Sbanken eller You Need A Budget.
       </div>
       <div className="sby-button-group">
