@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NWebsec.AspNetCore.Middleware;
 
 namespace Sby
 {
@@ -33,6 +34,23 @@ namespace Sby
             {
                 app.UseHsts();
             }
+
+            app.UseXContentTypeOptions();
+            app.UseXfo(options => options.SameOrigin());
+            app.UseXXssProtection(options => options.EnabledWithBlockMode());
+            app.UseXRobotsTag(options => options.NoIndex().NoFollow());
+            app.UseReferrerPolicy(opts => opts.SameOrigin());
+
+            app.UseCsp(options => options
+                .FontSources(action => action
+                    .Self()
+                    .CustomSources("https://fonts.gstatic.com"))
+                .ObjectSources(action => action.None())
+                .ScriptSources(action => action.Self())
+                .StyleSources(action => action
+                    .Self()
+                    .CustomSources("https://fonts.googleapis.com/css"))
+            );
 
             app.UseDefaultFiles(new DefaultFilesOptions
             {
