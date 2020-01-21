@@ -19,6 +19,7 @@
     "eslint": "eslint . --fix --report-unused-disable-directives",
     "eslint-ci": "eslint .",
     "start": "node server.js",
+    "start-net": "dotnet run",
     "stylelint": "stylelint src/**/*.scss --fix",
     "typecheck": "tsc"
   },
