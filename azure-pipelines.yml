@@ -3,7 +3,7 @@ jobs:
   displayName: Build frontend
 
   pool:
-    vmImage: ubuntu-latest
+    vmImage: ubuntu-18.04
 
   steps:
     - task: UseNode@1
@@ -58,7 +58,7 @@ jobs:
   displayName: Build backend
 
   pool:
-    vmImage: windows-latest
+    vmImage: windows-2019
 
   steps:
     - task: UseDotNet@2
@@ -72,7 +72,7 @@ jobs:
       inputs:
         command: publish
         publishWebProjects: true
-        arguments: --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)
+        arguments: --configuration Release --output $(Build.ArtifactStagingDirectory)
         zipAfterPublish: false
 
     - task: PublishPipelineArtifact@1
@@ -80,5 +80,3 @@ jobs:
       inputs:
         targetPath: $(Build.ArtifactStagingDirectory)
         artifact: backend
-
-
