@@ -7,7 +7,7 @@ jobs:
 
   steps:
     - task: UseNode@1
-      displayName: Use Node 12 LTS
+      displayName: Install Node 12 LTS
       inputs:
         version: 12.x
 
@@ -48,11 +48,11 @@ jobs:
         contents: wwwroot/**/*
         targetFolder: $(Build.ArtifactStagingDirectory)
 
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       displayName: Publish build artifacts
       inputs:
-        pathToPublish: $(Build.ArtifactStagingDirectory)
-        artifactName: frontend
+        targetPath: $(Build.ArtifactStagingDirectory)
+        artifact: frontend
 
 - job: backend
   displayName: Build backend
@@ -62,7 +62,7 @@ jobs:
 
   steps:
     - task: UseDotNet@2
-      displayName: Install .NET Core SDK
+      displayName: Install .NET Core 3.0 SDK
       inputs:
         version: 3.0.x
         performMultiLevelLookup: true
@@ -75,7 +75,10 @@ jobs:
         arguments: --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)
         zipAfterPublish: false
 
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
+      displayName: Publish build artifacts
       inputs:
-        pathtoPublish: $(Build.ArtifactStagingDirectory)
-        artifactName: backend
+        targetPath: $(Build.ArtifactStagingDirectory)
+        artifact: backend
+
+

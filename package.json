@@ -22,7 +22,7 @@
     "start-net": "dotnet run",
     "stylelint": "stylelint src/**/*.scss --fix",
     "test": "jest --coverage --passWithNoTests",
-    "test-ci": "jest --ci --bail --coverage --passWithNoTests",
+    "test-ci": "jest --ci --coverage --passWithNoTests",
     "typecheck": "tsc"
   },
   "dependencies": {
