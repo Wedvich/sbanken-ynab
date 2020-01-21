@@ -79,7 +79,7 @@ export interface SbankenTransactionEnriched extends SbankenTransaction {
 
 export const patchDate = (date: string, text: string, purchaseDate?: string) => {
   if (!purchaseDate) {
-    const textDateFragments = /^(?:\*\d{4}\s+)(\d{2})\.(\d{2})/.exec(text);
+    const textDateFragments = /^(?:\*\d{4}\s+)?(\d{2})\.(\d{2})/.exec(text);
     if (!textDateFragments) return date;
 
     const textDate = DateTime.fromObject({

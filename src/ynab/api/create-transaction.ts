@@ -33,7 +33,7 @@ export function* createTransactionSaga({ transactionId }) {
     date: transaction.date.toISO(),
     // eslint-disable-next-line @typescript-eslint/camelcase
     import_id: transaction.id,
-    memo: `[Sbanken-YNAB]: ${transaction.description}`,
+    memo: transaction.description,
   } as YnabTransaction;
 
   const response = yield call(

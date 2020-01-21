@@ -1,6 +1,7 @@
 module.exports = {
   browser: true,
   collectCoverageFrom: ['src/**/*.*'],
-  coverageReporters: ['cobertura'],
+  coverageReporters: ['lcov', 'cobertura'],
+  reporters: ['default', 'jest-junit'],
   testRunner: 'jest-circus/runner',
 };

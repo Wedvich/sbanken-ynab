@@ -75,3 +75,6 @@ typings/
 
 # Webpack build output
 public
+
+# Test output
+junit.xml
