@@ -20,7 +20,7 @@ const SbankenOnboarding = () => {
   const [clientSecret, setClientSecret] = useState(existingCredentials?.clientSecret || process.env.SBANKEN_CLIENT_SECRET);
   const [customerId, setCustomerId] = useState(state.customerId || process.env.SBANKEN_CUSTOMER_ID);
 
-  const validCustomerId = customerId.length === 11;
+  const validCustomerId = customerId?.length === 11;
 
   const canSubmit = !state.authenticating &&
     clientId &&
