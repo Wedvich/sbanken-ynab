@@ -3,7 +3,7 @@ jobs:
   displayName: Build frontend
 
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: ubuntu-latest
 
   steps:
     - task: UseNode@1
@@ -23,19 +23,24 @@ jobs:
     - script: yarn typecheck
       displayName: Check types
 
-    - script: yarn build
-      displayName: Build app bundles
+    - script: yarn test-ci
+      displayName: Run tests
 
     - task: PublishTestResults@2
       displayName: Publish test results
+      continueOnError: true
       inputs:
         testResultsFiles: junit.xml
 
     - task: PublishCodeCoverageResults@1
       displayName: Publish test coverage
+      continueOnError: true
       inputs:
         codeCoverageTool: Cobertura
         summaryFileLocation: coverage/cobertura-coverage.xml
+
+    - script: yarn build
+      displayName: Build app bundles
 
     - task: CopyFiles@2
       displayName: Copy build output to staging directory
@@ -53,7 +58,7 @@ jobs:
   displayName: Build backend
 
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: windows-latest
 
   steps:
     - task: UseDotNet@2
@@ -68,6 +73,7 @@ jobs:
         command: publish
         publishWebProjects: true
         arguments: --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)
+        zipAfterPublish: false
 
     - task: PublishBuildArtifacts@1
       inputs:
