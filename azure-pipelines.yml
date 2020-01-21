@@ -12,10 +12,24 @@ jobs:
         version: 12.x
 
     - script: yarn install --frozen-lockfile
+      displayName: Install dependencies
+
     - script: yarn eslint-ci
+      displayName: Lint TypeScript code
+
     - script: yarn stylelint
+      displayName: Lint SCSS code
+
     - script: yarn typecheck
+      displayName: Check types
+
     - script: yarn build
+      displayName: Build app bundles
+
+    - task: PublishTestResults@2
+      displayName: Publish test results
+      inputs:
+        testResultsFiles: junit.xml
 
     - task: PublishCodeCoverageResults@1
       displayName: Publish test coverage
@@ -26,7 +40,7 @@ jobs:
     - task: CopyFiles@2
       displayName: Copy build output to staging directory
       inputs:
-        contents: public/**/*
+        contents: wwwroot/**/*
         targetFolder: $(Build.ArtifactStagingDirectory)
 
     - task: PublishBuildArtifacts@1
@@ -52,9 +66,8 @@ jobs:
       displayName: Package artifacts
       inputs:
         command: publish
-        publishWebProjects: True
+        publishWebProjects: true
         arguments: --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)
-        zipAfterPublish: True
 
     - task: PublishBuildArtifacts@1
       inputs:
