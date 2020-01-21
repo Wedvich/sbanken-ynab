@@ -1,25 +1,62 @@
-pool:
-  vmImage: 'ubuntu-latest'
+jobs:
+- job: frontend
+  displayName: Build frontend
 
-steps:
-  - task: UseNode@1
-    inputs:
-      version: 12.x
-  - script: yarn install --frozen-lockfile
-  - script: yarn eslint-ci
-  - script: yarn stylelint
-  - script: yarn typecheck
-  - script: yarn test-ci
-  - script: yarn build
-  - task: CopyFiles@2
-    inputs:
-      contents: |
-        public/**/*
-        package.json
-        server.js
-        yarn.lock
-      targetFolder: $(Build.ArtifactStagingDirectory)
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathToPublish: $(Build.ArtifactStagingDirectory)
-      artifactName: drop
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  steps:
+    - task: UseNode@1
+      displayName: Use Node 12 LTS
+      inputs:
+        version: 12.x
+
+    - script: yarn install --frozen-lockfile
+    - script: yarn eslint-ci
+    - script: yarn stylelint
+    - script: yarn typecheck
+    - script: yarn build
+
+    - task: PublishCodeCoverageResults@1
+      displayName: Publish test coverage
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: coverage/cobertura-coverage.xml
+
+    - task: CopyFiles@2
+      displayName: Copy build output to staging directory
+      inputs:
+        contents: public/**/*
+        targetFolder: $(Build.ArtifactStagingDirectory)
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish build artifacts
+      inputs:
+        pathToPublish: $(Build.ArtifactStagingDirectory)
+        artifactName: frontend
+
+- job: backend
+  displayName: Build backend
+
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  steps:
+    - task: UseDotNet@2
+      displayName: Install .NET Core SDK
+      inputs:
+        version: 3.0.x
+        performMultiLevelLookup: true
+
+    - task: DotNetCoreCLI@2
+      displayName: Package artifacts
+      inputs:
+        command: publish
+        publishWebProjects: True
+        arguments: --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)
+        zipAfterPublish: True
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: $(Build.ArtifactStagingDirectory)
+        artifactName: backend

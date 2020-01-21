@@ -75,6 +75,11 @@ typings/
 
 # Webpack build output
 public
+wwwroot
 
 # Test output
 junit.xml
+
+# .NET Core build output
+[Bb]in
+[Oo]bj

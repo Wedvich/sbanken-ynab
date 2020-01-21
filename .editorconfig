@@ -11,3 +11,7 @@ quote_type = single
 
 [*.md]
 trim_trailing_whitespace = false
+
+[*.cs]
+indent_size = 4
+quote_type = double
