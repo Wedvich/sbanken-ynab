@@ -1,9 +1,10 @@
 import { Reducer } from 'redux';
-import { YnabAccount, YnabTransaction } from './api';
+import { YnabAccount, YnabTransaction, YnabBudget } from './api';
 import { getAccountsRequest, getAccountsResponse } from './api/get-accounts';
 import { getStoredServerKnowledge, getStoredBudgetId, getStoredToken } from './utils';
 import { getTransactionsRequest, getTransactionsResponse } from './api/get-transactions';
 import { createTransactionRequest, createTransactionResponse } from './api/create-transaction';
+import { getBudgetsRequest, getBudgetsResponse } from './api/get-budgets';
 
 export enum YnabActionType {
   SetToken = 'ynab/set-token',
@@ -14,6 +15,8 @@ export enum YnabActionType {
   GetTransactionsResponse = 'ynab/get-transactions-response',
   CreateTransactionRequest = 'ynab/create-transaction-request',
   CreateTransactionResponse = 'ynab/create-transaction-response',
+  GetBudgetsRequest = 'ynab/get-budgets-request',
+  GetBudgetsResponse = 'ynab/get-budgets-response',
 }
 
 const setToken = (token: string) => ({
@@ -35,6 +38,8 @@ export const actions = {
   getTransactionsResponse,
   createTransactionRequest,
   createTransactionResponse,
+  getBudgetsRequest,
+  getBudgetsResponse,
 };
 
 export type YnabAction = ReturnType<typeof actions[keyof typeof actions]>
@@ -48,6 +53,7 @@ const initialState = {
   accounts: { } as { [key: string]: YnabAccount },
   loading: false,
   transactions: [] as YnabTransaction[],
+  budgets: [] as YnabBudget[],
 };
 
 export type YnabState = typeof initialState;
@@ -122,6 +128,19 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
       return {
         ...state,
         loading: false,
+      };
+
+    case YnabActionType.GetBudgetsRequest:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case YnabActionType.GetBudgetsResponse:
+      return {
+        ...state,
+        loading: false,
+        budgets: action.budgets,
       };
 
     default: {

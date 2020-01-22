@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/root-reducer';
 import ExternalLink from '../shared/external-link';
 import OnboardingSteps from './steps';
+import Loader from '../shared/loader';
 
 const YnabOnboarding = () => {
   const formRef = useRef<HTMLFormElement>();
@@ -17,11 +18,17 @@ const YnabOnboarding = () => {
 
   const canSubmit = personalAccessToken && budgetId;
 
+  const showBudgetPicker = !state.loading && state.personalAccessToken;
+
   const onSubmit = useCallback((e: FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
-    dispatch(ynabActions.setToken(personalAccessToken));
-    dispatch(ynabActions.setBudget(budgetId));
+    // TODO: Add "verified" or something
+    if (!state.personalAccessToken) {
+      dispatch(ynabActions.setToken(personalAccessToken));
+    } else {
+      dispatch(ynabActions.setBudget(budgetId));
+    }
   }, [canSubmit, personalAccessToken, budgetId]);
 
   return (
@@ -29,41 +36,55 @@ const YnabOnboarding = () => {
       <h2>Sbanken → YNAB</h2>
       <h1>Koble til YNAB</h1>
       <div className="sby-onboarding-instructions">
-        Du må gå til <ExternalLink href="https://app.youneedabudget.com/settings/developer">utviklerinnstillingene</ExternalLink> og opprette en Personal Access Token.
-        <br />
-        <br />
-        Deretter finner du budsjett-ID&apos;en din i URL&apos;en når du er inne i YNAB. Eksempel:
-        <br />
-        <br />
-        <span className="example">https://app.youneedabudget.com/<strong>aca193c6-edd5-484f-b045-b3721c46d9b6</strong>/budget</span>
+        {!showBudgetPicker && (
+          <>
+            Du må gå til <ExternalLink href="https://app.youneedabudget.com/settings/developer">utviklerinnstillingene</ExternalLink> og opprette et Personal Access Token.
+          </>
+        )}
+
+        {showBudgetPicker && (
+          <>
+            Velg budsjettet du bruker i YNAB.
+          </>
+        )}
       </div>
-      <div className="sby-input-group">
-        <label htmlFor="ynabPersonalAccessToken">Personal Access Token</label>
-        <input
-          type="text"
-          id="ynabPersonalAccessToken"
-          className="sby-text-input"
-          value={personalAccessToken}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setPersonalAccessToken(e.target.value)}
-          size={32}
-          autoComplete="off"
-        />
-      </div>
-      <div className="sby-input-group">
-        <label htmlFor="ynabBudgetId">Budsjett</label>
-        <input
-          type="text"
-          id="ynabBudgetId"
-          className="sby-text-input"
-          value={budgetId}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setBudgetId(e.target.value)}
-          size={32}
-          autoComplete="off"
-        />
+      <div className="sby-input-group-collection">
+        <div className="sby-input-group">
+          <label htmlFor="ynabPersonalAccessToken">Personal Access Token</label>
+          <input
+            type="text"
+            id="ynabPersonalAccessToken"
+            className="sby-text-input"
+            value={personalAccessToken}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setPersonalAccessToken(e.target.value)}
+            size={32}
+            autoComplete="off"
+          />
+        </div>
+        {showBudgetPicker && (
+          <div className="sby-input-group">
+            <label htmlFor="ynabBudgetId">Budsjett</label>
+            <select
+              id="ynabBudgetId"
+              value={budgetId}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => setBudgetId(e.target.value)}
+            >
+              {state.budgets.map((budget) => (
+                <option
+                  key={budget.id}
+                  value={budget.id}
+                >
+                  {budget.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
       <OnboardingSteps />
       <div className="sby-button-group">
-        <button type="submit">
+        <button type="submit" disabled={!canSubmit}>
+          {state.loading && <Loader inverted />}
           <span>Fortsett</span>
         </button>
       </div>

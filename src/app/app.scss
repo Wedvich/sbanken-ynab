@@ -30,7 +30,9 @@ body {
     margin-bottom: 0.5rem;
   }
 
-  input[type='text'] {
+  input[type='text'],
+  select {
+    appearance: none;
     background-color: white;
     border-radius: 2px;
     border: thin solid colors.$medium-gray;
@@ -48,6 +50,7 @@ body {
 
     &::selection {
       background: colors.$light-pink;
+      outline: none;
     }
 
     &:disabled,
@@ -55,6 +58,12 @@ body {
       background-color: colors.$light-gray;
       color: colors.$dark-gray;
     }
+  }
+}
+
+.sby-input-group-collection {
+  .sby-input-group {
+    width: 100%;
   }
 }
 

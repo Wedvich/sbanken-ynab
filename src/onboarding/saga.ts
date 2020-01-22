@@ -23,11 +23,13 @@ export default function* (history: History) {
 
   const { personalAccessToken: ynabToken, budgetId }: YnabState = yield select((state: RootState) => state.ynab);
   if (!ynabToken || !budgetId) {
-    history.replace('/onboarding/ynab');
-    yield all([
-      take(YnabActionType.SetToken),
-      take(YnabActionType.SetBudget),
-    ]);
+    history.push('/onboarding/ynab');
+    if (ynabToken) {
+      yield put(ynabActions.getBudgetsRequest());
+    }
+    yield take(YnabActionType.GetBudgetsResponse);
+    history.replace('/onboarding/ynab/budget');
+    yield take(YnabActionType.SetBudget);
   }
 
   history.replace('/');

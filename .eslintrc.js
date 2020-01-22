@@ -39,7 +39,9 @@ module.exports = {
     'indent': ['error', 2,
       {
         'SwitchCase': 1,
-      }],
+      },
+    ],
+    'jsx-a11y/no-onchange': 'off',
     'jsx-quotes': [ 'error', 'prefer-double'],
     'no-multiple-empty-lines': [
       'error',

@@ -22,7 +22,7 @@ const DeleteSettingsModal = () => {
         <h2>Fjern alle data?</h2>
       </header>
       <form onSubmit={onSubmit} ref={formRef}>
-        <p>Dette vil permanent slette all data og innloggingsinformasjon som er lagret i denne appen, og sende deg tilbake til startsiden.</p>
+        <p>Dette vil permanent slette all data og innloggingsinformasjon som er lagret, og sende deg tilbake til startsiden.</p>
         <p>Ingenting blir slettet i Sbanken eller You Need A Budget.</p>
         <div className="sby-button-group modal-buttons">
           <button type="button" onClick={() => dispatch(actions.closeModal(ModalId.DeleteSettings))}>Avbryt</button>

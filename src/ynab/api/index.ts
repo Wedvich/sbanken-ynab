@@ -35,3 +35,24 @@ export interface YnabTransaction {
   transfer_account_id: string | null;
   transfer_transaction_id: string | null;
 }
+
+export interface YnabBudget {
+  currency_format: {
+    currency_symbol: string;
+    decimal_digits: number;
+    decimal_separator: string;
+    display_symbol: boolean;
+    example_format: string;
+    group_separator: string;
+    iso_code: string;
+    symbol_first: boolean;
+  };
+  date_format: {
+    format: string;
+  };
+  first_month: string;
+  id: string;
+  last_modified_on: string;
+  last_month: string;
+  name: string;
+}
