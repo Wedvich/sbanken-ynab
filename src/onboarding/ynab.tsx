@@ -16,14 +16,14 @@ const YnabOnboarding = () => {
   const [personalAccessToken, setPersonalAccessToken] = useState(state.personalAccessToken || process.env.YNAB_PERSONAL_ACCESS_TOKEN);
   const [budgetId, setBudgetId] = useState(state.budgetId || process.env.YNAB_BUDGET_ID);
 
-  const canSubmit = personalAccessToken && budgetId;
-
   const showBudgetPicker = !state.loading && state.personalAccessToken;
+
+  const canSubmit = personalAccessToken && (!showBudgetPicker || budgetId);
 
   const onSubmit = useCallback((e: FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
-    // TODO: Add "verified" or something
+    // TODO: Add "verified" or something about the token.
     if (!state.personalAccessToken) {
       dispatch(ynabActions.setToken(personalAccessToken));
     } else {
@@ -44,7 +44,7 @@ const YnabOnboarding = () => {
 
         {showBudgetPicker && (
           <>
-            Velg budsjettet du bruker i YNAB.
+            Velg budsjettet du bruker i You Need A Budget.
           </>
         )}
       </div>
@@ -69,6 +69,7 @@ const YnabOnboarding = () => {
               value={budgetId}
               onChange={(e: ChangeEvent<HTMLSelectElement>) => setBudgetId(e.target.value)}
             >
+              <option selected disabled value="">&nbsp;</option>
               {state.budgets.map((budget) => (
                 <option
                   key={budget.id}
