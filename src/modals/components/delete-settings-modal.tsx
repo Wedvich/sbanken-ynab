@@ -3,17 +3,23 @@ import { useDispatch } from 'react-redux';
 import { actions } from '../reducer';
 import { ModalId } from '../types';
 import useFocusTrap from '../../shared/use-focus-trap';
+import { cacheName } from '../../service-worker/constants';
 
 const DeleteSettingsModal = () => {
   const formRef = useRef<HTMLFormElement>();
   useFocusTrap(formRef);
   const dispatch = useDispatch();
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     sessionStorage.clear();
     localStorage.clear();
-    window.location.reload();
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all([registrations.map((registration) => registration.unregister())]);
+      await caches.delete(cacheName);
+    }
+    window.location.reload(true);
   };
 
   return (
