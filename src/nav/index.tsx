@@ -7,13 +7,14 @@ import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import accountsSelector from '../accounts/selectors/accounts';
 import { loadingSelector } from '../shared/utils';
 import Loader from '../shared/loader';
-import Icon, { IconType, IconSize } from '../shared/icon';
+import Icon, { IconType, IconSize, IconStyle } from '../shared/icon';
 import { actions as modalActions } from '../modals/reducer';
 import { ModalId } from '../modals/types';
 import NavAccount from './components/account';
 import { actions as accountActions } from '../accounts/reducer';
 
 import './nav.scss';
+import { RootState } from '../store/root-reducer';
 
 const Nav = () => {
   const connectedAccounts = useSelector(accountsSelector);
@@ -21,6 +22,7 @@ const Nav = () => {
   const loading = useSelector(loadingSelector);
   const location = useLocation();
   const dispatch = useDispatch();
+  const isOffline = useSelector((state: RootState) => state.app.offline);
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -68,6 +70,13 @@ const Nav = () => {
         }}>
           <Icon type={IconType.Trash} size={IconSize.Small} />
         </button>
+        {isOffline && (
+          <Icon
+            type={IconType.Network}
+            style={IconStyle.Outline}
+            className="sby-network-status"
+          />
+        )}
       </div>
     </nav>
   );

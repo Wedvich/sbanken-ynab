@@ -68,7 +68,7 @@ module.exports = {
     }),
     new WebpackBar({
       color: 'hotpink',
-      name: 'Sbanken → YNAB',
+      name: 'App           ',
     }),
   ],
   resolve: {

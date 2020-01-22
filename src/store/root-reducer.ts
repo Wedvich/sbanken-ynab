@@ -5,9 +5,11 @@ import * as utils from '../shared/utils';
 import accountsReducer, { accountsStateKey } from '../accounts/reducer';
 import transactionsReducer, { transactionsStateKey } from '../transactions/reducer';
 import modalsReducer, { modalsStateKey } from '../modals/reducer';
+import appReducer, { appStateKey } from '../app/reducer';
 
 let reducerMap = {
   [accountsStateKey]: accountsReducer,
+  [appStateKey]: appReducer,
   [modalsStateKey]: modalsReducer,
   [sbankenStateKey]: sbankenReducer,
   [transactionsStateKey]: transactionsReducer,

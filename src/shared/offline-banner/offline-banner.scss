@@ -1,0 +1,41 @@
+@use '../colors';
+
+.sby-offline-banner {
+  align-items: center;
+  background: colors.$medium-yellow;
+  bottom: 4rem;
+  box-shadow: 0 0 1rem colors.$dark-gray;
+  display: flex;
+  justify-content: center;
+  left: 2rem;
+  padding: 1rem;
+  position: fixed;
+  right: 2rem;
+  will-change: transform, opacity;
+
+  &.enter {
+    opacity: 0;
+    transform: translateY(5rem);
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+
+    &-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &.exit {
+    opacity: 1;
+    transform: translateY(0);
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+
+    &-active {
+      opacity: 0;
+      transform: translateY(5rem);
+    }
+  }
+
+  span {
+    margin: 0 1em;
+  }
+}

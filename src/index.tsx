@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
-import Root from './root';
+import App from './app';
 import createStore from './store';
 
 const history = createBrowserHistory();
@@ -12,7 +12,7 @@ const store = createStore(history);
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
-      <Root />
+      <App />
     </Router>
   </Provider>,
   document.getElementById('sby')

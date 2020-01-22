@@ -1,6 +1,7 @@
 import { createStore, compose as reduxCompose, Middleware, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import immutableStateInvariantMiddleware from 'redux-immutable-state-invariant';
+import { createLogger } from 'redux-logger';
 import { History } from 'history';
 import rootReducer from './root-reducer';
 import rootSaga from './root-saga';
@@ -11,7 +12,10 @@ const compose =
 export default (history: History) => {
   const middlewares: Middleware[] = [];
   if (process.env.NODE_ENV === 'development') {
-    middlewares.push(immutableStateInvariantMiddleware());
+    middlewares.push(
+      createLogger({ collapsed: true }),
+      immutableStateInvariantMiddleware()
+    );
   }
 
   const sagaMiddleware = createSagaMiddleware();

@@ -5,12 +5,13 @@ import Onboarding from '../onboarding';
 import Accounts from '../accounts';
 import icons from '../shared/icon/icons.svg';
 import Modals from '../modals';
+import OfflineBanner from '../shared/offline-banner';
 
 import 'normalize.css/normalize.css';
-import './root.scss';
+import './app.scss';
 
-const Root = () => (
-  <div className="sby-root">
+const App = () => (
+  <div className="sby-app">
     <div hidden dangerouslySetInnerHTML={{ __html: icons }} />
     <Switch>
       <Route path="/onboarding">
@@ -23,8 +24,9 @@ const Root = () => (
         <Redirect to="/accounts" />
       </Route>
     </Switch>
+    <OfflineBanner />
     <Modals />
   </div>
 );
 
-export default hot(Root);
+export default hot(App);
