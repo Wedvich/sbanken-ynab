@@ -41,7 +41,7 @@ const SelectedAccount = ({ account }: SelectedAccountProps) => {
           dispatch(ynabActions.getTransactionsRequest(account.ynabId));
         }} disabled={loading}>
           {loading && <Loader inverted />}
-          {loading ? 'Oppdaterer' : 'Oppdater'} transaksjoner
+          {loading ? 'Henter' : 'Hent'} transaksjoner
         </button>
         <button onClick={() => {
           dispatch(sbankenActions.getAccountsRequest());

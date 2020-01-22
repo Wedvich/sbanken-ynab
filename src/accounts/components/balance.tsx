@@ -16,7 +16,7 @@ const Balance = ({ account }: BalanceProps) => {
           <td className="operator" />
           <th scope="col">Bokført saldo</th>
           <th scope="col" />
-          <th scope="col">Ikke bokført saldo</th>
+          <th scope="col">Ikke bokført</th>
           <th scope="col" />
           <th scope="col">Disponibel saldo</th>
           <th className="pull" />
