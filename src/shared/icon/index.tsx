@@ -6,6 +6,7 @@ export enum IconType {
   Edit,
   Error,
   ExternalLink,
+  Network,
   ThumbsUp,
   Trash,
 }
@@ -33,6 +34,10 @@ const iconSymbolMap = {
   [IconType.Error]: {
     [IconStyle.Outline]: 'close',
     [IconStyle.Solid]: 'error',
+  },
+  [IconType.Network]: {
+    [IconStyle.Outline]: 'wifi',
+    [IconStyle.Solid]: 'wireless',
   },
   [IconType.ThumbsUp]: {
     [IconStyle.Outline]: 'like-1',

@@ -6,7 +6,7 @@ import './footer.scss';
 const Footer = () => (
   <footer className="sby-footer">
     Ikoner av
-    <ExternalLink href="https://www.flaticon.com/authors/freepik" noIcon>Freepik</ExternalLink>
+    <ExternalLink href="https://www.flaticon.com/authors/smashicons" noIcon>Smashicons</ExternalLink>
     fra
     <ExternalLink href="https://www.flaticon.com" noIcon>www.flaticon.com</ExternalLink>
   </footer>
