@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 import { useHistory, Switch, Route } from 'react-router-dom';
@@ -23,7 +23,7 @@ const Accounts = () => {
   const noAccounts = connectedAccounts.length === 0;
   const selectedAccount = connectedAccounts.find((account) => account.compoundId === accountId);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!noAccounts && !accountId) {
       history.push(`/accounts/${connectedAccounts[0].compoundId}`);
     }

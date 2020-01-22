@@ -14,7 +14,7 @@ export default function* (history: History) {
     yield call(storeAccountSources, connectedAccountSources);
     if (type === AccountsActionType.Add) {
       yield call([history, history.push], `/accounts/${connectedAccounts[connectedAccounts.length - 1].compoundId}` as any);
-    } else {
+    } else if (type === AccountsActionType.Remove) {
       yield call([history, history.replace], '/accounts' as any);
     }
   });
