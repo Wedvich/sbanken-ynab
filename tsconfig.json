@@ -3,10 +3,17 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
+    "lib": [
+      "dom",
+      "esnext",
+      "webworker"
+    ],
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
     "resolveJsonModule": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
     "target": "esnext"
   },
   "include": [
