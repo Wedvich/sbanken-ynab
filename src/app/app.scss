@@ -16,8 +16,44 @@ body {
   font-size: 16px;
 }
 
+#sby {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
 .sby-app {
+  flex-shrink: 0;
   position: relative;
+  width: 100%;
+}
+
+%sby-input {
+  appearance: none;
+  background-color: white;
+  border-radius: 2px;
+  border: thin solid colors.$medium-gray;
+  display: inline-block;
+  font-size: 0.875rem;
+  padding: 0.375rem 0.5rem;
+  width: 100%;
+
+  &:focus {
+    background-color: white;
+    border-color: colors.$dark-pink;
+    box-shadow: 0 0 0 0.2rem colors.$light-pink;
+    outline: none;
+  }
+
+  &::selection {
+    background: colors.$light-pink;
+    outline: none;
+  }
+
+  &:disabled {
+    background-color: colors.$light-gray;
+    color: colors.$dark-gray;
+  }
 }
 
 .sby-input-group {
@@ -32,33 +68,18 @@ body {
 
   input[type='text'],
   select {
-    appearance: none;
-    background-color: white;
-    border-radius: 2px;
-    border: thin solid colors.$medium-gray;
-    display: inline-block;
-    font-size: 0.875rem;
-    padding: 0.375rem 0.5rem;
-    width: 100%;
-
-    &:focus {
-      background-color: white;
-      border-color: colors.$dark-pink;
-      box-shadow: 0 0 0 0.2rem colors.$light-pink;
-      outline: none;
-    }
-
-    &::selection {
-      background: colors.$light-pink;
-      outline: none;
-    }
-
-    &:disabled,
-    &:read-only {
-      background-color: colors.$light-gray;
-      color: colors.$dark-gray;
-    }
+    @extend %sby-input;
   }
+
+  input[type='text']:read-only {
+    background-color: colors.$light-gray;
+    color: colors.$dark-gray;
+  }
+}
+
+textarea {
+  @extend %sby-input;
+  resize: none;
 }
 
 .sby-input-group-collection {
@@ -117,5 +138,9 @@ body {
       font-weight: normal;
       padding: 0 0.5rem;
     }
+  }
+
+  & + & {
+    margin-top: 1rem;
   }
 }

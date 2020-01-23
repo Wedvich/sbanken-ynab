@@ -5,6 +5,7 @@ import './icon.scss';
 export enum IconType {
   Edit,
   Error,
+  Export,
   ExternalLink,
   Network,
   ThumbsUp,
@@ -26,6 +27,10 @@ const iconSymbolMap = {
   [IconType.Edit]: {
     [IconStyle.Outline]: 'edit',
     [IconStyle.Solid]: 'edit-1',
+  },
+  [IconType.Export]: {
+    [IconStyle.Outline]: 'send',
+    [IconStyle.Solid]: 'send-1',
   },
   [IconType.ExternalLink]: {
     [IconStyle.Outline]: 'exit',

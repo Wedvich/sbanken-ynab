@@ -41,6 +41,10 @@
         color: colors.$medium-red;
       }
 
+      .neutral {
+        color: black;
+      }
+
       span {
         color: colors.$dark-gray;
         font-family: fonts.$default;
@@ -105,38 +109,50 @@
     padding: 0 0.5rem;
     position: fixed;
     width: variables.$nav-width;
+
+    button {
+      align-items: center;
+      background: none;
+      border: none;
+      border-radius: 2px;
+      display: flex;
+      justify-content: center;
+      height: 2rem;
+      padding: 0;
+      transition: background-color 0.15s;
+      width: 2rem;
+
+      &:not(:disabled) {
+        cursor: pointer;
+      }
+    }
   }
 
-  .sby-delete-settings {
-    align-items: center;
-    background: none;
-    border: none;
-    border-radius: 2px;
-    display: flex;
-    justify-content: center;
-    height: 2rem;
-    padding: 0;
-    transition: background-color 0.15s;
-    width: 2rem;
-
+  .sby-nav-button {
     .sby-icon {
-      fill: colors.$medium-red;
+      fill: colors.$dark-purple;
       transition: fill 0.15s;
     }
 
-    &:not(:disabled) {
-      cursor: pointer;
-    }
-
-    .hover {
-      display: none;
-    }
-
     &:hover {
-      background: colors.$medium-red;
+      background: colors.$dark-purple;
 
       .sby-icon {
         fill: white;
+      }
+    }
+
+    &.sby-nav-delete-settings {
+      .sby-icon {
+        fill: colors.$medium-red;
+      }
+
+      &:hover {
+        background: colors.$medium-red;
+
+        .sby-icon {
+          fill: white;
+        }
       }
     }
   }

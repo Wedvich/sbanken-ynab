@@ -65,10 +65,15 @@ const Nav = () => {
         </div>
       )}
       <div className="sby-nav-footer">
-        <button className="sby-delete-settings" title="Fjern alle data" onClick={() => {
+        <button className="sby-nav-button sby-nav-delete-settings" title="Fjern alle data" onClick={() => {
           dispatch(modalActions.openModal(ModalId.DeleteSettings));
         }}>
           <Icon type={IconType.Trash} size={IconSize.Small} />
+        </button>
+        <button className="sby-nav-button" title="Eksporter innstillinger" onClick={() => {
+          dispatch(modalActions.openModal(ModalId.ExportSettings));
+        }}>
+          <Icon type={IconType.Export} size={IconSize.Small} />
         </button>
         {isOffline && (
           <Icon

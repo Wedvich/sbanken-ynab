@@ -1,8 +1,10 @@
 import { Reducer } from 'redux';
+import { ExportedSettings } from './utils';
 
 export enum AppActionType {
   HasUpdates = 'app/has-updates',
   UpdateOfflineStatus = 'app/update-offline-status',
+  ImportSettings = 'app/import-settings',
 }
 
 const hasUpdates = () => ({
@@ -14,9 +16,15 @@ const updateOfflineStatus = (offline: boolean) => ({
   offline,
 });
 
+const importSettings = (settings: ExportedSettings) => ({
+  type: AppActionType.ImportSettings as AppActionType.ImportSettings,
+  settings,
+});
+
 export const actions = {
   hasUpdates,
   updateOfflineStatus,
+  importSettings,
 };
 
 export type AppAction = ReturnType<typeof actions[keyof typeof actions]>
