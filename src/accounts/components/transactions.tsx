@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { formatCurrency, formatDate, useAccountId  } from '../utils';
+import { useAccountId  } from '../utils';
+import { formatCurrency, formatDate } from '../../localization';
 import transactionsSelector from '../selectors/transactions';
 import { loadingSelector } from '../../shared/utils';
 import { actions as ynabActions } from '../../ynab/reducer';
@@ -29,7 +30,7 @@ const Transactions = () => {
 
   return (
     <section className="sby-transactions">
-      <h2>Manglende transaksjoner</h2>
+      <h2>Kanskje noen av disse transaksjonene mangler eller er feil?</h2>
       <table>
         <thead>
           <tr>

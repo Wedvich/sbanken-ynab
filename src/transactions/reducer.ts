@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 import { DateTime } from 'luxon';
-import { formatDate } from '../accounts/utils';
+import { formatDate } from '../localization';
 
 export const transactionsStateKey = 'transactions';
 

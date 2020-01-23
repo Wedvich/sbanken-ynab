@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
-import { ConnectedAccount } from '../../accounts/types';
-import { getNumberClass, formatCurrency } from '../../accounts/utils';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
+import { ConnectedAccount } from '../../accounts/types';
+import { getNumberClass } from '../../accounts/utils';
+import { formatCurrency } from '../../localization';
 
 interface NavAccountProps {
   account: ConnectedAccount;

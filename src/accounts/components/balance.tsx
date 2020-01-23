@@ -1,6 +1,7 @@
 import React from 'react';
 import { ConnectedAccount } from '../types';
-import { formatCurrency, getNumberClass } from '../utils';
+import { getNumberClass } from '../utils';
+import { formatCurrency } from '../../localization';
 
 import './balance.scss';
 

@@ -1,5 +1,4 @@
 import { ConnectedAccountSource } from './types';
-import { DateTime } from 'luxon';
 import { useParams } from 'react-router-dom';
 
 export enum AccountsStorageKey {
@@ -25,14 +24,6 @@ export const createCompoundId = (source: ConnectedAccountSource) =>
 
 export const convertAmountFromYnab = (amount: number) =>
   Number.parseFloat((amount / 1000).toFixed(2));
-
-const currencyConverter = new Intl.NumberFormat('no-nb', { style: 'currency', currency: 'NOK' });
-
-export const formatCurrency = (amount: number) =>
-  currencyConverter.format(amount);
-
-export const formatDate = (date: DateTime) =>
-  date.toFormat('yyyy-MM-dd');
 
 export const useAccountId = () => {
   const { accountId } = useParams<{ accountId?: string }>();
