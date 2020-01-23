@@ -24,3 +24,14 @@ export enum HttpMethod {
   GET = 'GET',
   POST = 'POST',
 }
+
+export enum HttpErrorSource {
+  SbankenApi = 'sbanken-api',
+  YnabApi = 'ynab-api'
+}
+
+export interface HttpError {
+  source: HttpErrorSource;
+  statusCode: number;
+  statusText?: string;
+}

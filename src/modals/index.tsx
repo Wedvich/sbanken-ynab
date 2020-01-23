@@ -8,6 +8,7 @@ import { Transition } from 'react-transition-group';
 import DeleteSettingsModal from './components/delete-settings-modal';
 import ExportSettingsModal from './components/export-settings-modal';
 import ImportSettingsModal from './components/import-settings-modal';
+import ErrorModal from './components/error-modal';
 import './modals.scss';
 
 const Modals = () => {
@@ -48,6 +49,8 @@ const Modals = () => {
                   return <ExportSettingsModal />;
                 case ModalId.ImportSettings:
                   return <ImportSettingsModal />;
+                case ModalId.Error:
+                  return <ErrorModal />;
                 default:
                   return null;
               }

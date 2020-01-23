@@ -80,6 +80,13 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
 
     case YnabActionType.GetAccountsResponse:
     {
+      if (action.error) {
+        return {
+          ...state,
+          loading: false,
+        };
+      }
+
       return {
         ...state,
         loading: false,

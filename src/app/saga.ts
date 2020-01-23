@@ -4,12 +4,13 @@ import { ServiceWorkerMessageType } from '../service-worker/constants';
 import { actions, AppActionType } from './reducer';
 import { ExportedSettings } from './utils';
 import { actions as sbankenActions } from '../sbanken/reducer';
-import { actions as ynabActions } from '../ynab/reducer';
+import { actions as ynabActions, YnabActionType } from '../ynab/reducer';
 import { actions as modalActions } from '../modals/reducer';
 import { actions as accountActions } from '../accounts/reducer';
 import { decodeCredentials } from '../sbanken/utils';
 import { ModalId } from '../modals/types';
 import { OnboardingActionType } from '../onboarding/utils';
+import { HttpError } from '../shared/utils';
 
 /**
  * Handles messages to and from the service worker.
@@ -96,4 +97,12 @@ export default function* appSaga() {
 
   yield fork(offlineMonitorSaga);
   yield takeLatest(AppActionType.ImportSettings as any, importSettingsSaga);
+
+  yield takeLatest([
+    YnabActionType.GetAccountsResponse,
+  ] as any, function* httpErrorSaga({ error }: { error?: HttpError }) {
+    if (!error) return;
+    yield put(actions.setLastError(error));
+    yield put(modalActions.openModal(ModalId.Error));
+  });
 }
