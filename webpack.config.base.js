@@ -32,14 +32,20 @@ module.exports = {
             },
           },
           {
-            loader: 'css-loader',
+            loader: require.resolve('css-loader'),
             options: {
-              importLoaders: 1,
+              importLoaders: 2,
               sourceMap: isDev,
             },
           },
           {
-            loader: 'sass-loader',
+            loader: require.resolve('postcss-loader'),
+            options: {
+              sourceMap: isDev,
+            },
+          },
+          {
+            loader: require.resolve('sass-loader'),
             options: {
               sourceMap: isDev,
             },
@@ -48,7 +54,7 @@ module.exports = {
       },
       {
         test: /\.svg$/i,
-        loader: 'svg-inline-loader',
+        loader: require.resolve('svg-inline-loader'),
         options: {
           removeTags: true,
         },

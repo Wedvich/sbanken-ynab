@@ -40,6 +40,7 @@ namespace Sby
             }
             else
             {
+                app.UseHttpsRedirection();
                 app.UseHsts();
             }
 
@@ -48,7 +49,6 @@ namespace Sby
             app.UseXXssProtection(options => options.EnabledWithBlockMode());
             app.UseXRobotsTag(options => options.NoIndex().NoFollow());
             app.UseReferrerPolicy(opts => opts.SameOrigin());
-
             app.UseCsp(options => options
                 .FontSources(action => action
                     .Self()

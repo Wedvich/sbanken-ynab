@@ -23,7 +23,7 @@ const createProdConfig = (env = {}) => merge.smart(baseConfig, {
       'src/resources/robots.txt',
     ]),
     new SriPlugin({
-      hashFuncNames: ['sha512', 'sha3-512'],
+      hashFuncNames: ['sha512'],
     }),
     env.analyze && new (require('webpack-bundle-analyzer').BundleAnalyzerPlugin)(),
   ].filter(Boolean),

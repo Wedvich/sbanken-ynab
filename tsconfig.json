@@ -20,8 +20,7 @@
     "src/**/*",
     ".eslintrc.js",
     ".stylelintrc.js",
-    "babel.config.js",
-    "jest.config.js",
+    "*.config.js",
     "server.js",
     "webpack.config.*.js"
   ],
