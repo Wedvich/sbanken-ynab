@@ -1,6 +1,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { OnboardingActionType } from './utils';
+import { actions as modalActions } from '../modals/reducer';
+import { ModalId } from '../modals/types';
 
 const OnboardingIntro = () => {
   const dispatch = useDispatch();
@@ -22,6 +24,11 @@ const OnboardingIntro = () => {
       <div className="sby-button-group">
         <button onClick={() => dispatch({ type: OnboardingActionType.Seen })}>
           Kom i gang
+        </button>
+      </div>
+      <div className="sby-button-group">
+        <button className="link" onClick={() => dispatch(modalActions.openModal(ModalId.ImportSettings))}>
+          Importer innstillinger
         </button>
       </div>
     </div>

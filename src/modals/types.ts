@@ -1,4 +1,5 @@
 export enum ModalId {
-  RemoveAccount = 'modals/remove-account',
-  DeleteSettings = 'modals/delete-settings'
+  DeleteSettings = 'modals/delete-settings',
+  ExportSettings = 'modals/export-settings',
+  ImportSettings = 'modals/import-settings',
 }

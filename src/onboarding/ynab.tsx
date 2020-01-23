@@ -13,11 +13,12 @@ const YnabOnboarding = () => {
   const dispatch = useDispatch();
   const state = useSelector<RootState, YnabState>((state) => state.ynab);
 
-  const [personalAccessToken, setPersonalAccessToken] = useState(state.personalAccessToken || process.env.YNAB_PERSONAL_ACCESS_TOKEN);
-  const [budgetId, setBudgetId] = useState(state.budgetId || process.env.YNAB_BUDGET_ID);
+  const [personalAccessToken, setPersonalAccessToken] = useState(state.personalAccessToken || '');
+  const [budgetId, setBudgetId] = useState(state.budgetId || '');
 
   const showBudgetPicker = !state.loading && state.personalAccessToken;
 
+  // FIXME: This feels too brittle
   const canSubmit = personalAccessToken && (!showBudgetPicker || budgetId);
 
   const onSubmit = useCallback((e: FormEvent) => {
@@ -59,6 +60,7 @@ const YnabOnboarding = () => {
             onChange={(e: ChangeEvent<HTMLInputElement>) => setPersonalAccessToken(e.target.value)}
             size={32}
             autoComplete="off"
+            spellCheck={false}
           />
         </div>
         {showBudgetPicker && (
@@ -69,7 +71,7 @@ const YnabOnboarding = () => {
               value={budgetId}
               onChange={(e: ChangeEvent<HTMLSelectElement>) => setBudgetId(e.target.value)}
             >
-              <option selected disabled value="">&nbsp;</option>
+              <option disabled value="">&nbsp;</option>
               {state.budgets.map((budget) => (
                 <option
                   key={budget.id}

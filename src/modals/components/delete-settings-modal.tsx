@@ -19,7 +19,7 @@ const DeleteSettingsModal = () => {
       await Promise.all([registrations.map((registration) => registration.unregister())]);
       await caches.delete(cacheName);
     }
-    window.location.reload(true);
+    window.location.reload();
   };
 
   return (

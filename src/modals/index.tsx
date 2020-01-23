@@ -1,17 +1,28 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import cx from 'classnames';
 import { RootState } from '../store/root-reducer';
 import { actions } from './reducer';
-import RemoveAccountModal from './components/remove-account-modal';
 import { ModalId } from './types';
 import { Transition } from 'react-transition-group';
 import DeleteSettingsModal from './components/delete-settings-modal';
+import ExportSettingsModal from './components/export-settings-modal';
+import ImportSettingsModal from './components/import-settings-modal';
 import './modals.scss';
 
 const Modals = () => {
   const activeModal = useSelector((state: RootState) => state.modals[0]);
   const dispatch = useDispatch();
+
+  useLayoutEffect(() => {
+    const closeHandler = (e: KeyboardEvent)  => {
+      if (['Esc', 'Escape'].includes(e.key)) {
+        dispatch(actions.closeModal(activeModal));
+      }
+    };
+    window.addEventListener('keydown', closeHandler);
+    return () => window.removeEventListener('keydown', closeHandler);
+  }, [activeModal]);
 
   return (
     <div className={cx('sby-modals-root', {
@@ -31,10 +42,12 @@ const Modals = () => {
           <div className="sby-modal-content">
             {(() => {
               switch (modalId) {
-                case ModalId.RemoveAccount:
-                  return <RemoveAccountModal />;
                 case ModalId.DeleteSettings:
                   return <DeleteSettingsModal />;
+                case ModalId.ExportSettings:
+                  return <ExportSettingsModal />;
+                case ModalId.ImportSettings:
+                  return <ImportSettingsModal />;
                 default:
                   return null;
               }

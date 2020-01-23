@@ -1,7 +1,15 @@
 import { eventChannel, buffers } from 'redux-saga';
-import { call, fork, takeEvery, cancel, put, spawn } from 'redux-saga/effects';
+import { call, fork, takeEvery, cancel, put, spawn, takeLatest, all } from 'redux-saga/effects';
 import { ServiceWorkerMessageType } from '../service-worker/constants';
-import { actions } from './reducer';
+import { actions, AppActionType } from './reducer';
+import { ExportedSettings } from './utils';
+import { actions as sbankenActions } from '../sbanken/reducer';
+import { actions as ynabActions } from '../ynab/reducer';
+import { actions as modalActions } from '../modals/reducer';
+import { actions as accountActions } from '../accounts/reducer';
+import { decodeCredentials } from '../sbanken/utils';
+import { ModalId } from '../modals/types';
+import { OnboardingActionType } from '../onboarding/utils';
 
 /**
  * Handles messages to and from the service worker.
@@ -69,10 +77,23 @@ function* offlineMonitorSaga() {
   });
 }
 
+function* importSettingsSaga({ settings }: { settings: ExportedSettings }) {
+  const { clientId, clientSecret } = decodeCredentials(settings.sbankenCredentials);
+  yield all([
+    put(sbankenActions.setCredentials(clientId, clientSecret, settings.sbankenCustomerId)),
+    put(ynabActions.setToken(settings.ynabPersonalAccessToken)),
+    put(ynabActions.setBudget(settings.ynabBudgetId)),
+    ...settings.accounts.map((account) => put(accountActions.add(account))),
+    put(modalActions.closeModal(ModalId.ImportSettings)),
+    put({ type: OnboardingActionType.Seen }),
+  ]);
+}
+
 export default function* appSaga() {
   if ('serviceWorker' in navigator) {
     yield spawn(serviceWorkerSaga);
   }
 
   yield fork(offlineMonitorSaga);
+  yield takeLatest(AppActionType.ImportSettings as any, importSettingsSaga);
 }

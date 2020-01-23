@@ -16,9 +16,9 @@ const SbankenOnboarding = () => {
   const state = useSelector<RootState, SbankenState>((state) => state.sbanken);
   const existingCredentials = decodeCredentials(state.credentials);
 
-  const [clientId, setClientId] = useState(existingCredentials?.clientId || process.env.SBANKEN_CLIENT_ID);
-  const [clientSecret, setClientSecret] = useState(existingCredentials?.clientSecret || process.env.SBANKEN_CLIENT_SECRET);
-  const [customerId, setCustomerId] = useState(state.customerId || process.env.SBANKEN_CUSTOMER_ID);
+  const [clientId, setClientId] = useState(existingCredentials?.clientId || '');
+  const [clientSecret, setClientSecret] = useState(existingCredentials?.clientSecret || '');
+  const [customerId, setCustomerId] = useState(state.customerId || '');
 
   const validCustomerId = customerId?.length === 11;
 
@@ -56,6 +56,7 @@ const SbankenOnboarding = () => {
           disabled={state.authenticating}
           size={32}
           autoComplete="off"
+          spellCheck={false}
         />
       </div>
       <div className="sby-input-group">
@@ -69,6 +70,7 @@ const SbankenOnboarding = () => {
           disabled={state.authenticating}
           size={32}
           autoComplete="off"
+          spellCheck={false}
         />
       </div>
       <div className="sby-input-group">
@@ -83,6 +85,7 @@ const SbankenOnboarding = () => {
           size={32}
           maxLength={11}
           autoComplete="off"
+          spellCheck={false}
         />
       </div>
       <OnboardingSteps />
