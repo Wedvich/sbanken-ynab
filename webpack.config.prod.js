@@ -5,6 +5,7 @@ const merge = require('webpack-merge');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const SriPlugin = require('webpack-subresource-integrity');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
 const baseConfig = require('./webpack.config.base');
 const createSwConfig = require('./webpack.config.sw');
 
@@ -25,6 +26,7 @@ const createProdConfig = (env = {}) => merge.smart(baseConfig, {
     new SriPlugin({
       hashFuncNames: ['sha512'],
     }),
+    new ManifestPlugin(),
     env.analyze && new (require('webpack-bundle-analyzer').BundleAnalyzerPlugin)(),
   ].filter(Boolean),
 });
