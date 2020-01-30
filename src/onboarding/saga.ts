@@ -4,24 +4,33 @@ import { SbankenActionType, actions as sbankenActions, SbankenState } from '../s
 import { YnabActionType, actions as ynabActions, YnabState } from '../ynab/reducer';
 import { RootState } from '../store/root-reducer';
 import { validateAccessToken } from '../sbanken/utils';
-import { getStoredHasSeenIntro, OnboardingActionType, storeHasSeenIntro } from './utils';
+import { getStoredOnboardingStatus, OnboardingActionType, storeOnboardingStatus, OnboardingStatus } from './utils';
 
 export default function* (history: History) {
-  const hasSeenIntro = yield call(getStoredHasSeenIntro);
-  if (!hasSeenIntro) {
+  const onboardingStatus: OnboardingStatus = yield call(getStoredOnboardingStatus);
+  if (onboardingStatus === OnboardingStatus.NotStarted) {
     history.replace('/onboarding/intro');
     yield take(OnboardingActionType.Seen);
-    yield call(storeHasSeenIntro);
+    yield call(storeOnboardingStatus, OnboardingStatus.Started);
   }
 
-  const { token: sbankenToken, customerId }: SbankenState = yield select((state: RootState) => state.sbanken);
+  const { token: sbankenToken, customerId }: SbankenState =
+    yield select((state: RootState) => state.sbanken);
+
   if (!validateAccessToken(sbankenToken) || !customerId) {
-    history.replace('/onboarding/sbanken');
-    const response: ReturnType<typeof sbankenActions.getTokenResponse> = yield take(SbankenActionType.GetTokenResponse);
-    if (response.error) return;
+    // If the onboarding has been completed before, we can skip the onboarding screen
+    // and request a new token using the existing credentials.
+    if (onboardingStatus === OnboardingStatus.Completed) {
+      yield put(sbankenActions.getTokenRequest());
+    } else {
+      history.replace('/onboarding/sbanken');
+    }
+    yield take(SbankenActionType.GetTokenResponse);
   }
 
-  const { personalAccessToken: ynabToken, budgetId }: YnabState = yield select((state: RootState) => state.ynab);
+  const { personalAccessToken: ynabToken, budgetId }: YnabState =
+    yield select((state: RootState) => state.ynab);
+
   if (!ynabToken || !budgetId) {
     history.push('/onboarding/ynab');
     if (ynabToken) {
@@ -32,6 +41,9 @@ export default function* (history: History) {
     yield take(YnabActionType.SetBudget);
   }
 
+  if (onboardingStatus !== OnboardingStatus.Completed) {
+    yield call(storeOnboardingStatus, OnboardingStatus.Completed);
+  }
   history.replace('/');
   yield all([
     put(sbankenActions.getAccountsRequest()),

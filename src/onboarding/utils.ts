@@ -3,10 +3,20 @@ export enum OnboardingActionType {
   NotSeen = 'onboarding/reset'
 }
 
-export const hasSeenIntroStorageKey = 'onboarding/has-seen-intro';
+export enum OnboardingStatus {
+  NotStarted = 'not-started',
+  Started = 'started',
+  Completed = 'completed'
+}
 
-export const getStoredHasSeenIntro = () =>
-  !!localStorage.getItem(hasSeenIntroStorageKey);
+export const onboardingStatusStorageKey = 'onboarding/status';
 
-export const storeHasSeenIntro = () =>
-  localStorage.setItem(hasSeenIntroStorageKey, 'true');
+export const getStoredOnboardingStatus = () => {
+  const status = localStorage.getItem(onboardingStatusStorageKey) as OnboardingStatus;
+  return Object.values(OnboardingStatus).includes(status)
+    ? status
+    : OnboardingStatus.NotStarted;
+};
+
+export const storeOnboardingStatus = (status: OnboardingStatus) =>
+  localStorage.setItem(onboardingStatusStorageKey, status);
