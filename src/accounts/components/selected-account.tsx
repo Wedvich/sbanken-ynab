@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ConnectedAccount } from '../types';
 import { actions as sbankenActions } from '../../sbanken/reducer';
 import { actions as ynabActions } from '../../ynab/reducer';
-import { loadingSelector } from '../../shared/utils';
+import { loadingSelector, isMobile } from '../../shared/utils';
 import Balance from './balance';
 import Loader from '../../shared/loader';
 import Icon, { IconType, IconStyle } from '../../shared/icon';
@@ -21,6 +21,9 @@ const SelectedAccount = ({ account }: SelectedAccountProps) => {
   const dispatch = useDispatch();
   const loading = useSelector(loadingSelector);
   const { budgetId } = useSelector((state: RootState) => state.ynab);
+  const ynabLink = isMobile
+    ? 'ynab://'
+    : `https://app.youneedabudget.com/${budgetId}/accounts/${account.ynabId}`;
 
   return (
     <>
@@ -30,7 +33,7 @@ const SelectedAccount = ({ account }: SelectedAccountProps) => {
           Åpne i Sbanken
         </ExternalLink>
         <span className="separator">&bull;</span>
-        <ExternalLink href={`https://app.youneedabudget.com/${budgetId}/accounts/${account.ynabId}`}>
+        <ExternalLink href={ynabLink}>
           Åpne i YNAB
         </ExternalLink>
       </div>

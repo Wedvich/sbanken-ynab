@@ -35,3 +35,5 @@ export interface HttpError {
   statusCode: number;
   statusText?: string;
 }
+
+export const isMobile = /android|iphone/i.test(window.navigator.userAgent);
