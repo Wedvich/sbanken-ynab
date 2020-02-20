@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { RootState } from '../../store/root-reducer';
 import { ConnectedAccount } from '../types';
-import { createCompoundId, convertAmountFromYnab } from '../utils';
+import { createCompoundId, convertAmountFromYnab, fixCurrencyPrecision } from '../utils';
 import { SbankenAccountType } from '../../sbanken/api';
 
 const accountsSelector = createSelector(
@@ -16,7 +16,7 @@ const accountsSelector = createSelector(
       if (!sbankenAccount || !ynabAccounts[source.ynabId]) return null;
 
       const workingBankBalance = sbankenAccount.accountType === SbankenAccountType.CreditCard
-        ? -(sbankenAccount.creditLimit - sbankenAccount.available)
+        ? -fixCurrencyPrecision(sbankenAccount.creditLimit - sbankenAccount.available)
         : sbankenAccount.available;
 
       const connectedAccount: Partial<ConnectedAccount> = {
@@ -25,7 +25,7 @@ const accountsSelector = createSelector(
         compoundId: createCompoundId(source),
         clearedBankBalance: sbankenAccount.balance,
         clearedBudgetBalance: convertAmountFromYnab(ynabAccount.cleared_balance),
-        unclearedBankBalance: Math.round((workingBankBalance - sbankenAccount.balance) * 100) / 100,
+        unclearedBankBalance: fixCurrencyPrecision(workingBankBalance - sbankenAccount.balance),
         unclearedBudgetBalance: convertAmountFromYnab(ynabAccount.uncleared_balance),
         workingBankBalance,
         workingBudgetBalance: convertAmountFromYnab(ynabAccount.balance),

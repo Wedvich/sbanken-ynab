@@ -35,3 +35,6 @@ export const getNumberClass = (amount: number) =>
 
 export const compareConnectedAccountSource = (a: ConnectedAccountSource, b: ConnectedAccountSource) =>
   a.displayName === b.displayName && a.sbankenId === b.sbankenId && a.ynabId === b.ynabId;
+
+export const fixCurrencyPrecision = (amount: number) =>
+  Math.round(amount * 100) / 100;
