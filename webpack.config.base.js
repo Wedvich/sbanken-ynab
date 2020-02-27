@@ -41,6 +41,9 @@ module.exports = {
           {
             loader: require.resolve('postcss-loader'),
             options: {
+              config: {
+                path: path.resolve(__dirname, 'postcss.config.js'),
+              },
               sourceMap: isDev,
             },
           },

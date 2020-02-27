@@ -1,2 +1,4 @@
 !.eslintrc*.js
+coverage
 node_modules
+wwwroot
