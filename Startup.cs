@@ -24,7 +24,8 @@ namespace Sby
 
         public readonly ISet<string> ImmutableFileExtensions = new HashSet<string> {
             ".css",
-            ".js"
+            ".js",
+            ".woff"
         };
 
         public void ConfigureServices(IServiceCollection services)
@@ -50,15 +51,10 @@ namespace Sby
             app.UseXRobotsTag(options => options.NoIndex().NoFollow());
             app.UseReferrerPolicy(opts => opts.SameOrigin());
             app.UseCsp(options => options
-                .FontSources(action => action
-                    .Self()
-                    .CustomSources("https://fonts.gstatic.com"))
+                .FontSources(action => action.Self())
                 .ObjectSources(action => action.None())
                 .ScriptSources(action => action.Self())
-                .StyleSources(action => action
-                    .Self()
-                    .UnsafeInline()
-                    .CustomSources("https://fonts.googleapis.com/css"))
+                .StyleSources(action => action.Self().UnsafeInline())
             );
 
             app.UseDefaultFiles(new DefaultFilesOptions

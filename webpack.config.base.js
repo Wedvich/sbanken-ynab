@@ -62,6 +62,13 @@ module.exports = {
           removeTags: true,
         },
       },
+      {
+        test: /\.woff$/i,
+        loader: require.resolve('file-loader'),
+        options: {
+          name: '[name].[contenthash].[ext]',
+        },
+      },
     ],
   },
   output: {
