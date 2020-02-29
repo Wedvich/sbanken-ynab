@@ -17,7 +17,7 @@ const accountsSelector = createSelector(
 
       const workingBankBalance = sbankenAccount.accountType === SbankenAccountType.CreditCard
         ? -fixCurrencyPrecision(sbankenAccount.creditLimit - sbankenAccount.available)
-        : sbankenAccount.available;
+        : fixCurrencyPrecision(sbankenAccount.available - sbankenAccount.creditLimit);
 
       const connectedAccount: Partial<ConnectedAccount> = {
         ...source,
