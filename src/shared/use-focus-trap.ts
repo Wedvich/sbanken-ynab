@@ -1,8 +1,8 @@
 import { useLayoutEffect, useState, MutableRefObject } from 'react';
 
 export default (containerRef: MutableRefObject<HTMLElement>) => {
-  const [firstFocusableNode, setFirstFocusableNode] = useState();
-  const [lastFocusableNode, setLastFocusableNode] = useState();
+  const [firstFocusableNode, setFirstFocusableNode] = useState<HTMLElement>();
+  const [lastFocusableNode, setLastFocusableNode] = useState<HTMLElement>();
 
   useLayoutEffect(() => {
     if (!containerRef.current) return;
