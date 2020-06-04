@@ -11,7 +11,7 @@ export const sortObject = <TObject>(o: TObject): TObject => {
     Object.entries(o)
       .sort(([k1], [k2]) => k1.localeCompare(k2))
       .map(([k, v]) => [k, sortObject(v)]),
-  );
+  ) as TObject;
 };
 
 export const loadingSelector = createSelector(

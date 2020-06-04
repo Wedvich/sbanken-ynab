@@ -27,11 +27,9 @@ export function* createTransactionSaga({ transactionId }) {
   const { budgetId, personalAccessToken } = state.ynab;
 
   const ynabTransaction = {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     account_id: account.ynabId,
     amount: transaction.amount * 1000,
     date: transaction.date.toISO(),
-    // eslint-disable-next-line @typescript-eslint/camelcase
     import_id: transaction.id,
     memo: transaction.description,
   } as YnabTransaction;

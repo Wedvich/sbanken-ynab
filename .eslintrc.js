@@ -31,18 +31,23 @@ module.exports = {
   ],
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-empty-function': 'warn',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unsafe-assignment': 'off',
+    '@typescript-eslint/no-unsafe-call': 'off',
+    '@typescript-eslint/no-unsafe-member-access': 'off',
+    '@typescript-eslint/no-unsafe-return': 'off',
+    '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/unbound-method': 'off',
     'arrow-parens': ['error', 'always'],
-    'comma-dangle': ['error','always-multiline'],
+    'comma-dangle': ['error', 'always-multiline'],
     'indent': ['error', 2,
       {
         'SwitchCase': 1,
       },
     ],
     'jsx-a11y/no-onchange': 'off',
-    'jsx-quotes': [ 'error', 'prefer-double'],
+    'jsx-quotes': ['error', 'prefer-double'],
     'no-multiple-empty-lines': [
       'error',
       {

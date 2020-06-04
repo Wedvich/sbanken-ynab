@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/camelcase */ // TODO: Remove this eslint-disable
-import React, {  } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import cx from 'classnames';
 import { Link, useParams, useLocation } from 'react-router-dom';
@@ -54,7 +53,7 @@ const Nav = () => {
       </DragDropContext>
       <Link
         to={'/accounts/add'}
-        className={cx({ active: location.pathname === '/accounts/add'})}
+        className={cx({ active: location.pathname === '/accounts/add' })}
       >
         <span className="label">+ Legg til kobling</span>
       </Link>

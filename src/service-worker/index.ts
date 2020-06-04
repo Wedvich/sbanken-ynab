@@ -42,7 +42,7 @@ serviceWorker.addEventListener('fetch', (event: FetchEvent) => {
     caches.open(cacheName).then((cache) => cache.match(request).then((cacheResponse) => {
       if (requestUrl.pathname === '/') {
         const networkResponse = fetch(request).then((networkResponse) => {
-          cache.put(request, networkResponse.clone());
+          void cache.put(request, networkResponse.clone());
           return networkResponse;
         });
         return cacheResponse || networkResponse;
@@ -53,7 +53,7 @@ serviceWorker.addEventListener('fetch', (event: FetchEvent) => {
       }
 
       return fetch(request).then((networkResponse) => {
-        cache.put(request, networkResponse.clone());
+        void cache.put(request, networkResponse.clone());
         return networkResponse;
       });
     }))

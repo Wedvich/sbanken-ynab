@@ -1,5 +1,4 @@
 module.exports = {
-  browser: true,
   collectCoverageFrom: ['src/**/*.*'],
   coverageReporters: ['lcov', 'cobertura'],
   modulePathIgnorePatterns: ['<rootDir>/bin'],
