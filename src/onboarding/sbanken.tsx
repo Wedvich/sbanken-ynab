@@ -4,7 +4,7 @@ import useFocusTrap from '../shared/use-focus-trap';
 import { actions as sbankenActions, SbankenState } from '../sbanken/reducer';
 import { RootState } from '../store/root-reducer';
 import Loader from '../shared/loader';
-import { decodeCredentials } from '../sbanken/utils';
+import { decodeCredentials, sbankenDevPortalUrl } from '../sbanken/utils';
 import ExternalLink from '../shared/external-link';
 import OnboardingSteps from './steps';
 import Icon, { IconType } from '../shared/icon';
@@ -38,7 +38,7 @@ const SbankenOnboarding = () => {
       <h2>Sbanken → YNAB</h2>
       <h1>Koble til Sbanken</h1>
       <div className="sby-onboarding-instructions">
-        Du må gå til <ExternalLink href="https://secure.sbanken.no/Personal/ApiBeta/Info/">Utviklerportalen</ExternalLink> og opprette en applikasjon med følgende tilganger:
+        Du må gå til <ExternalLink href={sbankenDevPortalUrl}>Utviklerportalen</ExternalLink> og opprette en applikasjon med følgende tilganger:
         <ul>
           <li>Grants access to perform read operations on the Accounts service.</li>
           <li>Grants access to perform read operations on the Transactions service.</li>

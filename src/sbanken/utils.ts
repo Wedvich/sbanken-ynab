@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon';
 import { SbankenAccessToken, SbankenTransaction } from './api';
 
+export const sbankenDevPortalUrl = 'https://secure.sbanken.no/Personal/ApiBeta/Info/';
+
 export enum SbankenStorageKey {
   AccessToken = 'sbanken/access-token',
   Credentials = 'sbanken/credentials',

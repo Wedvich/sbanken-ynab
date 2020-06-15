@@ -23,7 +23,7 @@ export const transformAccessToken = (response: SbankenTokenResponse) => {
 
 export enum SbankenAccountType {
   Standard = 'Standard account',
-  CreditCard = 'Creditcard account'
+  CreditCard = 'Creditcard account',
 }
 
 export interface SbankenAccount {
@@ -51,7 +51,7 @@ export interface SbankenCardDetails {
 }
 
 export enum SbankenTransactionType {
-  Transfer = 'OVFNETTB'
+  Transfer = 'OVFNETTB',
 }
 
 export interface SbankenTransaction {
@@ -77,24 +77,28 @@ export interface SbankenTransactionEnriched extends SbankenTransaction {
   id: string;
 }
 
-export const patchDate = (date: string, text: string, purchaseDate?: string) => {
+export const patchDate = (
+  date: string,
+  text: string,
+  purchaseDate?: string
+) => {
   if (!purchaseDate) {
     const textDateFragments = /^(?:\*\d{4}\s+)?(\d{2})\.(\d{2})/.exec(text);
     if (!textDateFragments) return date;
 
     const textDate = DateTime.fromObject({
-      'day': Number.parseInt(textDateFragments[1]),
-      'month': Number.parseInt(textDateFragments[2]),
+      day: Number.parseInt(textDateFragments[1]),
+      month: Number.parseInt(textDateFragments[2]),
     });
 
     if (!textDate.isValid) return date;
 
     const dateTime = DateTime.fromISO(date);
-    return textDate.set({ 'year': dateTime.get('year') }).toISO();
+    return textDate.set({ year: dateTime.get('year') }).toISO();
   }
 
   const purchaseDateTime = DateTime.fromISO(purchaseDate);
   const dateTime = DateTime.fromISO(date);
 
-  return purchaseDateTime.set({ 'year': dateTime.get('year') }).toISO();
+  return purchaseDateTime.set({ year: dateTime.get('year') }).toISO();
 };
