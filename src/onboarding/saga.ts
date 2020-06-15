@@ -25,7 +25,12 @@ export default function* (history: History) {
     } else {
       history.replace('/onboarding/sbanken');
     }
-    yield take(SbankenActionType.GetTokenResponse);
+
+    // If the token retrieval fails for any reason, there's no point in continuing.
+    const { error } = yield take(SbankenActionType.GetTokenResponse);
+    if (error) {
+      return;
+    }
   }
 
   const { personalAccessToken: ynabToken, budgetId }: YnabState =
