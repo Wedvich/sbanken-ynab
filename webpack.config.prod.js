@@ -20,9 +20,11 @@ const createProdConfig = (env = {}) => merge.smart(baseConfig, {
     new MiniCssExtractPlugin({
       filename: '[name].[hash].css',
     }),
-    new CopyWebpackPlugin([
-      'src/resources/robots.txt',
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'src/resources/robots.txt' },
+      ],
+    }),
     new SriPlugin({
       hashFuncNames: ['sha512'],
     }),
