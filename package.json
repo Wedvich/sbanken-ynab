@@ -58,7 +58,7 @@
     "eslint-plugin-react-hooks": "^4.0.4",
     "fibers": "^5.0.0",
     "file-loader": "^6.0.0",
-    "history": "^5.0.0",
+    "history": "^4.10.1",
     "html-webpack-plugin": "^4.3.0",
     "jest": "^26.0.1",
     "jest-circus": "^26.0.1",
