@@ -122,6 +122,14 @@ body {
   }
 }
 
+.sby-select::after {
+  bottom: 0.375rem;
+  content: '▾';
+  pointer-events: none;
+  position: absolute;
+  right: 0.375rem;
+}
+
 textarea {
   @extend %sby-input;
   resize: none;

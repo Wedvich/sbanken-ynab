@@ -64,7 +64,7 @@ const YnabOnboarding = () => {
           />
         </div>
         {showBudgetPicker && (
-          <div className="sby-input-group">
+          <div className="sby-input-group sby-select">
             <label htmlFor="ynabBudgetId">Budsjett</label>
             <select
               id="ynabBudgetId"
