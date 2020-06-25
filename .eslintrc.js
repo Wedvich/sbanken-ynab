@@ -33,22 +33,22 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-unnecessary-condition': 'warn',
+    // '@typescript-eslint/no-unnecessary-condition': 'warn', TODO: Investigate false positives
     '@typescript-eslint/no-unsafe-assignment': 'off',
     '@typescript-eslint/no-unsafe-call': 'off',
     '@typescript-eslint/no-unsafe-member-access': 'off',
     '@typescript-eslint/no-unsafe-return': 'off',
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/unbound-method': 'off',
-    'arrow-parens': ['error', 'always'],
-    'comma-dangle': ['error', 'always-multiline'],
-    'indent': ['error', 2,
+    'arrow-parens': ['warn', 'always'],
+    'comma-dangle': ['warn', 'always-multiline'],
+    'indent': ['warn', 2,
       {
         'SwitchCase': 1,
       },
     ],
     'jsx-a11y/no-onchange': 'off',
-    'jsx-quotes': ['error', 'prefer-double'],
+    'jsx-quotes': ['warn', 'prefer-double'],
     'no-multiple-empty-lines': [
       'warn',
       {
