@@ -1,5 +1,3 @@
-export const ynabApiBaseUrl = 'https://api.youneedabudget.com/v1';
-
 export interface YnabAccount {
   balance: number;
   cleared_balance: number;

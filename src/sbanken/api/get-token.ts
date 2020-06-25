@@ -3,6 +3,7 @@ import { SbankenTokenResponse, transformAccessToken, SbankenAccessToken } from '
 import { select, put, call, take } from 'redux-saga/effects';
 import { RootState } from '../../store/root-reducer';
 import { storeAccessToken, validateAccessToken } from '../utils';
+import { sbankenIdentityServerUrl } from '../../shared/config';
 
 export const getTokenRequest = () => ({
   type: SbankenActionType.GetTokenRequest as SbankenActionType.GetTokenRequest,
@@ -34,7 +35,7 @@ export function* getTokenSaga() {
   };
 
   try {
-    const response: Response = yield call(fetch, 'https://auth.sbanken.no/identityserver/connect/token', tokenRequest as RequestInit);
+    const response: Response = yield call(fetch, sbankenIdentityServerUrl, tokenRequest as RequestInit);
     if (!response.ok) {
       return yield put(getTokenResponse(undefined, response.statusText));
     }

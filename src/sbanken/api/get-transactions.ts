@@ -1,10 +1,11 @@
 import { SbankenActionType, SbankenState } from '../reducer';
 import { select, call, put } from 'redux-saga/effects';
 import { RootState } from '../../store/root-reducer';
-import { sbankenApiBaseUrl, SbankenTransaction, SbankenTransactionEnriched, patchDate, SbankenTransactionType } from '.';
+import { SbankenTransaction, SbankenTransactionEnriched, patchDate, SbankenTransactionType } from '.';
 import { computeTransactionId } from '../utils';
 import { TransactionsState } from '../../transactions/reducer';
 import { refreshExpiredTokenSaga } from './get-token';
+import { sbankenApiBaseUrl } from '../../shared/config';
 
 export const getTransactionsRequest = (accountId: string) => ({
   type: SbankenActionType.GetTransactionsRequest as SbankenActionType.GetTransactionsRequest,

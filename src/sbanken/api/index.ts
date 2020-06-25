@@ -1,7 +1,5 @@
 import { DateTime } from 'luxon';
 
-export const sbankenApiBaseUrl = 'https://api.sbanken.no/exec.bank/api/v1';
-
 export interface SbankenAccessToken {
   token: string;
   expiry: string;

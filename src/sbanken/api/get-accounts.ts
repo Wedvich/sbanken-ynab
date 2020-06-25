@@ -1,8 +1,9 @@
 import { put, call, select } from 'redux-saga/effects';
 import { SbankenActionType, SbankenState } from '../reducer';
 import { RootState } from '../../store/root-reducer';
-import { SbankenAccount, sbankenApiBaseUrl } from '.';
+import { SbankenAccount } from '.';
 import { refreshExpiredTokenSaga } from './get-token';
+import { sbankenApiBaseUrl } from '../../shared/config';
 
 export const getAccountsRequest = () => ({
   type: SbankenActionType.GetAccountsRequest as SbankenActionType.GetAccountsRequest,

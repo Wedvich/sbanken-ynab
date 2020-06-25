@@ -4,10 +4,11 @@ import { RootState } from '../../store/root-reducer';
 import transactionsSelector from '../../accounts/selectors/transactions';
 import { NormalizedTransaction, ConnectedAccount } from '../../accounts/types';
 import accountsSelector from '../../accounts/selectors/accounts';
-import { ynabApiBaseUrl, YnabTransaction } from '.';
+import { YnabTransaction } from '.';
 import { getTransactionsResponse } from './get-transactions';
 import { getAccountsRequest } from './get-accounts';
 import { HttpMethod } from '../../shared/utils';
+import { ynabApiBaseUrl } from '../../shared/config';
 
 export const createTransactionRequest = (transactionId: string) => ({
   type: YnabActionType.CreateTransactionRequest as YnabActionType.CreateTransactionRequest,

@@ -1,7 +1,8 @@
 import { select, call, put } from 'redux-saga/effects';
 import { YnabActionType, YnabState } from '../reducer';
 import { RootState } from '../../store/root-reducer';
-import { YnabTransaction, ynabApiBaseUrl } from '.';
+import { YnabTransaction } from '.';
+import { ynabApiBaseUrl } from '../../shared/config';
 
 export const getTransactionsRequest = (accountId: string) => ({
   type: YnabActionType.GetTransactionsRequest as YnabActionType.GetTransactionsRequest,

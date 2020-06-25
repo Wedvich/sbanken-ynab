@@ -1,7 +1,8 @@
 import { select, call, put } from 'redux-saga/effects';
 import { YnabActionType, YnabState } from '../reducer';
 import { RootState } from '../../store/root-reducer';
-import { ynabApiBaseUrl, YnabBudget } from '.';
+import { YnabBudget } from '.';
+import { ynabApiBaseUrl } from '../../shared/config';
 
 export const getBudgetsRequest = () => ({
   type: YnabActionType.GetBudgetsRequest as YnabActionType.GetBudgetsRequest,
