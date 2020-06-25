@@ -45,9 +45,11 @@ serviceWorker.addEventListener('fetch', (event: FetchEvent) => {
           void cache.put(request, networkResponse.clone());
           return networkResponse;
         });
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         return cacheResponse || networkResponse;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (cacheResponse) {
         return cacheResponse;
       }

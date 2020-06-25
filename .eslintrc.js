@@ -50,17 +50,17 @@ module.exports = {
     'jsx-a11y/no-onchange': 'off',
     'jsx-quotes': ['error', 'prefer-double'],
     'no-multiple-empty-lines': [
-      'error',
+      'warn',
       {
         'max': 1,
         'maxEOF': 1,
         'maxBOF': 0,
       },
     ],
-    'no-trailing-spaces': 'error',
-    'quotes': ['error', 'single'],
+    'no-trailing-spaces': 'warn',
+    'quotes': ['warn', 'single'],
     'require-yield': 'warn',
-    'semi': ['error', 'always'],
+    'semi': ['warn', 'always'],
   },
   settings: {
     'import/resolver': {
