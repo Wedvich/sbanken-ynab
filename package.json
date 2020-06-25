@@ -18,6 +18,7 @@
     "dev": "webpack-dev-server --config webpack.config.dev.js --hot",
     "eslint": "eslint . --fix --report-unused-disable-directives",
     "eslint-ci": "eslint .",
+    "mock-api": "dotnet run -p mock-api/mock-api.csproj",
     "start": "dotnet run",
     "stylelint": "stylelint src/**/*.scss --fix",
     "test": "jest --coverage --passWithNoTests",
