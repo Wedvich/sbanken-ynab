@@ -6,6 +6,11 @@ export interface ConnectedAccountSource {
   ynabId: string;
 }
 
+export enum ConnectedAccountType {
+  Debit,
+  Credit
+}
+
 export interface ConnectedAccount extends ConnectedAccountSource {
   creditLimit: number;
   compoundId: string;
@@ -16,6 +21,7 @@ export interface ConnectedAccount extends ConnectedAccountSource {
     uncleared: number;
     working: number;
   } | null;
+  type: ConnectedAccountType;
   unclearedBankBalance: number;
   unclearedBudgetBalance: number;
   workingBankBalance: number;

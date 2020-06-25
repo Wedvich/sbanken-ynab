@@ -1,5 +1,5 @@
 import React from 'react';
-import { ConnectedAccount } from '../types';
+import { ConnectedAccount, ConnectedAccountType } from '../types';
 import { getNumberClass } from '../utils';
 import { formatCurrency } from '../../localization';
 
@@ -19,7 +19,11 @@ const Balance = ({ account }: BalanceProps) => {
           <th scope="col" />
           <th scope="col">Ikke bokført</th>
           <th scope="col" />
-          <th scope="col">Disponibel saldo</th>
+          <th scope="col">
+            {account.type === ConnectedAccountType.Credit
+              ? 'Utestående'
+              : 'Disponibelt'}
+          </th>
           <th className="pull" />
         </tr>
       </thead>
