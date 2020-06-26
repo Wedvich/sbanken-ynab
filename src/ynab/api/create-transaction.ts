@@ -34,6 +34,7 @@ export function* createTransactionSaga({ transactionId }) {
     date: transaction.payee[0] == "*" ? (new Date().getFullYear())+"-"+str.split(" ")[1].split(".").reverse().join("-").toISO() : transaction.date.toISO(),
     import_id: transaction.id,
     memo: transaction.description,
+    approved: false
   } as YnabTransaction;
 
   const response = yield call(
