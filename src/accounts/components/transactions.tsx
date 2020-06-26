@@ -37,6 +37,7 @@ const Transactions = () => {
             <th>Kilde</th>
             <th>Dato</th>
             <th>Bokført</th>
+            <th>Betalingsmottaker</th>
             <th>Beskrivelse</th>
             <th>Ut</th>
             <th>Inn</th>
@@ -50,6 +51,7 @@ const Transactions = () => {
               <td className="date">{transaction.payee[0] == "*" ? (new Date().getFullYear())+"-"+str.split(" ")[1].split(".").reverse().join("-")}</td>
               <td className="date">{formatDate(transaction.date)}</td>
               <td>{transaction.payee[0] == "*" ? transaction.payee.split(" ").slice(4,-2).join(" ") : transaction.payee}</td>
+              <td>{transaction.payee}</td>
               <td className="currency">
                 {transaction.amount <= 0 ? formatCurrency(-transaction.amount) : ''}
               </td>
