@@ -5,7 +5,7 @@ import { formatDate } from '../localization';
 export const transactionsStateKey = 'transactions';
 
 const initialState = {
-  startDate: formatDate(DateTime.local().minus({ days: 23 })),
+  startDate: formatDate(DateTime.local().minus({ days: 7 })),
 };
 
 export type TransactionsState = typeof initialState;
