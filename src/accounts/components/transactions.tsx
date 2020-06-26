@@ -48,7 +48,7 @@ const Transactions = () => {
           {accountTransactions.map((transaction) => (
             <tr key={transaction.id}>
               <td>{transaction.source}</td>
-              <td className="date">{transaction.payee[0] == "*" ? (new Date().getFullYear())+"-"+str.split(" ")[1].split(".").reverse().join("-")}</td>
+              <td className="date">{transaction.payee[0] == "*" ? (new Date().getFullYear())+"-"+transaction.payee.split(" ")[1].split(".").reverse().join("-")}</td>
               <td className="date">{formatDate(transaction.date)}</td>
               <td>{transaction.payee[0] == "*" ? transaction.payee.split(" ").slice(4,-2).join(" ") : transaction.payee}</td>
               <td>{transaction.payee}</td>
