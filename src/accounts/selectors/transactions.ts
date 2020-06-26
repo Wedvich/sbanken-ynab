@@ -21,7 +21,7 @@ const transactionsSelector = createSelector(
       date: DateTime.fromISO(sbankenTransaction.date),
       description: sbankenTransaction.text,
       id: sbankenTransaction.id,
-      payee: sbankenTransaction.text,
+      payee: sbankenTransaction.payee,
       source: TransactionSource.Sbanken,
     } as NormalizedTransaction));
 

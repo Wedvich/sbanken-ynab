@@ -83,3 +83,7 @@ junit.xml
 # .NET Core build output
 [Bb]in
 [Oo]bj
+.vs/sbanken-ynab/v16/.suo
+.vs/VSWorkspaceState.json
+.vs/slnx.sqlite
+.vs/ProjectSettings.json
