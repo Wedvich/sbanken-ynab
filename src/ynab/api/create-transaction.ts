@@ -31,7 +31,7 @@ export function* createTransactionSaga({ transactionId }) {
     account_id: account.ynabId,
     payee_name: transaction.description[0] == "*" ? transaction.description.split(" ").slice(4,-2).join(" ") : transaction.description,
     amount: transaction.amount * 1000,
-    date: transaction.payee[0] == "*" ? (new Date().getFullYear())+"-"+str.split(" ")[1].split(".").reverse().join("-").toISO() : transaction.date.toISO(),
+    date: transaction.payee[0] == "*" ? (new Date().getFullYear())+"-"+transaction.payee.split(" ")[1].split(".").reverse().join("-").toISO() : transaction.date.toISO(),
     import_id: transaction.id,
     memo: transaction.description,
     approved: false
