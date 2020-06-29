@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Sby</RootNamespace>
+    <DefaultItemExcludes>$(DefaultItemExcludes);mock-api\**</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NWebsec.AspNetCore.Middleware" Version="3.0.0" />
