@@ -1,10 +1,15 @@
 import React from 'react';
-import ExternalLink from '../../shared/external-link';
+import cx from 'classnames';
+import ExternalLink from './external-link';
 
 import './footer.scss';
 
-const Footer = () => (
-  <footer className="sby-footer">
+interface FooterProps {
+  className?: string;
+}
+
+const Footer: React.FC<FooterProps> = ({ className }) => (
+  <footer className={cx('sby-footer', className)}>
     Ikoner av
     <ExternalLink href="https://www.flaticon.com/authors/smashicons" noIcon>Smashicons</ExternalLink>
     fra

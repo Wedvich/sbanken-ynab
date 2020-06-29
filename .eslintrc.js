@@ -59,6 +59,7 @@ module.exports = {
     ],
     'no-trailing-spaces': 'warn',
     'quotes': ['warn', 'single'],
+    'react/prop-types': 'off',
     'require-yield': 'warn',
     'semi': ['warn', 'always'],
   },

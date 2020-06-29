@@ -3,6 +3,7 @@ import cx from 'classnames';
 import './icon.scss';
 
 export enum IconType {
+  Cog,
   Edit,
   Error,
   Export,
@@ -24,6 +25,10 @@ export enum IconStyle {
 }
 
 const iconSymbolMap = {
+  [IconType.Cog]: {
+    [IconStyle.Outline]: 'settings',
+    [IconStyle.Solid]: 'gear',
+  },
   [IconType.Edit]: {
     [IconStyle.Outline]: 'edit',
     [IconStyle.Solid]: 'edit-1',
@@ -33,8 +38,8 @@ const iconSymbolMap = {
     [IconStyle.Solid]: 'send-1',
   },
   [IconType.ExternalLink]: {
-    [IconStyle.Outline]: 'exit',
-    [IconStyle.Solid]: 'exit-1',
+    [IconStyle.Outline]: 'exit-1',
+    [IconStyle.Solid]: 'exit',
   },
   [IconType.Error]: {
     [IconStyle.Outline]: 'close',

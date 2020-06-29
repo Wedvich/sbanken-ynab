@@ -1,0 +1,31 @@
+@use '../shared/colors';
+@use '../shared/fonts';
+@use '../shared/variables';
+
+.sby-settings {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+
+  .sby-footer {
+    grid-row: 2;
+  }
+}
+
+.sby-settings-page {
+  background: colors.$light-gray;
+  grid-row: 1;
+  height: 100%;
+  padding: 1rem;
+  overflow-y: auto;
+
+  header {
+    border-bottom: thin dashed colors.$medium-gray;
+    margin: 0 -1rem 1rem;
+    padding: 0 1rem 1rem;
+  }
+
+  h1 {
+    margin: 0 0 1rem 0;
+  }
+}

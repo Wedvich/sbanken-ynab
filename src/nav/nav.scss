@@ -19,7 +19,7 @@
     padding: 0.5rem 1rem;
   }
 
-  a {
+  .sby-nav-link {
     align-items: center;
     color: colors.$dark-pink;
     display: flex;
@@ -81,13 +81,6 @@
 
   .sby-button-group {
     padding: 0.5rem;
-
-    .sby-icon {
-      margin-right: 0.5rem;
-      position: relative;
-      top: -2px;
-      vertical-align: middle;
-    }
   }
 
   .loading-placeholder {
@@ -159,5 +152,10 @@
 
   .sby-network-status {
     fill: colors.$medium-yellow;
+  }
+
+  .sby-nav-button-group {
+    display: flex;
+    flex-direction: row;
   }
 }

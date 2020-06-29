@@ -1,5 +1,5 @@
-@use '../../shared/colors';
-@use '../../shared/variables';
+@use './colors';
+@use './variables';
 
 .sby-footer {
   align-items: center;
@@ -8,8 +8,6 @@
   color: colors.$dark-gray;
   display: flex;
   font-size: 0.875rem;
-  grid-column: 2;
-  grid-row: 2;
   height: 3rem;
   justify-content: flex-end;
   padding: 0 1rem;

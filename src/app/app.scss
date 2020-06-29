@@ -130,6 +130,13 @@ body {
   right: 0.375rem;
 }
 
+.sby-select-loading {
+  bottom: 0.375rem;
+  left: 0.875rem;
+  pointer-events: none;
+  position: absolute;
+}
+
 textarea {
   @extend %sby-input;
   resize: none;
@@ -142,13 +149,16 @@ textarea {
 }
 
 .sby-button-group {
+  display: flex;
+
   button {
+    align-items: center;
     background: colors.$dark-purple;
     border: none;
     border-radius: 2px;
     color: white;
     cursor: pointer;
-    display: inline-block;
+    display: inline-flex;
     font-size: 0.875rem;
     font-weight: 600;
     line-height: 1.25rem;
@@ -190,6 +200,10 @@ textarea {
       font-size: 1rem;
       font-weight: normal;
       padding: 0 0.5rem;
+    }
+
+    .sby-icon {
+      margin-right: 0.5rem;
     }
   }
 

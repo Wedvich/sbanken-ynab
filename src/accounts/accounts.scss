@@ -7,6 +7,11 @@
   grid-template-columns: variables.$nav-width 1fr;
   grid-template-rows: 1fr auto;
   height: 100%;
+
+  .sby-footer {
+    grid-column: 2;
+    grid-row: 2;
+  }
 }
 
 .sby-accounts-page {

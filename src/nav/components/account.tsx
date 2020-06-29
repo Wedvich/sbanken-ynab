@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 import { ConnectedAccount } from '../../accounts/types';
@@ -8,11 +8,10 @@ import { formatCurrency } from '../../localization';
 
 interface NavAccountProps {
   account: ConnectedAccount;
-  active?: boolean;
   index: number;
 }
 
-const NavAccount = ({ account, active, index }: NavAccountProps) => {
+const NavAccount = ({ account, index }: NavAccountProps) => {
   const hasDiffs = !!account.diffs;
 
   return (
@@ -21,13 +20,13 @@ const NavAccount = ({ account, active, index }: NavAccountProps) => {
       index={index}
     >
       {(provided: DraggableProvided, snapshot) => (
-        <Link
+        <NavLink
           to={`/accounts/${account.compoundId}`}
-          className={cx({
-            'active': active,
+          className={cx('sby-nav-link', {
             'has-diffs': hasDiffs,
             'dragging': snapshot.isDragging,
           })}
+          activeClassName="active"
           innerRef={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -43,7 +42,7 @@ const NavAccount = ({ account, active, index }: NavAccountProps) => {
               </div>
             )}
           </div>
-        </Link>
+        </NavLink>
       )}
     </Draggable>
   );

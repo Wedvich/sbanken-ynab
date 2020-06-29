@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import cx from 'classnames';
-import { Link, useParams, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import accountsSelector from '../accounts/selectors/accounts';
 import { loadingSelector } from '../shared/utils';
@@ -11,13 +11,12 @@ import { actions as modalActions } from '../modals/reducer';
 import { ModalId } from '../modals/types';
 import NavAccount from './components/account';
 import { actions as accountActions } from '../accounts/reducer';
+import { RootState } from '../store/root-reducer';
 
 import './nav.scss';
-import { RootState } from '../store/root-reducer';
 
 const Nav = () => {
   const connectedAccounts = useSelector(accountsSelector);
-  const { accountId } = useParams<{ accountId?: string }>();
   const loading = useSelector(loadingSelector);
   const location = useLocation();
   const dispatch = useDispatch();
@@ -42,7 +41,6 @@ const Nav = () => {
                 <NavAccount
                   key={account.compoundId}
                   account={account}
-                  active={accountId === account.compoundId}
                   index={index}
                 />
               ))}
@@ -52,8 +50,8 @@ const Nav = () => {
         </Droppable>
       </DragDropContext>
       <Link
-        to={'/accounts/add'}
-        className={cx({ active: location.pathname === '/accounts/add' })}
+        to="/accounts/add"
+        className={cx('sby-nav-link', { active: location.pathname === '/accounts/add' })}
       >
         <span className="label">+ Legg til kobling</span>
       </Link>
@@ -69,11 +67,6 @@ const Nav = () => {
         }}>
           <Icon type={IconType.Trash} size={IconSize.Small} />
         </button>
-        <button className="sby-nav-button" title="Eksporter innstillinger" onClick={() => {
-          dispatch(modalActions.openModal(ModalId.ExportSettings));
-        }}>
-          <Icon type={IconType.Export} size={IconSize.Small} />
-        </button>
         {isOffline && (
           <Icon
             type={IconType.Network}
@@ -81,6 +74,11 @@ const Nav = () => {
             className="sby-network-status"
           />
         )}
+        <Link to="/settings">
+          <button className="sby-nav-button" title="Innstillinger">
+            <Icon type={IconType.Cog} size={IconSize.Small} />
+          </button>
+        </Link>
       </div>
     </nav>
   );

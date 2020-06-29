@@ -6,6 +6,7 @@ import Accounts from '../accounts';
 import icons from '../shared/icon/icons.svg';
 import Modals from '../modals';
 import OfflineBanner from '../shared/offline-banner';
+import Settings from '../settings';
 
 import 'normalize.css/normalize.css';
 import './app.scss';
@@ -16,6 +17,9 @@ const App = () => (
     <Switch>
       <Route path="/onboarding">
         <Onboarding />
+      </Route>
+      <Route path="/settings">
+        <Settings />
       </Route>
       <Route path="/accounts/:accountId?">
         <Accounts />

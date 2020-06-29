@@ -1,4 +1,4 @@
-import React, { useRef, FormEvent, useState, useCallback, ChangeEvent } from 'react';
+import React, { useRef, FormEvent, useState, useCallback } from 'react';
 import useFocusTrap from '../shared/use-focus-trap';
 import { actions as ynabActions, YnabState } from '../ynab/reducer';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,6 +6,7 @@ import { RootState } from '../store/root-reducer';
 import ExternalLink from '../shared/external-link';
 import OnboardingSteps from './steps';
 import Loader from '../shared/loader';
+import YnabSettings from '../settings/components/ynab';
 
 const YnabOnboarding = () => {
   const formRef = useRef<HTMLFormElement>();
@@ -16,7 +17,7 @@ const YnabOnboarding = () => {
   const [personalAccessToken, setPersonalAccessToken] = useState(state.personalAccessToken || '');
   const [budgetId, setBudgetId] = useState(state.budgetId || '');
 
-  const showBudgetPicker = !state.loading && state.personalAccessToken;
+  const showBudgetPicker = !state.loading && !!state.personalAccessToken;
 
   // FIXME: This feels too brittle
   const canSubmit = personalAccessToken && (!showBudgetPicker || budgetId);
@@ -49,41 +50,15 @@ const YnabOnboarding = () => {
           </>
         )}
       </div>
-      <div className="sby-input-group-collection">
-        <div className="sby-input-group">
-          <label htmlFor="ynabPersonalAccessToken">Personal Access Token</label>
-          <input
-            type="text"
-            id="ynabPersonalAccessToken"
-            className="sby-text-input"
-            value={personalAccessToken}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setPersonalAccessToken(e.target.value)}
-            size={32}
-            autoComplete="off"
-            spellCheck={false}
-          />
-        </div>
-        {showBudgetPicker && (
-          <div className="sby-input-group sby-select">
-            <label htmlFor="ynabBudgetId">Budsjett</label>
-            <select
-              id="ynabBudgetId"
-              value={budgetId}
-              onChange={(e: ChangeEvent<HTMLSelectElement>) => setBudgetId(e.target.value)}
-            >
-              <option disabled value="">&nbsp;</option>
-              {state.budgets.map((budget) => (
-                <option
-                  key={budget.id}
-                  value={budget.id}
-                >
-                  {budget.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
+      <YnabSettings
+        budgetId={budgetId}
+        budgets={state.budgets}
+        isLoading={state.loading}
+        personalAccessToken={personalAccessToken}
+        setBudgetId={setBudgetId}
+        setPersonalAccessToken={setPersonalAccessToken}
+        showBudgetPicker={showBudgetPicker}
+      />
       <OnboardingSteps />
       <div className="sby-button-group">
         <button type="submit" disabled={!canSubmit}>

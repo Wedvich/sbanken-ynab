@@ -10,7 +10,7 @@ import { useAccountId } from './utils';
 import { loadingSelector } from '../shared/utils';
 import Loader from '../shared/loader';
 import AddAccount from './components/add-account';
-import Footer from './components/footer';
+import Footer from '../shared/footer';
 
 import './accounts.scss';
 

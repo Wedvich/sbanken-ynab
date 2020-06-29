@@ -8,6 +8,7 @@ import { decodeCredentials, sbankenDevPortalUrl } from '../sbanken/utils';
 import ExternalLink from '../shared/external-link';
 import OnboardingSteps from './steps';
 import Icon, { IconType } from '../shared/icon';
+import SbankenSettings from '../settings/components/sbanken';
 
 const SbankenOnboarding = () => {
   const formRef = useRef<HTMLFormElement>();
@@ -45,49 +46,15 @@ const SbankenOnboarding = () => {
         </ul>
         Dette gir deg applikasjonsnøkkelen og passordet.
       </div>
-      <div className="sby-input-group">
-        <label htmlFor="sbankenClientId">Applikasjonsnøkkel</label>
-        <input
-          type="text"
-          id="sbankenClientId"
-          className="sby-text-input"
-          value={clientId}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setClientId(e.target.value)}
-          disabled={state.authenticating}
-          size={32}
-          autoComplete="off"
-          spellCheck={false}
-        />
-      </div>
-      <div className="sby-input-group">
-        <label htmlFor="sbankenClientSecret">Passord</label>
-        <input
-          type="text"
-          id="sbankenClientSecret"
-          className="sby-text-input"
-          value={clientSecret}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setClientSecret(e.target.value)}
-          disabled={state.authenticating}
-          size={32}
-          autoComplete="off"
-          spellCheck={false}
-        />
-      </div>
-      <div className="sby-input-group">
-        <label htmlFor="sbankenCustomerId">Fødselsnummer</label>
-        <input
-          type="text"
-          id="sbankenCustomerId"
-          className="sby-text-input"
-          value={customerId}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomerId(e.target.value.replace(/\D/g, ''))}
-          disabled={state.authenticating}
-          size={32}
-          maxLength={11}
-          autoComplete="off"
-          spellCheck={false}
-        />
-      </div>
+      <SbankenSettings
+        clientId={clientId}
+        clientSecret={clientSecret}
+        customerId={customerId}
+        isDisabled={state.authenticating}
+        setClientId={setClientId}
+        setClientSecret={setClientSecret}
+        setCustomerId={setCustomerId}
+      />
       <OnboardingSteps />
       <div className="sby-button-group">
         <button type="submit" disabled={!canSubmit}>
