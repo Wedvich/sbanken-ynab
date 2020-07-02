@@ -29,10 +29,12 @@ export function* createTransactionSaga({ transactionId }) {
 
   const ynabTransaction = {
     account_id: account.ynabId,
+    payee_name: transaction.payee,
     amount: transaction.amount * 1000,
     date: transaction.date.toISO(),
     import_id: transaction.id,
     memo: transaction.description,
+    approved: false
   } as YnabTransaction;
 
   const response = yield call(

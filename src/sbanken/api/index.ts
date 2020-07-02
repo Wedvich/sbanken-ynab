@@ -73,6 +73,7 @@ export interface SbankenTransactionEnriched extends SbankenTransaction {
   accountId: string;
   date: string;
   id: string;
+  payee: string;
 }
 
 export const patchDate = (

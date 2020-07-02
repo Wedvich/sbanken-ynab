@@ -36,6 +36,7 @@ const Transactions = () => {
           <tr>
             <th>Kilde</th>
             <th>Dato</th>
+            <th>Betalingsmottaker</th>
             <th>Beskrivelse</th>
             <th>Ut</th>
             <th>Inn</th>
@@ -48,6 +49,7 @@ const Transactions = () => {
               <td>{transaction.source}</td>
               <td className="date">{formatDate(transaction.date)}</td>
               <td>{transaction.payee}</td>
+              <td>{transaction.description}</td>
               <td className="currency">
                 {transaction.amount <= 0 ? formatCurrency(-transaction.amount) : ''}
               </td>

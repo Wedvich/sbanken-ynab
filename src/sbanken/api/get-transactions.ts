@@ -24,16 +24,11 @@ const enrichTransactions = async (transactions: SbankenTransaction[], accountId:
       : transaction.interestDate;
     return {
       ...transaction,
-      date: patchDate(
-        transaction.transactionType === SbankenTransactionType.Transfer
-          ? earliestDate
-          : transaction.accountingDate,
-        transaction.text,
-        transaction.cardDetails?.purchaseDate
-      ),
+      date: transaction.isReservation == true ? transaction.accountingDate : transaction.cardDetails?.purchaseDate,
       accountId,
       id: transaction.cardDetails?.transactionId
         ?? await computeTransactionId(transaction),
+      payee: transaction.isReservation == true ? transaction.text : transaction.text.split(" ").slice(4,-2).join(" "),
     } as SbankenTransactionEnriched;
   }));
 
