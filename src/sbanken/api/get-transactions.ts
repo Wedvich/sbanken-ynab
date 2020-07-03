@@ -1,7 +1,12 @@
 import { SbankenActionType, SbankenState } from '../reducer';
 import { select, call, put } from 'redux-saga/effects';
 import { RootState } from '../../store/root-reducer';
-import { SbankenTransaction, SbankenTransactionEnriched, patchDate, SbankenTransactionType } from '.';
+import {
+  SbankenTransaction,
+  SbankenTransactionEnriched,
+  patchDate,
+  SbankenTransactionType,
+} from '.';
 import { computeTransactionId } from '../utils';
 import { TransactionsState } from '../../transactions/reducer';
 import { refreshExpiredTokenSaga } from './get-token';
@@ -18,24 +23,26 @@ export const getTransactionsResponse = (transactions: SbankenTransactionEnriched
 });
 
 const enrichTransactions = async (transactions: SbankenTransaction[], accountId: string) => {
-  const transactionsWithIds = await Promise.all(transactions.map(async (transaction) => {
-    const earliestDate = transaction.interestDate > transaction.accountingDate
-      ? transaction.accountingDate
-      : transaction.interestDate;
-    return {
-      ...transaction,
-      date: patchDate(
-        transaction.transactionType === SbankenTransactionType.Transfer
-          ? earliestDate
-          : transaction.accountingDate,
-        transaction.text,
-        transaction.cardDetails?.purchaseDate
-      ),
-      accountId,
-      id: transaction.cardDetails?.transactionId
-        ?? await computeTransactionId(transaction),
-    } as SbankenTransactionEnriched;
-  }));
+  const transactionsWithIds = await Promise.all(
+    transactions.map<Promise<SbankenTransactionEnriched>>(
+      async (transaction) => {
+        const earliestDate = transaction.interestDate > transaction.accountingDate
+          ? transaction.accountingDate
+          : transaction.interestDate;
+        return {
+          ...transaction,
+          date: patchDate(
+            transaction.transactionType === SbankenTransactionType.Transfer
+              ? earliestDate
+              : transaction.accountingDate,
+            transaction.text,
+            transaction.cardDetails?.purchaseDate
+          ),
+          accountId,
+          id: transaction.cardDetails?.transactionId
+            ?? await computeTransactionId(transaction),
+        };
+      }));
 
   const idCounts = (transactionsWithIds.reduce((counts, transaction, i) => {
     counts[transaction.id] = (counts[transaction.id] ?? []).concat([i]);

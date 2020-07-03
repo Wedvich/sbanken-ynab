@@ -5,26 +5,29 @@ import { TransactionSource, NormalizedTransaction, MatchedTransaction } from '..
 import { convertAmountFromYnab } from '../utils';
 import accountsSelector from './accounts';
 
-// TODO: This needs to be cleaned up and commented a bit
-
-const transactionsSelector = createSelector(
+const normalizedSbankenTransactionsSelector = createSelector(
   (state: RootState) => state.sbanken.transactions,
-  (state: RootState) => state.ynab.transactions,
   accountsSelector,
-  (state: RootState) => DateTime.fromISO(state.transactions.startDate),
-  (sbankenTransactions, ynabTransactions, accounts, startDate) => {
-    let normalizedTransactions = sbankenTransactions.map((sbankenTransaction) => ({
+  (sbankenTransactions, accounts) =>
+    sbankenTransactions.map<NormalizedTransaction>((sbankenTransaction) => ({
       amount: sbankenTransaction.amount,
       connectedAccountId: accounts.find(
-        (account) => account.sbankenId === sbankenTransaction.accountId)
-        .compoundId,
+        (account) => account.sbankenId === sbankenTransaction.accountId
+      ).compoundId,
       date: DateTime.fromISO(sbankenTransaction.date),
       description: sbankenTransaction.text,
       id: sbankenTransaction.id,
       payee: sbankenTransaction.text,
       source: TransactionSource.Sbanken,
-    } as NormalizedTransaction));
+    }))
+);
 
+const transactionsSelector = createSelector(
+  normalizedSbankenTransactionsSelector,
+  (state: RootState) => state.ynab.transactions,
+  accountsSelector,
+  (state: RootState) => DateTime.fromISO(state.transactions.startDate),
+  (normalizedTransactions, ynabTransactions, accounts, startDate) => {
     const matchedTransactions = [] as MatchedTransaction[];
     const matchedTransactionIds = [];
 
