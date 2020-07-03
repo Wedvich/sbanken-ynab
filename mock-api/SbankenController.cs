@@ -73,7 +73,24 @@ namespace Sby.MockApi.Controllers
         public IActionResult Transactions() => Ok(new
         {
             availableItems = 0,
-            items = new ArrayList {}
+            items = new ArrayList {
+                new
+                {
+                    accountId = "31E44B4167E34C3F8DFDB8B2AEC19F42",
+                    accountingDate = "2020-06-29T00:00:00+02:00",
+                    amount = -9000,
+                    interestDate = "2020-06-28T00:00:00+02:00",
+                    isReservation = false,
+                    otherAccountNumberSpecified = false,
+                    payee = "ABC",
+                    source = "Archive",
+                    text = "Nettgiro fra: ABC 28.06.20",
+                    transactionDetailSpecified = false,
+                    transactionType = "NETTGIRO",
+                    transactionTypeCode = 203,
+                    transactionTypeText = "NETTGIRO"
+                }
+            }
         });
     }
 }

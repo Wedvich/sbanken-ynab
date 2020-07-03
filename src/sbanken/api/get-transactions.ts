@@ -5,7 +5,6 @@ import {
   SbankenTransaction,
   SbankenTransactionEnriched,
   patchDate,
-  SbankenTransactionType,
 } from '.';
 import { computeTransactionId } from '../utils';
 import { TransactionsState } from '../../transactions/reducer';
@@ -29,12 +28,11 @@ const enrichTransactions = async (transactions: SbankenTransaction[], accountId:
         const earliestDate = transaction.interestDate > transaction.accountingDate
           ? transaction.accountingDate
           : transaction.interestDate;
+
         return {
           ...transaction,
           date: patchDate(
-            transaction.transactionType === SbankenTransactionType.Transfer
-              ? earliestDate
-              : transaction.accountingDate,
+            earliestDate,
             transaction.text,
             transaction.cardDetails?.purchaseDate
           ),
