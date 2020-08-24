@@ -1,5 +1,4 @@
 import React from 'react';
-import { hot } from 'react-hot-loader/root';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import Onboarding from '../onboarding';
 import Accounts from '../accounts';
@@ -29,4 +28,4 @@ const App = () => (
   </div>
 );
 
-export default hot(App);
+export default App;
