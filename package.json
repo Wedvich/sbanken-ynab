@@ -23,7 +23,9 @@
     "stylelint": "stylelint src/**/*.scss --fix",
     "test": "jest --coverage --passWithNoTests",
     "test-ci": "jest --ci --coverage --passWithNoTests",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "snyk-protect": "snyk protect",
+    "prepare": "yarn run snyk-protect"
   },
   "devDependencies": {
     "@babel/core": "^7.8.0",
@@ -100,5 +102,9 @@
   },
   "resolutions": {
     "lodash": "^4.17.20"
+  },
+  "snyk": true,
+  "dependencies": {
+    "snyk": "^1.382.0"
   }
 }
