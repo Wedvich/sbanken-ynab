@@ -31,7 +31,7 @@ const SbankenOnboarding = () => {
     e.preventDefault();
     if (!canSubmit) return;
     dispatch(sbankenActions.setCredentials(clientId, clientSecret, customerId));
-  }, [canSubmit, clientId, clientSecret, customerId]);
+  }, [canSubmit, clientId, clientSecret, customerId, dispatch]);
 
   return (
     <form className="sby-onboarding" ref={formRef} onSubmit={onSubmit}>

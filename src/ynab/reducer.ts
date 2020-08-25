@@ -50,10 +50,11 @@ const initialState = {
   budgetId: getStoredBudgetId(),
   personalAccessToken: getStoredToken(),
   serverKnowledge: getStoredServerKnowledge(),
-  accounts: { } as { [key: string]: YnabAccount },
+  accounts: {} as { [key: string]: YnabAccount },
   loading: false,
   transactions: [] as YnabTransaction[],
   budgets: [] as YnabBudget[],
+  error: null as string | null,
 };
 
 export type YnabState = typeof initialState;
@@ -78,8 +79,7 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
         loading: true,
       };
 
-    case YnabActionType.GetAccountsResponse:
-    {
+    case YnabActionType.GetAccountsResponse: {
       if (action.error) {
         return {
           ...state,
@@ -147,7 +147,8 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
       return {
         ...state,
         loading: false,
-        budgets: action.budgets,
+        budgets: action.budgets ?? [],
+        error: action.error ?? '',
       };
 
     default: {

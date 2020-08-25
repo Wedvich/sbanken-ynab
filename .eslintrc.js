@@ -60,6 +60,7 @@ module.exports = {
     'no-trailing-spaces': 'warn',
     'quotes': ['warn', 'single'],
     'react/prop-types': 'off',
+    'react-hooks/exhaustive-deps': 'warn',
     'require-yield': 'warn',
     'semi': ['warn', 'always'],
   },

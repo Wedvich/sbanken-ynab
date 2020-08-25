@@ -5,6 +5,7 @@ import { YnabActionType, actions as ynabActions, YnabState } from '../ynab/reduc
 import { RootState } from '../store/root-reducer';
 import { validateAccessToken } from '../sbanken/utils';
 import { getStoredOnboardingStatus, OnboardingActionType, storeOnboardingStatus, OnboardingStatus } from './utils';
+import { getBudgetsResponse } from '../ynab/api/get-budgets';
 
 export default function* (history: History) {
   const onboardingStatus: OnboardingStatus = yield call(getStoredOnboardingStatus);
@@ -41,7 +42,24 @@ export default function* (history: History) {
     if (ynabToken) {
       yield put(ynabActions.getBudgetsRequest());
     }
-    yield take(YnabActionType.GetBudgetsResponse);
+
+    let validYnabToken = false;
+    while (!validYnabToken) {
+      console.count('while (!validYnabToken)');
+      const budgetsResponse: ReturnType<typeof getBudgetsResponse> =
+        yield take(YnabActionType.GetBudgetsResponse);
+
+      console.log('response', budgetsResponse);
+
+      if (budgetsResponse.error) {
+        yield take(YnabActionType.SetToken);
+      } else {
+        validYnabToken = true;
+        console.log('validYnabToken = true');
+      }
+    }
+
+    console.log('history.replace(\'/onboarding/ynab/budget\')');
     history.replace('/onboarding/ynab/budget');
     yield take(YnabActionType.SetBudget);
   }

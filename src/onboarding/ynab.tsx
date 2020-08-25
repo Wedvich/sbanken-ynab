@@ -6,6 +6,7 @@ import { RootState } from '../store/root-reducer';
 import ExternalLink from '../shared/external-link';
 import OnboardingSteps from './steps';
 import Loader from '../shared/loader';
+import Icon, { IconType } from '../shared/icon';
 
 const YnabOnboarding = () => {
   const formRef = useRef<HTMLFormElement>();
@@ -16,7 +17,7 @@ const YnabOnboarding = () => {
   const [personalAccessToken, setPersonalAccessToken] = useState(state.personalAccessToken || '');
   const [budgetId, setBudgetId] = useState(state.budgetId || '');
 
-  const showBudgetPicker = !state.loading && state.personalAccessToken;
+  const showBudgetPicker = !state.loading && !state.error && state.personalAccessToken;
 
   // FIXME: This feels too brittle
   const canSubmit = personalAccessToken && (!showBudgetPicker || budgetId);
@@ -24,13 +25,12 @@ const YnabOnboarding = () => {
   const onSubmit = useCallback((e: FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
-    // TODO: Add "verified" or something about the token.
-    if (!state.personalAccessToken) {
+    if (!state.personalAccessToken || state.error) {
       dispatch(ynabActions.setToken(personalAccessToken));
     } else {
       dispatch(ynabActions.setBudget(budgetId));
     }
-  }, [canSubmit, personalAccessToken, budgetId]);
+  }, [canSubmit, state, dispatch, personalAccessToken, budgetId]);
 
   return (
     <form className="sby-onboarding" ref={formRef} onSubmit={onSubmit}>
@@ -91,6 +91,15 @@ const YnabOnboarding = () => {
           <span>Fortsett</span>
         </button>
       </div>
+      {state.error && (
+        <div className="sby-error">
+          <Icon type={IconType.Error} />
+          Det oppsto en feil under tilkobling til You Need A Budget.
+          <br />
+          <br />
+          Kanskje du har skrevet feil token?
+        </div>
+      )}
     </form>
   );
 };
