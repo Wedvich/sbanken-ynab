@@ -99,7 +99,7 @@
     "webpack-dev-server": "^3.10.1",
     "webpack-manifest-plugin": "^2.2.0",
     "webpack-merge": "^4.2.2",
-    "webpack-subresource-integrity": "^1.4.0",
+    "webpack-subresource-integrity": "^1.5.1",
     "webpackbar": "^4.0.0"
   }
 }
