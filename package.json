@@ -87,7 +87,7 @@
     "reselect": "^4.0.0",
     "sass": "^1.24.2",
     "sass-loader": "^9.0.0",
-    "snyk": "^1.382.0",
+    "snyk": "^1.425.4",
     "stylelint": "^13.0.0",
     "stylelint-config-recommended-scss": "^4.1.0",
     "stylelint-scss": "^3.13.0",
