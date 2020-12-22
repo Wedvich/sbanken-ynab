@@ -7,7 +7,7 @@ interface LoaderProps {
 }
 
 const Loader = ({ inverted }: LoaderProps) => (
-  <div className={cx('sk-flow', { 'inverted': inverted })}>
+  <div className={cx('sk-flow', { inverted: inverted })}>
     <div className="sk-flow-dot"></div>
     <div className="sk-flow-dot"></div>
     <div className="sk-flow-dot"></div>

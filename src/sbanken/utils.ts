@@ -32,8 +32,7 @@ export const getStoredAccessToken = (): SbankenAccessToken | null => {
 export const storeAccessToken = (accessToken: SbankenAccessToken) =>
   sessionStorage.setItem(SbankenStorageKey.AccessToken, JSON.stringify(accessToken));
 
-export const getStoredCustomerId = () =>
-  localStorage.getItem(SbankenStorageKey.CustomerId) || null;
+export const getStoredCustomerId = () => localStorage.getItem(SbankenStorageKey.CustomerId) || null;
 
 export const storeCustomerId = (customerId: string) =>
   localStorage.setItem(SbankenStorageKey.CustomerId, customerId);
@@ -47,20 +46,22 @@ export const storeCredentials = (credentials: string) =>
 export const encodeCredentials = (clientId: string, clientSecret: string) =>
   btoa(`${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`);
 
-export const decodeCredentials =
-  (credentials: string): { clientId: string; clientSecret: string } | null => {
-    if (!credentials) return null;
-    try {
-      const [clientId, clientSecret] =
-        atob(credentials).split(':').map((part) => decodeURIComponent(part));
-      return {
-        clientId,
-        clientSecret,
-      };
-    } catch {
-      return null;
-    }
-  };
+export const decodeCredentials = (
+  credentials: string
+): { clientId: string; clientSecret: string } | null => {
+  if (!credentials) return null;
+  try {
+    const [clientId, clientSecret] = atob(credentials)
+      .split(':')
+      .map((part) => decodeURIComponent(part));
+    return {
+      clientId,
+      clientSecret,
+    };
+  } catch {
+    return null;
+  }
+};
 
 const encoder = new TextEncoder();
 

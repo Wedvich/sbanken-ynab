@@ -38,7 +38,7 @@ export const actions = {
   reorder,
 };
 
-export type AccountsAction = ReturnType<typeof actions[keyof typeof actions]>
+export type AccountsAction = ReturnType<typeof actions[keyof typeof actions]>;
 
 export const accountsStateKey = 'accounts';
 
@@ -49,9 +49,12 @@ export type AccountsState = typeof initialState;
 const reducer: Reducer<AccountsState, AccountsAction> = (state = initialState, action) => {
   switch (action.type) {
     case AccountsActionType.Add: {
-      if (state.find(
-        (connectedAccount) => compareConnectedAccountSource(connectedAccount, action.source))
-      ) return state;
+      if (
+        state.find((connectedAccount) =>
+          compareConnectedAccountSource(connectedAccount, action.source)
+        )
+      )
+        return state;
       return state.concat([action.source]);
     }
 
@@ -59,8 +62,9 @@ const reducer: Reducer<AccountsState, AccountsAction> = (state = initialState, a
       return state.filter((account) => !compareConnectedAccountSource(account, action.source));
 
     case AccountsActionType.Rename: {
-      const accountIndex = state.findIndex(
-        (connectedAccount) => compareConnectedAccountSource(connectedAccount, action.source));
+      const accountIndex = state.findIndex((connectedAccount) =>
+        compareConnectedAccountSource(connectedAccount, action.source)
+      );
 
       if (accountIndex === -1) return state;
 

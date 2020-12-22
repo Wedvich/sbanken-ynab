@@ -5,11 +5,7 @@ interface ModalProps {
 }
 
 const Modal = ({ children }: ModalProps) => {
-  return (
-    <div className="sby-modal">
-      {children}
-    </div>
-  );
+  return <div className="sby-modal">{children}</div>;
 };
 
 export default Modal;

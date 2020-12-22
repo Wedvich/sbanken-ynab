@@ -3,7 +3,7 @@ import { ModalId } from './types';
 
 export enum ModalsActionType {
   Show = 'modals/open',
-  Close = 'modals/close'
+  Close = 'modals/close',
 }
 
 const openModal = (modalId: ModalId) => ({
@@ -20,7 +20,7 @@ export const actions = {
   openModal,
   closeModal,
 };
-export type ModalsAction = ReturnType<typeof actions[keyof typeof actions]>
+export type ModalsAction = ReturnType<typeof actions[keyof typeof actions]>;
 
 export const modalsStateKey = 'modals';
 

@@ -27,7 +27,9 @@ const ExportSettingsModal = () => {
         <textarea readOnly rows={10} value={settings} />
       </p>
       <div className="sby-button-group modal-buttons">
-        <button type="button" onClick={() => dispatch(actions.closeModal(ModalId.ExportSettings))}>Lukk</button>
+        <button type="button" onClick={() => dispatch(actions.closeModal(ModalId.ExportSettings))}>
+          Lukk
+        </button>
       </div>
     </div>
   );

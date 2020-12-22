@@ -19,11 +19,15 @@ function* serviceWorkerMessageHandler() {
   let messageChannel: MessageChannel;
 
   // Listen for messages from the service worker.
-  const serviceWorkerChannel = yield call(eventChannel, (emit) => {
-    messageChannel = new MessageChannel();
-    messageChannel.port1.onmessage = (message) => emit(message.data);
-    return () => messageChannel.port1.onmessage = undefined;
-  }, buffers.expanding());
+  const serviceWorkerChannel = yield call(
+    eventChannel,
+    (emit) => {
+      messageChannel = new MessageChannel();
+      messageChannel.port1.onmessage = (message) => emit(message.data);
+      return () => (messageChannel.port1.onmessage = undefined);
+    },
+    buffers.expanding()
+  );
 
   // Pipe messages from the message channel through to the Redux store.
   yield takeEvery(serviceWorkerChannel, function* (message: any) {
@@ -36,10 +40,16 @@ function* serviceWorkerMessageHandler() {
     }
   });
 
-  const { active: serviceWorker }: ServiceWorkerRegistration = yield call(() => navigator.serviceWorker.ready);
-  yield call([serviceWorker, serviceWorker.postMessage] as any, {
-    type: ServiceWorkerMessageType.CheckForUpdates,
-  }, [messageChannel.port2]);
+  const { active: serviceWorker }: ServiceWorkerRegistration = yield call(
+    () => navigator.serviceWorker.ready
+  );
+  yield call(
+    [serviceWorker, serviceWorker.postMessage] as any,
+    {
+      type: ServiceWorkerMessageType.CheckForUpdates,
+    },
+    [messageChannel.port2]
+  );
 }
 
 /**
@@ -98,11 +108,12 @@ export default function* appSaga() {
   yield fork(offlineMonitorSaga);
   yield takeLatest(AppActionType.ImportSettings as any, importSettingsSaga);
 
-  yield takeLatest([
-    YnabActionType.GetAccountsResponse,
-  ] as any, function* httpErrorSaga({ error }: { error?: HttpError }) {
-    if (!error) return;
-    yield put(actions.setLastError(error));
-    yield put(modalActions.openModal(ModalId.Error));
-  });
+  yield takeLatest(
+    [YnabActionType.GetAccountsResponse] as any,
+    function* httpErrorSaga({ error }: { error?: HttpError }) {
+      if (!error) return;
+      yield put(actions.setLastError(error));
+      yield put(modalActions.openModal(ModalId.Error));
+    }
+  );
 }

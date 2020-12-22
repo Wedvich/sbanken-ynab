@@ -1,4 +1,12 @@
-import React, { useState, ChangeEvent, useLayoutEffect, useRef, useCallback, KeyboardEvent, FocusEvent } from 'react';
+import React, {
+  useState,
+  ChangeEvent,
+  useLayoutEffect,
+  useRef,
+  useCallback,
+  KeyboardEvent,
+  FocusEvent,
+} from 'react';
 import { useDispatch } from 'react-redux';
 import Icon, { IconType, IconStyle } from '../../shared/icon';
 import { actions } from '../reducer';
@@ -24,12 +32,15 @@ const AccountName = ({ account }: AccountNameProps) => {
     ref.current.focus();
   }, [account, ref.current, isEditing]);
 
-  const finishEditing = useCallback((save = true) => {
-    if (save && currentName.length) {
-      dispatch(actions.rename(account, currentName.trim()));
-    }
-    setIsEditing(false);
-  }, [isEditing, account, currentName]);
+  const finishEditing = useCallback(
+    (save = true) => {
+      if (save && currentName.length) {
+        dispatch(actions.rename(account, currentName.trim()));
+      }
+      setIsEditing(false);
+    },
+    [isEditing, account, currentName]
+  );
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (['Esc', 'Escape'].includes(e.key)) {
@@ -46,10 +57,7 @@ const AccountName = ({ account }: AccountNameProps) => {
   if (!isEditing) {
     return (
       <h1 className="sby-account-name">
-        <button
-          title="Endre navn"
-          onClick={() => setIsEditing(true)}
-        >
+        <button title="Endre navn" onClick={() => setIsEditing(true)}>
           {currentName}
         </button>
         <Icon type={IconType.Edit} style={IconStyle.Solid} />

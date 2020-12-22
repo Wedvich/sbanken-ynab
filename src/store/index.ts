@@ -7,15 +7,12 @@ import rootReducer from './root-reducer';
 import rootSaga from './root-saga';
 
 const compose =
-    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({ trace: true }) || reduxCompose;
+  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({ trace: true }) || reduxCompose;
 
 export default (history: History) => {
   const middlewares: Middleware[] = [];
   if (process.env.NODE_ENV === 'development') {
-    middlewares.push(
-      createLogger({ collapsed: true }),
-      immutableStateInvariantMiddleware()
-    );
+    middlewares.push(createLogger({ collapsed: true }), immutableStateInvariantMiddleware());
   }
 
   const sagaMiddleware = createSagaMiddleware();

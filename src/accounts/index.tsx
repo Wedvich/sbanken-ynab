@@ -37,7 +37,7 @@ const Accounts = () => {
           <AddAccount />
         </Route>
         <Route>
-          <div className={cx('sby-accounts-page', { 'empty': noAccounts })}>
+          <div className={cx('sby-accounts-page', { empty: noAccounts })}>
             {noAccounts && (loading ? <Loader /> : <NoAccounts />)}
             {selectedAccount && <SelectedAccount account={selectedAccount} />}
           </div>

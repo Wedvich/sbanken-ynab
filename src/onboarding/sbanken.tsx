@@ -22,23 +22,24 @@ const SbankenOnboarding = () => {
 
   const validCustomerId = customerId?.length === 11;
 
-  const canSubmit = !state.authenticating &&
-    clientId &&
-    clientSecret &&
-    validCustomerId;
+  const canSubmit = !state.authenticating && clientId && clientSecret && validCustomerId;
 
-  const onSubmit = useCallback((e: FormEvent) => {
-    e.preventDefault();
-    if (!canSubmit) return;
-    dispatch(sbankenActions.setCredentials(clientId, clientSecret, customerId));
-  }, [canSubmit, clientId, clientSecret, customerId, dispatch]);
+  const onSubmit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      if (!canSubmit) return;
+      dispatch(sbankenActions.setCredentials(clientId, clientSecret, customerId));
+    },
+    [canSubmit, clientId, clientSecret, customerId, dispatch]
+  );
 
   return (
     <form className="sby-onboarding" ref={formRef} onSubmit={onSubmit}>
       <h2>Sbanken → YNAB</h2>
       <h1>Koble til Sbanken</h1>
       <div className="sby-onboarding-instructions">
-        Du må gå til <ExternalLink href={sbankenDevPortalUrl}>Utviklerportalen</ExternalLink> og opprette en applikasjon med følgende tilganger:
+        Du må gå til <ExternalLink href={sbankenDevPortalUrl}>Utviklerportalen</ExternalLink> og
+        opprette en applikasjon med følgende tilganger:
         <ul>
           <li>Grants access to perform read operations on the Accounts service.</li>
           <li>Grants access to perform read operations on the Transactions service.</li>
@@ -80,7 +81,9 @@ const SbankenOnboarding = () => {
           id="sbankenCustomerId"
           className="sby-text-input"
           value={customerId}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomerId(e.target.value.replace(/\D/g, ''))}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setCustomerId(e.target.value.replace(/\D/g, ''))
+          }
           disabled={state.authenticating}
           size={32}
           maxLength={11}

@@ -20,9 +20,7 @@ const Balance = ({ account }: BalanceProps) => {
           <th scope="col">Ikke bokført</th>
           <th scope="col" />
           <th scope="col">
-            {account.type === ConnectedAccountType.Credit
-              ? 'Utestående'
-              : 'Disponibelt'}
+            {account.type === ConnectedAccountType.Credit ? 'Utestående' : 'Disponibelt'}
           </th>
           <th className="pull" />
         </tr>

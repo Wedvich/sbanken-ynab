@@ -9,7 +9,11 @@ export const getAccountsRequest = () => ({
   type: YnabActionType.GetAccountsRequest as YnabActionType.GetAccountsRequest,
 });
 
-export const getAccountsResponse = (accounts: YnabAccount[], serverKnowledge: number, error?: HttpError) => ({
+export const getAccountsResponse = (
+  accounts: YnabAccount[],
+  serverKnowledge: number,
+  error?: HttpError
+) => ({
   type: YnabActionType.GetAccountsResponse as YnabActionType.GetAccountsResponse,
   accounts,
   serverKnowledge,
@@ -17,14 +21,18 @@ export const getAccountsResponse = (accounts: YnabAccount[], serverKnowledge: nu
 });
 
 export function* getAccountsSaga() {
-  const { personalAccessToken, budgetId, serverKnowledge }: YnabState = yield select((state: RootState) => state.ynab);
+  const { personalAccessToken, budgetId, serverKnowledge }: YnabState = yield select(
+    (state: RootState) => state.ynab
+  );
   const response: Response = yield call(
     fetch,
-    `${ynabApiBaseUrl}/budgets/${budgetId}/accounts?last_knowledge_of_server=${serverKnowledge[YnabActionType.GetAccountsRequest] ?? 0}`,
+    `${ynabApiBaseUrl}/budgets/${budgetId}/accounts?last_knowledge_of_server=${
+      serverKnowledge[YnabActionType.GetAccountsRequest] ?? 0
+    }`,
     {
       headers: new Headers({
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${personalAccessToken}`,
+        Accept: 'application/json',
+        Authorization: `Bearer ${personalAccessToken}`,
       }),
     }
   );
@@ -43,8 +51,10 @@ export function* getAccountsSaga() {
 
   const { accounts, server_knowledge: nextServerKnowledge } = accountsResponse.data;
 
-  yield put(getAccountsResponse(
-    accounts.filter((account: YnabAccount) => !account.deleted && !account.closed),
-    nextServerKnowledge
-  ));
+  yield put(
+    getAccountsResponse(
+      accounts.filter((account: YnabAccount) => !account.deleted && !account.closed),
+      nextServerKnowledge
+    )
+  );
 }

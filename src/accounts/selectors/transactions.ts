@@ -31,38 +31,43 @@ const transactionsSelector = createSelector(
     const matchedTransactions = [] as MatchedTransaction[];
     const matchedTransactionIds = [];
 
-    const unmatchedTransactions = ynabTransactions.map((ynabTransaction) => {
-      const transaction = {
-        amount: convertAmountFromYnab(ynabTransaction.amount),
-        connectedAccountId: accounts.find(
-          (account) => account.ynabId === ynabTransaction.account_id)
-          .compoundId,
-        date: DateTime.fromISO(ynabTransaction.date),
-        description: ynabTransaction.memo,
-        id: ynabTransaction.id,
-        payee: ynabTransaction.payee_name,
-        source: TransactionSource.Ynab,
-      } as NormalizedTransaction;
+    const unmatchedTransactions = ynabTransactions
+      .map((ynabTransaction) => {
+        const transaction = {
+          amount: convertAmountFromYnab(ynabTransaction.amount),
+          connectedAccountId: accounts.find(
+            (account) => account.ynabId === ynabTransaction.account_id
+          ).compoundId,
+          date: DateTime.fromISO(ynabTransaction.date),
+          description: ynabTransaction.memo,
+          id: ynabTransaction.id,
+          payee: ynabTransaction.payee_name,
+          source: TransactionSource.Ynab,
+        } as NormalizedTransaction;
 
-      const matchedTransaction = normalizedTransactions.find((sbankenTransaction) => {
-        return transaction.amount === sbankenTransaction.amount &&
-          transaction.date.equals(sbankenTransaction.date);
-      });
-
-      if (matchedTransaction) {
-        matchedTransactions.push({
-          sbankenTransaction: matchedTransaction,
-          ynabTransaction: transaction,
+        const matchedTransaction = normalizedTransactions.find((sbankenTransaction) => {
+          return (
+            transaction.amount === sbankenTransaction.amount &&
+            transaction.date.equals(sbankenTransaction.date)
+          );
         });
-        matchedTransactionIds.push(matchedTransaction.id);
-        normalizedTransactions = normalizedTransactions
-          .filter((sbankenTransaction) => sbankenTransaction !== matchedTransaction);
 
-        return null;
-      }
+        if (matchedTransaction) {
+          matchedTransactions.push({
+            sbankenTransaction: matchedTransaction,
+            ynabTransaction: transaction,
+          });
+          matchedTransactionIds.push(matchedTransaction.id);
+          normalizedTransactions = normalizedTransactions.filter(
+            (sbankenTransaction) => sbankenTransaction !== matchedTransaction
+          );
 
-      return transaction;
-    }).filter(Boolean);
+          return null;
+        }
+
+        return transaction;
+      })
+      .filter(Boolean);
 
     // TODO: Expose matched transactions
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useAccountId  } from '../utils';
+import { useAccountId } from '../utils';
 import { formatCurrency, formatDate } from '../../localization';
 import transactionsSelector from '../selectors/transactions';
 import { loadingSelector } from '../../shared/utils';
@@ -16,7 +16,8 @@ const Transactions = () => {
   const dispatch = useDispatch();
 
   const accountTransactions = transactions.filter(
-    (transaction) => transaction.connectedAccountId === accountId);
+    (transaction) => transaction.connectedAccountId === accountId
+  );
 
   const { sumOut, sumIn } = accountTransactions.reduce(
     (previousSums, transaction) => {
@@ -26,7 +27,9 @@ const Transactions = () => {
         previousSums.sumIn += transaction.amount;
       }
       return previousSums;
-    }, { sumOut: 0, sumIn: 0 });
+    },
+    { sumOut: 0, sumIn: 0 }
+  );
 
   return (
     <section className="sby-transactions">
@@ -56,9 +59,13 @@ const Transactions = () => {
               </td>
               <td className="sby-button-group actions">
                 {transaction.source === TransactionSource.Sbanken && (
-                  <button disabled={loading} onClick={() => {
-                    dispatch(ynabActions.createTransactionRequest(transaction.id));
-                  }} title="Opprett i YNAB">
+                  <button
+                    disabled={loading}
+                    onClick={() => {
+                      dispatch(ynabActions.createTransactionRequest(transaction.id));
+                    }}
+                    title="Opprett i YNAB"
+                  >
                     +
                   </button>
                 )}

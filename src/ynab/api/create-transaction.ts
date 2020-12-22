@@ -35,19 +35,15 @@ export function* createTransactionSaga({ transactionId }) {
     memo: transaction.description,
   } as YnabTransaction;
 
-  const response = yield call(
-    fetch,
-    `${ynabApiBaseUrl}/budgets/${budgetId}/transactions`,
-    {
-      method: HttpMethod.POST,
-      headers: new Headers({
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${personalAccessToken}`,
-        'Content-Type': 'application/json',
-      }),
-      body: JSON.stringify({ transaction: ynabTransaction }),
-    }
-  );
+  const response = yield call(fetch, `${ynabApiBaseUrl}/budgets/${budgetId}/transactions`, {
+    method: HttpMethod.POST,
+    headers: new Headers({
+      Accept: 'application/json',
+      Authorization: `Bearer ${personalAccessToken}`,
+      'Content-Type': 'application/json',
+    }),
+    body: JSON.stringify({ transaction: ynabTransaction }),
+  });
 
   // TODO: Handle errors
   if (!response.ok) {
@@ -56,16 +52,14 @@ export function* createTransactionSaga({ transactionId }) {
 
   const createdTransactionResponse = yield call([response, response.json]);
 
-  const { transaction: createdTransaction, server_knowledge: nextServerKnowledge } =
-    createdTransactionResponse.data;
+  const {
+    transaction: createdTransaction,
+    server_knowledge: nextServerKnowledge,
+  } = createdTransactionResponse.data;
 
   yield all([
     put(createTransactionResponse()),
-    put(getTransactionsResponse(
-      [createdTransaction],
-      account.ynabId,
-      nextServerKnowledge,
-    )),
+    put(getTransactionsResponse([createdTransaction], account.ynabId, nextServerKnowledge)),
     put(getAccountsRequest()),
   ]);
 }

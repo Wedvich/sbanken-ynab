@@ -35,7 +35,7 @@ export const actions = {
   setLastError,
 };
 
-export type AppAction = ReturnType<typeof actions[keyof typeof actions]>
+export type AppAction = ReturnType<typeof actions[keyof typeof actions]>;
 
 export const appStateKey = 'app';
 

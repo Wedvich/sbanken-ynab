@@ -27,15 +27,19 @@ export function* getTokenSaga() {
   const tokenRequest: Partial<RequestInit> = {
     method: 'post',
     headers: new Headers({
-      'Accept': 'application/json',
-      'Authorization': `Basic ${credentials}`,
+      Accept: 'application/json',
+      Authorization: `Basic ${credentials}`,
       'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
     }),
     body: 'grant_type=client_credentials',
   };
 
   try {
-    const response: Response = yield call(fetch, sbankenIdentityServerUrl, tokenRequest as RequestInit);
+    const response: Response = yield call(
+      fetch,
+      sbankenIdentityServerUrl,
+      tokenRequest as RequestInit
+    );
     if (!response.ok) {
       return yield put(getTokenResponse(undefined, response.statusText));
     }

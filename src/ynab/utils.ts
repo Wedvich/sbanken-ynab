@@ -1,7 +1,7 @@
 export enum YnabStorageKey {
   BudgetId = 'ynab/budget-id',
   PersonalAccessToken = 'ynab/personal-access-token',
-  ServerKnowledge = 'ynab/server-knowledge'
+  ServerKnowledge = 'ynab/server-knowledge',
 }
 
 export interface YnabServerKnowledge {
@@ -14,8 +14,7 @@ export const getStoredToken = () =>
 export const storeToken = (token: string) =>
   localStorage.setItem(YnabStorageKey.PersonalAccessToken, token);
 
-export const getStoredBudgetId = () =>
-  localStorage.getItem(YnabStorageKey.BudgetId) || null;
+export const getStoredBudgetId = () => localStorage.getItem(YnabStorageKey.BudgetId) || null;
 
 export const storeBudgetId = (budgetId: string) =>
   localStorage.setItem(YnabStorageKey.BudgetId, budgetId);
@@ -29,7 +28,7 @@ export const getStoredServerKnowledge = () => {
         if (!Number.isNaN(serverKnowledgeValue)) {
           serverKnowledge[key] = serverKnowledgeValue;
         }
-      // eslint-disable-next-line no-empty
+        // eslint-disable-next-line no-empty
       } catch {}
 
       return serverKnowledge;

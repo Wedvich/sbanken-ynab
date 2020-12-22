@@ -10,7 +10,7 @@ export const sortObject = <TObject>(o: TObject): TObject => {
   return Object.fromEntries(
     Object.entries(o)
       .sort(([k1], [k2]) => k1.localeCompare(k2))
-      .map(([k, v]) => [k, sortObject(v)]),
+      .map(([k, v]) => [k, sortObject(v)])
   ) as TObject;
 };
 
@@ -27,7 +27,7 @@ export enum HttpMethod {
 
 export enum HttpErrorSource {
   SbankenApi = 'sbanken-api',
-  YnabApi = 'ynab-api'
+  YnabApi = 'ynab-api',
 }
 
 export interface HttpError {

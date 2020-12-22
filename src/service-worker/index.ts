@@ -39,23 +39,25 @@ serviceWorker.addEventListener('fetch', (event: FetchEvent) => {
   }
 
   event.respondWith(
-    caches.open(cacheName).then((cache) => cache.match(request).then((cacheResponse) => {
-      if (requestUrl.pathname === '/') {
-        const networkResponse = fetch(request).then((networkResponse) => {
+    caches.open(cacheName).then((cache) =>
+      cache.match(request).then((cacheResponse) => {
+        if (requestUrl.pathname === '/') {
+          const networkResponse = fetch(request).then((networkResponse) => {
+            void cache.put(request, networkResponse.clone());
+            return networkResponse;
+          });
+          return cacheResponse || networkResponse;
+        }
+
+        if (cacheResponse) {
+          return cacheResponse;
+        }
+
+        return fetch(request).then((networkResponse) => {
           void cache.put(request, networkResponse.clone());
           return networkResponse;
         });
-        return cacheResponse || networkResponse;
-      }
-
-      if (cacheResponse) {
-        return cacheResponse;
-      }
-
-      return fetch(request).then((networkResponse) => {
-        void cache.put(request, networkResponse.clone());
-        return networkResponse;
-      });
-    }))
+      })
+    )
   );
 });

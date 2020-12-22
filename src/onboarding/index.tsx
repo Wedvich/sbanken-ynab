@@ -1,4 +1,4 @@
-import React, {  } from 'react';
+import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import SbankenOnboarding from './sbanken';
 import YnabOnboarding from './ynab';
@@ -23,9 +23,13 @@ const Onboarding = () => {
       </Switch>
       <footer className="sby-onboarding-footer">
         Ikoner av
-        <ExternalLink href="https://www.flaticon.com/authors/freepik" noIcon>Freepik</ExternalLink>
+        <ExternalLink href="https://www.flaticon.com/authors/freepik" noIcon>
+          Freepik
+        </ExternalLink>
         fra
-        <ExternalLink href="https://www.flaticon.com" noIcon>www.flaticon.com</ExternalLink>
+        <ExternalLink href="https://www.flaticon.com" noIcon>
+          www.flaticon.com
+        </ExternalLink>
       </footer>
     </>
   );

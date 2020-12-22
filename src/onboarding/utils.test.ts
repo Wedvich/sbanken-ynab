@@ -1,4 +1,9 @@
-import { onboardingStatusStorageKey, OnboardingStatus, getStoredOnboardingStatus, storeOnboardingStatus } from './utils';
+import {
+  onboardingStatusStorageKey,
+  OnboardingStatus,
+  getStoredOnboardingStatus,
+  storeOnboardingStatus,
+} from './utils';
 
 beforeEach(() => {
   localStorage.clear();

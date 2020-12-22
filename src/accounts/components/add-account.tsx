@@ -34,16 +34,21 @@ const AddAccount = () => {
     selectedSbankenAccount &&
     selectedYnabAccount &&
     name &&
-    !connectedAccounts.find((account) => compareConnectedAccountSource(account, connectedAccountSource));
+    !connectedAccounts.find((account) =>
+      compareConnectedAccountSource(account, connectedAccountSource)
+    );
 
-  const onSubmit = useCallback((e: FormEvent) => {
-    e.preventDefault();
-    if (!validConnection) return;
-    dispatch(actions.add(connectedAccountSource));
-    setSelectedSbankenAccount(null);
-    setSelectedYnabAccount(null);
-    setName('');
-  }, [connectedAccountSource, validConnection]);
+  const onSubmit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      if (!validConnection) return;
+      dispatch(actions.add(connectedAccountSource));
+      setSelectedSbankenAccount(null);
+      setSelectedYnabAccount(null);
+      setName('');
+    },
+    [connectedAccountSource, validConnection]
+  );
 
   return (
     <form className="sby-add-account" ref={formRef} onSubmit={onSubmit}>
@@ -53,7 +58,9 @@ const AddAccount = () => {
           <li className="heading">Sbanken-konto</li>
           {Object.values(sbankenAccounts).map((sbankenAccount) => {
             const key = `sbanken-${sbankenAccount.accountId}`;
-            const disabled = !!connectedAccounts.find((account) => account.sbankenId === sbankenAccount.accountId);
+            const disabled = !!connectedAccounts.find(
+              (account) => account.sbankenId === sbankenAccount.accountId
+            );
             return (
               <li key={key}>
                 <input
@@ -62,7 +69,9 @@ const AddAccount = () => {
                   name="sbanken-account"
                   disabled={disabled || loading}
                   checked={sbankenAccount.accountId === selectedSbankenAccount}
-                  onChange={() => { setSelectedSbankenAccount(sbankenAccount.accountId); }}
+                  onChange={() => {
+                    setSelectedSbankenAccount(sbankenAccount.accountId);
+                  }}
                 />
                 <label htmlFor={key} className={cx({ disabled })}>
                   {sbankenAccount.name}
@@ -75,7 +84,9 @@ const AddAccount = () => {
           <li className="heading">YNAB-konto</li>
           {Object.values(ynabAccounts).map((ynabAccount) => {
             const key = `ynab-${ynabAccount.id}`;
-            const disabled = !!connectedAccounts.find((account) => account.ynabId === ynabAccount.id);
+            const disabled = !!connectedAccounts.find(
+              (account) => account.ynabId === ynabAccount.id
+            );
             return (
               <li key={key}>
                 <input
@@ -107,13 +118,17 @@ const AddAccount = () => {
           className="sby-text-input"
           placeholder="Velg et navn"
           value={name}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => { setName(e.target.value); }}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            setName(e.target.value);
+          }}
           size={32}
           disabled={loading}
         />
       </div>
       <div className="sby-button-group">
-        <button type="submit" disabled={!validConnection || loading}>Legg til</button>
+        <button type="submit" disabled={!validConnection || loading}>
+          Legg til
+        </button>
       </div>
     </form>
   );

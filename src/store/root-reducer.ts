@@ -18,12 +18,12 @@ let reducerMap = {
 
 let rootReducer = combineReducers(reducerMap);
 
-export type RootState = ReturnType<typeof rootReducer>
+export type RootState = ReturnType<typeof rootReducer>;
 
 if (process.env.NODE_ENV === 'development') {
   reducerMap = utils.sortObject(reducerMap);
   const unsortedRootReducer = combineReducers(reducerMap);
-  rootReducer = ((state, action) => utils.sortObject(unsortedRootReducer(state, action)));
+  rootReducer = (state, action) => utils.sortObject(unsortedRootReducer(state, action));
 }
 
 export default rootReducer;
