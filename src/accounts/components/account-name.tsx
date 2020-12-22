@@ -1,16 +1,15 @@
 import React, {
   useState,
   ChangeEvent,
-  useLayoutEffect,
   useRef,
   useCallback,
   KeyboardEvent,
   FocusEvent,
+  useEffect,
 } from 'react';
 import { useDispatch } from 'react-redux';
 import Icon, { IconType, IconStyle } from '../../shared/icon';
 import { actions } from '../reducer';
-
 import './account-name.scss';
 import { ConnectedAccountSource } from '../types';
 
@@ -24,13 +23,13 @@ const AccountName = ({ account }: AccountNameProps) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLInputElement>();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!isEditing) {
       setCurrentName(account.displayName);
       return;
     }
     ref.current.focus();
-  }, [account, ref.current, isEditing]);
+  }, [account, isEditing]);
 
   const finishEditing = useCallback(
     (save = true) => {
@@ -39,7 +38,7 @@ const AccountName = ({ account }: AccountNameProps) => {
       }
       setIsEditing(false);
     },
-    [isEditing, account, currentName]
+    [currentName, dispatch, account]
   );
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {

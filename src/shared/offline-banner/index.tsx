@@ -14,7 +14,7 @@ const OfflineBanner = () => {
     if (isOffline && closedManually) {
       setClosedManually(false);
     }
-  }, [isOffline]);
+  }, [closedManually, isOffline]);
 
   return (
     <CSSTransition in={isOffline && !closedManually} timeout={300} unmountOnExit>

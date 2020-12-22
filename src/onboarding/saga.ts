@@ -67,7 +67,6 @@ export default function* (history: History) {
       }
     }
 
-    console.log("history.replace('/onboarding/ynab/budget')");
     history.replace('/onboarding/ynab/budget');
     yield take(YnabActionType.SetBudget);
   }

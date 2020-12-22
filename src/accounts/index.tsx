@@ -27,7 +27,7 @@ const Accounts = () => {
     if (!noAccounts && !accountId) {
       history.push(`/accounts/${connectedAccounts[0].compoundId}`);
     }
-  }, [connectedAccounts, accountId]);
+  }, [connectedAccounts, accountId, noAccounts, history]);
 
   return (
     <div className="sby-accounts" role="main">

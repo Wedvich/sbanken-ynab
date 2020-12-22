@@ -1,11 +1,4 @@
-import React, {
-  useLayoutEffect,
-  useRef,
-  FormEvent,
-  useState,
-  ChangeEvent,
-  useCallback,
-} from 'react';
+import React, { useEffect, useRef, FormEvent, useState, ChangeEvent, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { actions } from '../reducer';
 import { ModalId } from '../types';
@@ -21,11 +14,11 @@ const ImportSettingsModal = () => {
   const [settings, setSettings] = useState('');
   const canSubmit = settings.length > 0;
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const textArea = formRef.current?.querySelector('textarea');
     textArea?.focus();
     textArea?.setSelectionRange(0, textArea.value.length);
-  }, [formRef.current]);
+  }, []);
 
   const onSubmit = useCallback(
     (e: FormEvent) => {
@@ -33,7 +26,7 @@ const ImportSettingsModal = () => {
       const importedSettings = decodeSettings(settings);
       dispatch(appActions.importSettings(importedSettings));
     },
-    [settings]
+    [dispatch, settings]
   );
 
   return (

@@ -1,4 +1,4 @@
-import React, { useRef, FormEvent, useState, useCallback, ChangeEvent } from 'react';
+import React, { useRef, FormEvent, useState, useCallback, ChangeEvent, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import cx from 'classnames';
 import { RootState } from '../../store/root-reducer';
@@ -24,11 +24,14 @@ const AddAccount = () => {
   const [selectedYnabAccount, setSelectedYnabAccount] = useState(null);
   const [name, setName] = useState('');
 
-  const connectedAccountSource: ConnectedAccountSource = {
-    displayName: name,
-    sbankenId: selectedSbankenAccount,
-    ynabId: selectedYnabAccount,
-  };
+  const connectedAccountSource = useMemo<ConnectedAccountSource>(
+    () => ({
+      displayName: name,
+      sbankenId: selectedSbankenAccount,
+      ynabId: selectedYnabAccount,
+    }),
+    [name, selectedSbankenAccount, selectedYnabAccount]
+  );
 
   const validConnection =
     selectedSbankenAccount &&
@@ -47,7 +50,7 @@ const AddAccount = () => {
       setSelectedYnabAccount(null);
       setName('');
     },
-    [connectedAccountSource, validConnection]
+    [connectedAccountSource, dispatch, validConnection]
   );
 
   return (

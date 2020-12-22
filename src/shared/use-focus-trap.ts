@@ -31,5 +31,5 @@ export default (containerRef: MutableRefObject<HTMLElement>) => {
     return () => {
       document.removeEventListener('keydown', focusTrap);
     };
-  });
+  }, [containerRef, firstFocusableNode, lastFocusableNode]);
 };

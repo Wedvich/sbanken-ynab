@@ -23,7 +23,7 @@ const Modals = () => {
     };
     window.addEventListener('keydown', closeHandler);
     return () => window.removeEventListener('keydown', closeHandler);
-  }, [activeModal]);
+  }, [activeModal, dispatch]);
 
   return (
     <div
