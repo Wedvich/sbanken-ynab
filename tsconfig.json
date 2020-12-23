@@ -3,11 +3,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": [
-      "dom",
-      "esnext",
-      "webworker"
-    ],
+    "lib": ["dom", "esnext", "webworker"],
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
@@ -23,5 +19,5 @@
     "*.config.js",
     "server.js",
     "webpack.config.*.js"
-  ],
+  ]
 }

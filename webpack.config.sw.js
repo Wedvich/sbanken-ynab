@@ -7,7 +7,7 @@ const WebpackBar = require('webpackbar');
 module.exports = () => ({
   devtool: false,
   entry: {
-    'sw': path.resolve(__dirname, 'src/service-worker/index.ts'),
+    sw: path.resolve(__dirname, 'src/service-worker/index.ts'),
   },
   mode: process.env.NODE_ENV,
   module: {
@@ -15,10 +15,7 @@ module.exports = () => ({
       {
         test: /\.[jt]sx?$/i,
         exclude: /node_modules/,
-        use: [
-          require.resolve('babel-loader'),
-          require.resolve('eslint-loader'),
-        ],
+        use: [require.resolve('babel-loader'), require.resolve('eslint-loader')],
       },
     ],
   },

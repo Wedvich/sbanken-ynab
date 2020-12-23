@@ -8,17 +8,14 @@ const isDev = process.env.NODE_ENV === 'development';
 
 module.exports = {
   entry: {
-    'app': [path.resolve(__dirname, 'src/index.tsx')],
+    app: [path.resolve(__dirname, 'src/index.tsx')],
   },
   module: {
     rules: [
       {
         test: /\.[jt]sx?$/i,
         exclude: /node_modules/,
-        use: [
-          require.resolve('babel-loader'),
-          require.resolve('eslint-loader'),
-        ],
+        use: [require.resolve('babel-loader'), require.resolve('eslint-loader')],
       },
       {
         test: /\.s?css$/i,
