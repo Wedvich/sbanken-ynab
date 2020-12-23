@@ -4,12 +4,13 @@ import { select, put, call, take } from 'redux-saga/effects';
 import { RootState } from '../../store/root-reducer';
 import { storeAccessToken, validateAccessToken } from '../utils';
 import { sbankenIdentityServerUrl } from '../../shared/config';
+import { HttpError, HttpErrorSource } from '../../shared/utils';
 
 export const getTokenRequest = () => ({
   type: SbankenActionType.GetTokenRequest as SbankenActionType.GetTokenRequest,
 });
 
-export const getTokenResponse = (token?: SbankenAccessToken, error?: string) => ({
+export const getTokenResponse = (token?: SbankenAccessToken, error?: HttpError) => ({
   type: SbankenActionType.GetTokenResponse as SbankenActionType.GetTokenResponse,
   token,
   error,
@@ -40,14 +41,27 @@ export function* getTokenSaga() {
       sbankenIdentityServerUrl,
       tokenRequest as RequestInit
     );
+
     if (!response.ok) {
-      return yield put(getTokenResponse(undefined, response.statusText));
+      const error: HttpError = {
+        source: HttpErrorSource.SbankenApi,
+        statusCode: response.status,
+        statusText: response.statusText,
+      };
+
+      return yield put(getTokenResponse(undefined, error));
     }
+
     const tokenResponse: SbankenTokenResponse = yield call([response, response.json]);
     const token = transformAccessToken(tokenResponse);
     yield put(getTokenResponse(token));
     yield call(storeAccessToken, token);
   } catch (e) {
-    yield put(getTokenResponse(undefined, (e as Error).message));
+    const error: HttpError = {
+      source: HttpErrorSource.SbankenApi,
+      statusCode: 0,
+      statusText: (e as Error).message,
+    };
+    yield put(getTokenResponse(undefined, error));
   }
 }
