@@ -13,7 +13,10 @@ export default function* (history: History) {
     const connectedAccounts: ConnectedAccount[] = yield call(accountsSelector, state);
     yield call(storeAccountSources, connectedAccountSources);
     if (type === AccountsActionType.Add && connectedAccounts[connectedAccounts.length - 1]) {
-      yield call([history, history.push], `/accounts/${connectedAccounts[connectedAccounts.length - 1].compoundId}` as any);
+      yield call(
+        [history, history.push],
+        `/accounts/${connectedAccounts[connectedAccounts.length - 1].compoundId}` as any
+      );
     } else if (type === AccountsActionType.Remove) {
       yield call([history, history.replace], '/accounts' as any);
     }

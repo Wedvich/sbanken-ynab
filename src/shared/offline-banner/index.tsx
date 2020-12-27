@@ -14,23 +14,17 @@ const OfflineBanner = () => {
     if (isOffline && closedManually) {
       setClosedManually(false);
     }
-  }, [isOffline]);
+  }, [closedManually, isOffline]);
 
   return (
-    <CSSTransition
-      in={isOffline && !closedManually}
-      timeout={300}
-      unmountOnExit
-    >
+    <CSSTransition in={isOffline && !closedManually} timeout={300} unmountOnExit>
       <div className="sby-offline-banner">
-        <Icon
-          type={IconType.Network}
-          style={IconStyle.Outline}
-          className="sby-network-status"
-        />
+        <Icon type={IconType.Network} style={IconStyle.Outline} className="sby-network-status" />
         <span>Mangler nettverkstilkobling</span>
         <div className="sby-button-group">
-          <button className="link" onClick={() => setClosedManually(true)}>Lukk</button>
+          <button className="link" onClick={() => setClosedManually(true)}>
+            Lukk
+          </button>
         </div>
       </div>
     </CSSTransition>

@@ -4,7 +4,12 @@ import { SbankenActionType, actions as sbankenActions, SbankenState } from '../s
 import { YnabActionType, actions as ynabActions, YnabState } from '../ynab/reducer';
 import { RootState } from '../store/root-reducer';
 import { validateAccessToken } from '../sbanken/utils';
-import { getStoredOnboardingStatus, OnboardingActionType, storeOnboardingStatus, OnboardingStatus } from './utils';
+import {
+  getStoredOnboardingStatus,
+  OnboardingActionType,
+  storeOnboardingStatus,
+  OnboardingStatus,
+} from './utils';
 import { getBudgetsResponse } from '../ynab/api/get-budgets';
 
 export default function* (history: History) {
@@ -15,8 +20,9 @@ export default function* (history: History) {
     yield call(storeOnboardingStatus, OnboardingStatus.Started);
   }
 
-  const { token: sbankenToken, customerId }: SbankenState =
-    yield select((state: RootState) => state.sbanken);
+  const { token: sbankenToken, customerId }: SbankenState = yield select(
+    (state: RootState) => state.sbanken
+  );
 
   if (!validateAccessToken(sbankenToken) || !customerId) {
     // If the onboarding has been completed before, we can skip the onboarding screen
@@ -34,8 +40,9 @@ export default function* (history: History) {
     }
   }
 
-  const { personalAccessToken: ynabToken, budgetId }: YnabState =
-    yield select((state: RootState) => state.ynab);
+  const { personalAccessToken: ynabToken, budgetId }: YnabState = yield select(
+    (state: RootState) => state.ynab
+  );
 
   if (!ynabToken || !budgetId) {
     history.push('/onboarding/ynab');
@@ -46,8 +53,9 @@ export default function* (history: History) {
     let validYnabToken = false;
     while (!validYnabToken) {
       console.count('while (!validYnabToken)');
-      const budgetsResponse: ReturnType<typeof getBudgetsResponse> =
-        yield take(YnabActionType.GetBudgetsResponse);
+      const budgetsResponse: ReturnType<typeof getBudgetsResponse> = yield take(
+        YnabActionType.GetBudgetsResponse
+      );
 
       console.log('response', budgetsResponse);
 
@@ -59,7 +67,6 @@ export default function* (history: History) {
       }
     }
 
-    console.log('history.replace(\'/onboarding/ynab/budget\')');
     history.replace('/onboarding/ynab/budget');
     yield take(YnabActionType.SetBudget);
   }
@@ -68,8 +75,5 @@ export default function* (history: History) {
     yield call(storeOnboardingStatus, OnboardingStatus.Completed);
   }
   history.replace('/');
-  yield all([
-    put(sbankenActions.getAccountsRequest()),
-    put(ynabActions.getAccountsRequest()),
-  ]);
+  yield all([put(sbankenActions.getAccountsRequest()), put(ynabActions.getAccountsRequest())]);
 }

@@ -7,7 +7,9 @@ export default (containerRef: MutableRefObject<HTMLElement>) => {
   useLayoutEffect(() => {
     if (!containerRef.current) return;
 
-    const focusableElements = containerRef.current.querySelectorAll<HTMLElement>('input:not(:disabled), button:not(:disabled)');
+    const focusableElements = containerRef.current.querySelectorAll<HTMLElement>(
+      'input:not(:disabled), button:not(:disabled)'
+    );
     if (focusableElements.length === 0) return;
 
     setFirstFocusableNode(focusableElements[0]);
@@ -29,5 +31,5 @@ export default (containerRef: MutableRefObject<HTMLElement>) => {
     return () => {
       document.removeEventListener('keydown', focusTrap);
     };
-  });
+  }, [containerRef, firstFocusableNode, lastFocusableNode]);
 };

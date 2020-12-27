@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../reducer';
 import { ModalId } from '../types';
@@ -11,11 +11,11 @@ const ExportSettingsModal = () => {
   const dispatch = useDispatch();
   const settings = useSelector(exportSettingsSelector);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const textArea = modalRef.current?.querySelector('textarea');
     textArea?.focus();
     textArea?.setSelectionRange(0, textArea.value.length);
-  }, [modalRef.current]);
+  }, []);
 
   return (
     <div role="dialog" ref={modalRef}>
@@ -27,7 +27,9 @@ const ExportSettingsModal = () => {
         <textarea readOnly rows={10} value={settings} />
       </p>
       <div className="sby-button-group modal-buttons">
-        <button type="button" onClick={() => dispatch(actions.closeModal(ModalId.ExportSettings))}>Lukk</button>
+        <button type="button" onClick={() => dispatch(actions.closeModal(ModalId.ExportSettings))}>
+          Lukk
+        </button>
       </div>
     </div>
   );

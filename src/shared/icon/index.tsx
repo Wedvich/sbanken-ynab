@@ -62,11 +62,23 @@ interface IconProps {
   style?: IconStyle;
 }
 
-const Icon = ({ type, title, size = IconSize.Normal, style = IconStyle.Outline, className }: IconProps) => (
-  <svg className={cx('sby-icon', {
-    'small': size === IconSize.Small,
-    'big': size === IconSize.Big,
-  }, className)}>
+const Icon = ({
+  type,
+  title,
+  size = IconSize.Normal,
+  style = IconStyle.Outline,
+  className,
+}: IconProps) => (
+  <svg
+    className={cx(
+      'sby-icon',
+      {
+        small: size === IconSize.Small,
+        big: size === IconSize.Big,
+      },
+      className
+    )}
+  >
     {title && <title>{title}</title>}
     <use xlinkHref={`#${iconSymbolMap[type][style]}`} />
   </svg>

@@ -8,7 +8,7 @@ export interface ConnectedAccountSource {
 
 export enum ConnectedAccountType {
   Debit,
-  Credit
+  Credit,
 }
 
 export interface ConnectedAccount extends ConnectedAccountSource {

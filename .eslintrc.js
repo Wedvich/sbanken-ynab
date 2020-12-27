@@ -1,8 +1,8 @@
 module.exports = {
   env: {
-    'browser': true,
-    'es6': true,
-    'node': true,
+    browser: true,
+    es6: true,
+    node: true,
   },
   extends: [
     'eslint:recommended',
@@ -25,10 +25,7 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.json',
   },
-  plugins: [
-    'react-hooks',
-    'jsx-a11y',
-  ],
+  plugins: ['react-hooks', 'jsx-a11y'],
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -42,9 +39,11 @@ module.exports = {
     '@typescript-eslint/unbound-method': 'off',
     'arrow-parens': ['warn', 'always'],
     'comma-dangle': ['warn', 'always-multiline'],
-    'indent': ['warn', 2,
+    indent: [
+      'warn',
+      2,
       {
-        'SwitchCase': 1,
+        SwitchCase: 1,
       },
     ],
     'jsx-a11y/no-onchange': 'off',
@@ -52,17 +51,17 @@ module.exports = {
     'no-multiple-empty-lines': [
       'warn',
       {
-        'max': 1,
-        'maxEOF': 1,
-        'maxBOF': 0,
+        max: 1,
+        maxEOF: 1,
+        maxBOF: 0,
       },
     ],
     'no-trailing-spaces': 'warn',
-    'quotes': ['warn', 'single'],
+    quotes: ['warn', 'single'],
     'react/prop-types': 'off',
     'react-hooks/exhaustive-deps': 'warn',
     'require-yield': 'warn',
-    'semi': ['warn', 'always'],
+    semi: ['warn', 'always'],
   },
   settings: {
     'import/resolver': {
@@ -70,7 +69,7 @@ module.exports = {
         extensions: ['.js', '.ts', '.tsx'],
       },
     },
-    'react': {
+    react: {
       version: 'detect',
     },
   },

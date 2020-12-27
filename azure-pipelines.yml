@@ -1,82 +1,82 @@
 jobs:
-- job: frontend
-  displayName: Build frontend
+  - job: frontend
+    displayName: Build frontend
 
-  pool:
-    vmImage: ubuntu-20.04
+    pool:
+      vmImage: ubuntu-20.04
 
-  steps:
-    - task: UseNode@1
-      displayName: Install Node 12
-      inputs:
-        version: 12.x
+    steps:
+      - task: UseNode@1
+        displayName: Install Node 12
+        inputs:
+          version: 12.x
 
-    - script: yarn install --frozen-lockfile
-      displayName: Install dependencies
+      - script: yarn install --frozen-lockfile
+        displayName: Install dependencies
 
-    - script: yarn eslint-ci
-      displayName: Lint TypeScript code
+      - script: yarn lint-ci
+        displayName: Lint TypeScript code
 
-    - script: yarn stylelint
-      displayName: Lint SCSS code
+      - script: yarn stylelint
+        displayName: Lint SCSS code
 
-    - script: yarn typecheck
-      displayName: Check types
+      - script: yarn typecheck
+        displayName: Check types
 
-    - script: yarn test-ci
-      displayName: Run tests
+      - script: yarn test-ci
+        displayName: Run tests
 
-    - task: PublishTestResults@2
-      displayName: Publish test results
-      continueOnError: true
-      inputs:
-        testResultsFiles: junit.xml
+      - task: PublishTestResults@2
+        displayName: Publish test results
+        continueOnError: true
+        inputs:
+          testResultsFiles: junit.xml
 
-    - task: PublishCodeCoverageResults@1
-      displayName: Publish test coverage
-      continueOnError: true
-      inputs:
-        codeCoverageTool: Cobertura
-        summaryFileLocation: coverage/cobertura-coverage.xml
+      - task: PublishCodeCoverageResults@1
+        displayName: Publish test coverage
+        continueOnError: true
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: coverage/cobertura-coverage.xml
 
-    - script: yarn build
-      displayName: Build app bundles
+      - script: yarn build
+        displayName: Build app bundles
 
-    - task: CopyFiles@2
-      displayName: Copy build output to staging directory
-      inputs:
-        contents: wwwroot/**/*
-        targetFolder: $(Build.ArtifactStagingDirectory)
+      - task: CopyFiles@2
+        displayName: Copy build output to staging directory
+        inputs:
+          contents: wwwroot/**/*
+          targetFolder: $(Build.ArtifactStagingDirectory)
 
-    - task: PublishPipelineArtifact@1
-      displayName: Publish build artifacts
-      inputs:
-        targetPath: $(Build.ArtifactStagingDirectory)
-        artifact: frontend
+      - task: PublishPipelineArtifact@1
+        displayName: Publish build artifacts
+        inputs:
+          targetPath: $(Build.ArtifactStagingDirectory)
+          artifact: frontend
 
-- job: backend
-  displayName: Build backend
+  - job: backend
+    displayName: Build backend
 
-  pool:
-    vmImage: windows-2019
+    pool:
+      vmImage: windows-2019
 
-  steps:
-    - task: UseDotNet@2
-      displayName: Install .NET Core 3.1 SDK
-      inputs:
-        version: 3.1.x
-        performMultiLevelLookup: true
+    steps:
+      - task: UseDotNet@2
+        displayName: Install .NET Core 3.1 SDK
+        inputs:
+          version: 3.1.x
+          performMultiLevelLookup: true
 
-    - task: DotNetCoreCLI@2
-      displayName: Package artifacts
-      inputs:
-        command: publish
-        publishWebProjects: true
-        arguments: --configuration Release --output $(Build.ArtifactStagingDirectory)
-        zipAfterPublish: false
+      - task: DotNetCoreCLI@2
+        displayName: Package artifacts
+        inputs:
+          command: publish
+          publishWebProjects: true
+          arguments: --configuration Release --output $(Build.ArtifactStagingDirectory)
+          zipAfterPublish: false
 
-    - task: PublishPipelineArtifact@1
-      displayName: Publish build artifacts
-      inputs:
-        targetPath: $(Build.ArtifactStagingDirectory)
-        artifact: backend
+      - task: PublishPipelineArtifact@1
+        displayName: Publish build artifacts
+        inputs:
+          targetPath: $(Build.ArtifactStagingDirectory)
+          artifact: backend

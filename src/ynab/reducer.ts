@@ -42,7 +42,7 @@ export const actions = {
   getBudgetsResponse,
 };
 
-export type YnabAction = ReturnType<typeof actions[keyof typeof actions]>
+export type YnabAction = ReturnType<typeof actions[keyof typeof actions]>;
 
 export const ynabStateKey = 'ynab';
 
@@ -115,13 +115,14 @@ const reducer: Reducer<YnabState, YnabAction> = (state = initialState, action) =
         ...state,
         loading: false,
         transactions: state.transactions
-          .filter((existingTransaction) =>
-            !action.transactions.find((transaction) => transaction.id === existingTransaction.id))
+          .filter(
+            (existingTransaction) =>
+              !action.transactions.find((transaction) => transaction.id === existingTransaction.id)
+          )
           .concat(action.transactions),
         serverKnowledge: {
           ...state.serverKnowledge,
-          [`${YnabActionType.GetTransactionsRequest}/${action.accountId}`]:
-            action.serverKnowledge,
+          [`${YnabActionType.GetTransactionsRequest}/${action.accountId}`]: action.serverKnowledge,
         },
       };
 

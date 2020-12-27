@@ -1,16 +1,18 @@
 import { eventChannel, buffers } from 'redux-saga';
 import { call, fork, takeEvery, cancel, put, spawn, takeLatest, all } from 'redux-saga/effects';
+import { History } from 'history';
 import { ServiceWorkerMessageType } from '../service-worker/constants';
 import { actions, AppActionType } from './reducer';
 import { ExportedSettings } from './utils';
-import { actions as sbankenActions } from '../sbanken/reducer';
+import { actions as sbankenActions, SbankenActionType } from '../sbanken/reducer';
 import { actions as ynabActions, YnabActionType } from '../ynab/reducer';
 import { actions as modalActions } from '../modals/reducer';
 import { actions as accountActions } from '../accounts/reducer';
 import { decodeCredentials } from '../sbanken/utils';
 import { ModalId } from '../modals/types';
-import { OnboardingActionType } from '../onboarding/utils';
+import { OnboardingActionType, OnboardingStatus, storeOnboardingStatus } from '../onboarding/utils';
 import { HttpError } from '../shared/utils';
+import { Action } from 'redux';
 
 /**
  * Handles messages to and from the service worker.
@@ -19,11 +21,15 @@ function* serviceWorkerMessageHandler() {
   let messageChannel: MessageChannel;
 
   // Listen for messages from the service worker.
-  const serviceWorkerChannel = yield call(eventChannel, (emit) => {
-    messageChannel = new MessageChannel();
-    messageChannel.port1.onmessage = (message) => emit(message.data);
-    return () => messageChannel.port1.onmessage = undefined;
-  }, buffers.expanding());
+  const serviceWorkerChannel = yield call(
+    eventChannel,
+    (emit) => {
+      messageChannel = new MessageChannel();
+      messageChannel.port1.onmessage = (message) => emit(message.data);
+      return () => (messageChannel.port1.onmessage = undefined);
+    },
+    buffers.expanding()
+  );
 
   // Pipe messages from the message channel through to the Redux store.
   yield takeEvery(serviceWorkerChannel, function* (message: any) {
@@ -36,10 +42,16 @@ function* serviceWorkerMessageHandler() {
     }
   });
 
-  const { active: serviceWorker }: ServiceWorkerRegistration = yield call(() => navigator.serviceWorker.ready);
-  yield call([serviceWorker, serviceWorker.postMessage] as any, {
-    type: ServiceWorkerMessageType.CheckForUpdates,
-  }, [messageChannel.port2]);
+  const { active: serviceWorker }: ServiceWorkerRegistration = yield call(
+    () => navigator.serviceWorker.ready
+  );
+  yield call(
+    [serviceWorker, serviceWorker.postMessage] as any,
+    {
+      type: ServiceWorkerMessageType.CheckForUpdates,
+    },
+    [messageChannel.port2]
+  );
 }
 
 /**
@@ -90,7 +102,7 @@ function* importSettingsSaga({ settings }: { settings: ExportedSettings }) {
   ]);
 }
 
-export default function* appSaga() {
+export default function* appSaga(history: History) {
   if ('serviceWorker' in navigator) {
     yield spawn(serviceWorkerSaga);
   }
@@ -98,11 +110,17 @@ export default function* appSaga() {
   yield fork(offlineMonitorSaga);
   yield takeLatest(AppActionType.ImportSettings as any, importSettingsSaga);
 
-  yield takeLatest([
-    YnabActionType.GetAccountsResponse,
-  ] as any, function* httpErrorSaga({ error }: { error?: HttpError }) {
-    if (!error) return;
-    yield put(actions.setLastError(error));
-    yield put(modalActions.openModal(ModalId.Error));
-  });
+  yield takeLatest(
+    [YnabActionType.GetAccountsResponse, SbankenActionType.GetTokenResponse] as any,
+    function* httpErrorSaga({ error, type }: Action & { error?: HttpError }) {
+      if (!error) return;
+      yield put(actions.setLastError(error));
+      yield put(modalActions.openModal(ModalId.Error));
+
+      if (type === SbankenActionType.GetTokenResponse) {
+        yield call(storeOnboardingStatus, OnboardingStatus.Started);
+        history.push('/onboarding');
+      }
+    }
+  );
 }

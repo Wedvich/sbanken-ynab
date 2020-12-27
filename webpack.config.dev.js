@@ -14,17 +14,19 @@ module.exports = merge.smart(baseConfig, {
     historyApiFallback: true,
     hot: true,
     port: process.env.PORT || 8000,
+    stats: { ...baseConfig.stats },
   },
   devtool: 'cheap-module-source-map',
   mode: 'development',
   plugins: [
     new MiniCssExtractPlugin(),
     new WatchMissingNodeModulesPlugin(path.join(__dirname, 'node_modules')),
-    process.env.MOCK_API && new DefinePlugin({
-      'process.env.SBANKEN_API_BASE_URL': '"http://localhost:4300/sbanken/api"',
-      'process.env.SBANKEN_IDENTITY_SERVER_URL': '"http://localhost:4300/sbanken/identity/token"',
-      'process.env.YNAB_API_BASE_URL': '"http://localhost:4300/ynab/api"',
-    }),
+    process.env.MOCK_API &&
+      new DefinePlugin({
+        'process.env.SBANKEN_API_BASE_URL': '"http://localhost:4300/sbanken/api"',
+        'process.env.SBANKEN_IDENTITY_SERVER_URL': '"http://localhost:4300/sbanken/identity/token"',
+        'process.env.YNAB_API_BASE_URL': '"http://localhost:4300/ynab/api"',
+      }),
     new ReactRefreshWebpackPlugin(),
   ].filter(Boolean),
 });

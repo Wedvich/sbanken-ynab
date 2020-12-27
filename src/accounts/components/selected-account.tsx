@@ -29,33 +29,43 @@ const SelectedAccount = ({ account }: SelectedAccountProps) => {
     <>
       <AccountName account={account} />
       <div className="sby-link-group">
-        <ExternalLink href={`https://secure.sbanken.no/Home/AccountStatement?accountId=${account.sbankenId}`}>
+        <ExternalLink
+          href={`https://secure.sbanken.no/Home/AccountStatement?accountId=${account.sbankenId}`}
+        >
           Åpne i Sbanken
         </ExternalLink>
         <span className="separator">&bull;</span>
-        <ExternalLink href={ynabLink}>
-          Åpne i YNAB
-        </ExternalLink>
+        <ExternalLink href={ynabLink}>Åpne i YNAB</ExternalLink>
       </div>
       <Balance account={account} />
       <div className="sby-button-group">
-        <button onClick={() => {
-          dispatch(sbankenActions.getTransactionsRequest(account.sbankenId));
-          dispatch(ynabActions.getTransactionsRequest(account.ynabId));
-        }} disabled={loading}>
+        <button
+          onClick={() => {
+            dispatch(sbankenActions.getTransactionsRequest(account.sbankenId));
+            dispatch(ynabActions.getTransactionsRequest(account.ynabId));
+          }}
+          disabled={loading}
+        >
           {loading && <Loader inverted />}
           {loading ? 'Henter' : 'Hent'} transaksjoner
         </button>
-        <button onClick={() => {
-          dispatch(sbankenActions.getAccountsRequest());
-          dispatch(ynabActions.getAccountsRequest());
-        }} disabled={loading}>
+        <button
+          onClick={() => {
+            dispatch(sbankenActions.getAccountsRequest());
+            dispatch(ynabActions.getAccountsRequest());
+          }}
+          disabled={loading}
+        >
           {loading && <Loader inverted />}
           {loading ? 'Oppdaterer' : 'Oppdater'} saldo
         </button>
-        <button className="danger" disabled={loading} onClick={() => {
-          dispatch(actions.remove(account));
-        }}>
+        <button
+          className="danger"
+          disabled={loading}
+          onClick={() => {
+            dispatch(actions.remove(account));
+          }}
+        >
           Fjern kobling
         </button>
       </div>

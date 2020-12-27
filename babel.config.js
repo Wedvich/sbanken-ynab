@@ -14,9 +14,7 @@ module.exports = (api) => {
     '@babel/preset-react',
   ];
 
-  const plugins = [
-    '@babel/plugin-proposal-class-properties',
-  ];
+  const plugins = ['@babel/plugin-proposal-class-properties'];
 
   if (process.env.NODE_ENV === 'development') {
     plugins.push('react-refresh/babel');

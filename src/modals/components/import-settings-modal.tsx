@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, FormEvent, useState, ChangeEvent, useCallback } from 'react';
+import React, { useEffect, useRef, FormEvent, useState, ChangeEvent, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { actions } from '../reducer';
 import { ModalId } from '../types';
@@ -14,17 +14,20 @@ const ImportSettingsModal = () => {
   const [settings, setSettings] = useState('');
   const canSubmit = settings.length > 0;
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const textArea = formRef.current?.querySelector('textarea');
     textArea?.focus();
     textArea?.setSelectionRange(0, textArea.value.length);
-  }, [formRef.current]);
+  }, []);
 
-  const onSubmit = useCallback((e: FormEvent) => {
-    e.preventDefault();
-    const importedSettings = decodeSettings(settings);
-    dispatch(appActions.importSettings(importedSettings));
-  }, [settings]);
+  const onSubmit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      const importedSettings = decodeSettings(settings);
+      dispatch(appActions.importSettings(importedSettings));
+    },
+    [dispatch, settings]
+  );
 
   return (
     <div role="dialog">
@@ -32,13 +35,27 @@ const ImportSettingsModal = () => {
         <h2>Importer innstillinger</h2>
       </header>
       <form onSubmit={onSubmit} ref={formRef}>
-        <p>Hvis du allerede har satt opp appen i en annen nettleser, kan du eksportere innstillingene derfra og importere dem her.</p>
         <p>
-          <textarea rows={10} value={settings} onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setSettings(e.target.value)} />
+          Hvis du allerede har satt opp appen i en annen nettleser, kan du eksportere innstillingene
+          derfra og importere dem her.
+        </p>
+        <p>
+          <textarea
+            rows={10}
+            value={settings}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setSettings(e.target.value)}
+          />
         </p>
         <div className="sby-button-group modal-buttons">
-          <button type="button" onClick={() => dispatch(actions.closeModal(ModalId.ImportSettings))}>Avbryt</button>
-          <button type="submit" disabled={!canSubmit}>Importer</button>
+          <button
+            type="button"
+            onClick={() => dispatch(actions.closeModal(ModalId.ImportSettings))}
+          >
+            Avbryt
+          </button>
+          <button type="submit" disabled={!canSubmit}>
+            Importer
+          </button>
         </div>
       </form>
     </div>

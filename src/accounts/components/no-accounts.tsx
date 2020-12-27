@@ -7,7 +7,13 @@ const NoAccounts = () => {
     <>
       <span>Du har ingen sammenkoblede kontoer ennå.</span>
       <div className="sby-button-group">
-        <button onClick={() => { history.push('/accounts/add'); }}>Legg til kobling</button>
+        <button
+          onClick={() => {
+            history.push('/accounts/add');
+          }}
+        >
+          Legg til kobling
+        </button>
       </div>
     </>
   );

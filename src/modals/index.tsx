@@ -16,30 +16,32 @@ const Modals = () => {
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
-    const closeHandler = (e: KeyboardEvent)  => {
+    const closeHandler = (e: KeyboardEvent) => {
       if (['Esc', 'Escape'].includes(e.key)) {
         dispatch(actions.closeModal(activeModal));
       }
     };
     window.addEventListener('keydown', closeHandler);
     return () => window.removeEventListener('keydown', closeHandler);
-  }, [activeModal]);
+  }, [activeModal, dispatch]);
 
   return (
-    <div className={cx('sby-modals-root', {
-      active: activeModal,
-      inactive: !activeModal,
-    })}>
+    <div
+      className={cx('sby-modals-root', {
+        active: activeModal,
+        inactive: !activeModal,
+      })}
+    >
       {/* eslint-disable jsx-a11y/no-static-element-interactions */}
       {/* eslint-disable jsx-a11y/click-events-have-key-events */}
-      <div className="sby-modal-overlay" onClick={() => { dispatch(actions.closeModal(activeModal)); }} />
+      <div
+        className="sby-modal-overlay"
+        onClick={() => {
+          dispatch(actions.closeModal(activeModal));
+        }}
+      />
       {Object.values(ModalId).map((modalId) => (
-        <Transition
-          key={modalId}
-          in={activeModal === modalId}
-          timeout={300}
-          unmountOnExit
-        >
+        <Transition key={modalId} in={activeModal === modalId} timeout={300} unmountOnExit>
           <div className="sby-modal-content">
             {(() => {
               switch (modalId) {

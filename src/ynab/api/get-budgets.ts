@@ -15,9 +15,7 @@ export const getBudgetsResponse = (budgets?: YnabBudget[], error?: string) => ({
 });
 
 export function* getBudgetsSaga() {
-  const { personalAccessToken }: YnabState = yield select(
-    (state: RootState) => state.ynab
-  );
+  const { personalAccessToken }: YnabState = yield select((state: RootState) => state.ynab);
   const response: Response = yield call(fetch, `${ynabApiBaseUrl}/budgets`, {
     headers: new Headers({
       Accept: 'application/json',

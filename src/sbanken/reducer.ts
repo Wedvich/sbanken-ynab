@@ -2,7 +2,12 @@ import { Reducer } from 'redux';
 import { SbankenAccount, SbankenTransactionEnriched } from './api';
 import { getTokenRequest, getTokenResponse } from './api/get-token';
 import { getAccountsRequest, getAccountsResponse } from './api/get-accounts';
-import { getStoredAccessToken, getStoredCustomerId, encodeCredentials, getStoredCredentials } from './utils';
+import {
+  getStoredAccessToken,
+  getStoredCustomerId,
+  encodeCredentials,
+  getStoredCredentials,
+} from './utils';
 import { getTransactionsRequest, getTransactionsResponse } from './api/get-transactions';
 
 export enum SbankenActionType {
@@ -31,7 +36,7 @@ export const actions = {
   getTransactionsResponse,
 };
 
-export type SbankenAction = ReturnType<typeof actions[keyof typeof actions]>
+export type SbankenAction = ReturnType<typeof actions[keyof typeof actions]>;
 
 export const sbankenStateKey = 'sbanken';
 
@@ -42,7 +47,7 @@ const initialState = {
   error: null as string | null,
   token: getStoredAccessToken(),
   loading: false,
-  accounts: { } as { [key: string]: SbankenAccount },
+  accounts: {} as { [key: string]: SbankenAccount },
   transactions: [] as SbankenTransactionEnriched[],
 };
 
@@ -97,10 +102,14 @@ const reducer: Reducer<SbankenState, SbankenAction> = (state = initialState, act
       return {
         ...state,
         loading: false,
-        transactions: state.transactions
-          .concat(action.transactions.filter(
-            (transaction) => !state.transactions.find(
-              (existingTransaction) => transaction.id === existingTransaction.id))),
+        transactions: state.transactions.concat(
+          action.transactions.filter(
+            (transaction) =>
+              !state.transactions.find(
+                (existingTransaction) => transaction.id === existingTransaction.id
+              )
+          )
+        ),
       };
 
     default: {

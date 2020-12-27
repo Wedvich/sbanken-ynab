@@ -34,10 +34,7 @@ const Nav = () => {
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="navAccounts">
           {(provided) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
+            <div ref={provided.innerRef} {...provided.droppableProps}>
               {connectedAccounts.map((account, index) => (
                 <NavAccount
                   key={account.compoundId}
@@ -51,10 +48,7 @@ const Nav = () => {
           )}
         </Droppable>
       </DragDropContext>
-      <Link
-        to={'/accounts/add'}
-        className={cx({ active: location.pathname === '/accounts/add' })}
-      >
+      <Link to={'/accounts/add'} className={cx({ active: location.pathname === '/accounts/add' })}>
         <span className="label">+ Legg til kobling</span>
       </Link>
       {loading && connectedAccounts.length === 0 && (
@@ -64,22 +58,26 @@ const Nav = () => {
         </div>
       )}
       <div className="sby-nav-footer">
-        <button className="sby-nav-button sby-nav-delete-settings" title="Fjern alle data" onClick={() => {
-          dispatch(modalActions.openModal(ModalId.DeleteSettings));
-        }}>
+        <button
+          className="sby-nav-button sby-nav-delete-settings"
+          title="Fjern alle data"
+          onClick={() => {
+            dispatch(modalActions.openModal(ModalId.DeleteSettings));
+          }}
+        >
           <Icon type={IconType.Trash} size={IconSize.Small} />
         </button>
-        <button className="sby-nav-button" title="Eksporter innstillinger" onClick={() => {
-          dispatch(modalActions.openModal(ModalId.ExportSettings));
-        }}>
+        <button
+          className="sby-nav-button"
+          title="Eksporter innstillinger"
+          onClick={() => {
+            dispatch(modalActions.openModal(ModalId.ExportSettings));
+          }}
+        >
           <Icon type={IconType.Export} size={IconSize.Small} />
         </button>
         {isOffline && (
-          <Icon
-            type={IconType.Network}
-            style={IconStyle.Outline}
-            className="sby-network-status"
-          />
+          <Icon type={IconType.Network} style={IconStyle.Outline} className="sby-network-status" />
         )}
       </div>
     </nav>

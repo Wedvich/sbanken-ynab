@@ -20,9 +20,9 @@ export function* getAccountsSaga() {
 
   const response = yield call(fetch, `${sbankenApiBaseUrl}/accounts`, {
     headers: new Headers({
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${token.token}`,
-      'customerId': customerId,
+      Accept: 'application/json',
+      Authorization: `Bearer ${token.token}`,
+      customerId: customerId,
     }),
   });
 

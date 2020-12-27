@@ -1,8 +1,15 @@
-import React, { useState, ChangeEvent, useLayoutEffect, useRef, useCallback, KeyboardEvent, FocusEvent } from 'react';
+import React, {
+  useState,
+  ChangeEvent,
+  useRef,
+  useCallback,
+  KeyboardEvent,
+  FocusEvent,
+  useEffect,
+} from 'react';
 import { useDispatch } from 'react-redux';
 import Icon, { IconType, IconStyle } from '../../shared/icon';
 import { actions } from '../reducer';
-
 import './account-name.scss';
 import { ConnectedAccountSource } from '../types';
 
@@ -16,20 +23,23 @@ const AccountName = ({ account }: AccountNameProps) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLInputElement>();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!isEditing) {
       setCurrentName(account.displayName);
       return;
     }
     ref.current.focus();
-  }, [account, ref.current, isEditing]);
+  }, [account, isEditing]);
 
-  const finishEditing = useCallback((save = true) => {
-    if (save && currentName.length) {
-      dispatch(actions.rename(account, currentName.trim()));
-    }
-    setIsEditing(false);
-  }, [isEditing, account, currentName]);
+  const finishEditing = useCallback(
+    (save = true) => {
+      if (save && currentName.length) {
+        dispatch(actions.rename(account, currentName.trim()));
+      }
+      setIsEditing(false);
+    },
+    [currentName, dispatch, account]
+  );
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (['Esc', 'Escape'].includes(e.key)) {
@@ -46,10 +56,7 @@ const AccountName = ({ account }: AccountNameProps) => {
   if (!isEditing) {
     return (
       <h1 className="sby-account-name">
-        <button
-          title="Endre navn"
-          onClick={() => setIsEditing(true)}
-        >
+        <button title="Endre navn" onClick={() => setIsEditing(true)}>
           {currentName}
         </button>
         <Icon type={IconType.Edit} style={IconStyle.Solid} />

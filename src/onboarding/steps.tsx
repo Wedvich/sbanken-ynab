@@ -7,9 +7,9 @@ const OnboardingSteps = () => {
 
   return (
     <div className="steps">
-      <div className={cx('step', { 'active': location.pathname === '/onboarding/sbanken' })} />
-      <div className={cx('step', { 'active': location.pathname === '/onboarding/ynab' })} />
-      <div className={cx('step', { 'active': location.pathname === '/onboarding/ynab/budget' })} />
+      <div className={cx('step', { active: location.pathname === '/onboarding/sbanken' })} />
+      <div className={cx('step', { active: location.pathname === '/onboarding/ynab' })} />
+      <div className={cx('step', { active: location.pathname === '/onboarding/ynab/budget' })} />
     </div>
   );
 };

@@ -10,12 +10,7 @@ export interface ExternalLinkProps {
 }
 
 const ExternalLink = ({ href, children, noIcon }: ExternalLinkProps) => (
-  <a
-    className="sby-external-link"
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-  >
+  <a className="sby-external-link" href={href} target="_blank" rel="noopener noreferrer">
     {children}
     {!noIcon && (
       <>

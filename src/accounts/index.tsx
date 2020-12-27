@@ -27,7 +27,7 @@ const Accounts = () => {
     if (!noAccounts && !accountId) {
       history.push(`/accounts/${connectedAccounts[0].compoundId}`);
     }
-  }, [connectedAccounts, accountId]);
+  }, [connectedAccounts, accountId, noAccounts, history]);
 
   return (
     <div className="sby-accounts" role="main">
@@ -37,7 +37,7 @@ const Accounts = () => {
           <AddAccount />
         </Route>
         <Route>
-          <div className={cx('sby-accounts-page', { 'empty': noAccounts })}>
+          <div className={cx('sby-accounts-page', { empty: noAccounts })}>
             {noAccounts && (loading ? <Loader /> : <NoAccounts />)}
             {selectedAccount && <SelectedAccount account={selectedAccount} />}
           </div>

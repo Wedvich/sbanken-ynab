@@ -19,7 +19,9 @@ const ErrorModal = () => {
       </header>
       <ErrorModalDetails error={error} />
       <div className="sby-button-group modal-buttons">
-        <button type="button" onClick={() => dispatch(actions.closeModal(ModalId.Error))}>Lukk</button>
+        <button type="button" onClick={() => dispatch(actions.closeModal(ModalId.Error))}>
+          Lukk
+        </button>
       </div>
     </div>
   );

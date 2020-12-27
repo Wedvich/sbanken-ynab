@@ -16,17 +16,14 @@ const NavAccount = ({ account, active, index }: NavAccountProps) => {
   const hasDiffs = !!account.diffs;
 
   return (
-    <Draggable
-      draggableId={account.compoundId}
-      index={index}
-    >
+    <Draggable draggableId={account.compoundId} index={index}>
       {(provided: DraggableProvided, snapshot) => (
         <Link
           to={`/accounts/${account.compoundId}`}
           className={cx({
-            'active': active,
+            active: active,
             'has-diffs': hasDiffs,
-            'dragging': snapshot.isDragging,
+            dragging: snapshot.isDragging,
           })}
           innerRef={provided.innerRef}
           {...provided.draggableProps}

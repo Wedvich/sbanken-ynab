@@ -22,15 +22,18 @@ const YnabOnboarding = () => {
   // FIXME: This feels too brittle
   const canSubmit = personalAccessToken && (!showBudgetPicker || budgetId);
 
-  const onSubmit = useCallback((e: FormEvent) => {
-    e.preventDefault();
-    if (!canSubmit) return;
-    if (!state.personalAccessToken || state.error) {
-      dispatch(ynabActions.setToken(personalAccessToken));
-    } else {
-      dispatch(ynabActions.setBudget(budgetId));
-    }
-  }, [canSubmit, state, dispatch, personalAccessToken, budgetId]);
+  const onSubmit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      if (!canSubmit) return;
+      if (!state.personalAccessToken || state.error) {
+        dispatch(ynabActions.setToken(personalAccessToken));
+      } else {
+        dispatch(ynabActions.setBudget(budgetId));
+      }
+    },
+    [canSubmit, state, dispatch, personalAccessToken, budgetId]
+  );
 
   return (
     <form className="sby-onboarding" ref={formRef} onSubmit={onSubmit}>
@@ -39,15 +42,15 @@ const YnabOnboarding = () => {
       <div className="sby-onboarding-instructions">
         {!showBudgetPicker && (
           <>
-            Du må gå til <ExternalLink href="https://app.youneedabudget.com/settings/developer">utviklerinnstillingene</ExternalLink> og opprette et Personal Access Token.
+            Du må gå til{' '}
+            <ExternalLink href="https://app.youneedabudget.com/settings/developer">
+              utviklerinnstillingene
+            </ExternalLink>{' '}
+            og opprette et Personal Access Token.
           </>
         )}
 
-        {showBudgetPicker && (
-          <>
-            Velg budsjettet du bruker i You Need A Budget.
-          </>
-        )}
+        {showBudgetPicker && <>Velg budsjettet du bruker i You Need A Budget.</>}
       </div>
       <div className="sby-input-group-collection">
         <div className="sby-input-group">
@@ -71,12 +74,11 @@ const YnabOnboarding = () => {
               value={budgetId}
               onChange={(e: ChangeEvent<HTMLSelectElement>) => setBudgetId(e.target.value)}
             >
-              <option disabled value="">&nbsp;</option>
+              <option disabled value="">
+                &nbsp;
+              </option>
               {state.budgets.map((budget) => (
-                <option
-                  key={budget.id}
-                  value={budget.id}
-                >
+                <option key={budget.id} value={budget.id}>
                   {budget.name}
                 </option>
               ))}
