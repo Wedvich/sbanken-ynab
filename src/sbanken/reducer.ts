@@ -72,7 +72,7 @@ const reducer: Reducer<SbankenState, SbankenAction> = (state = initialState, act
       return {
         ...state,
         authenticating: false,
-        error: action.error ?? '',
+        error: action.error?.statusText ?? '',
         token: action.token || null,
       };
 

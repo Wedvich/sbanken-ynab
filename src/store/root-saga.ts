@@ -8,7 +8,7 @@ import ynabSaga from '../ynab/saga';
 
 export default function* rootSaga(history: History) {
   yield fork(accountsSaga, history);
-  yield fork(appSaga);
+  yield fork(appSaga, history);
   yield fork(onboardingSaga, history);
   yield fork(sbankenSaga);
   yield fork(ynabSaga);
