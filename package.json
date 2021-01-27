@@ -109,5 +109,8 @@
     "webpack-merge": "^4.2.2",
     "webpack-subresource-integrity": "^1.5.2",
     "webpackbar": "^5.0.0-3"
+  },
+  "resolutions": {
+    "immer": "^8.0.1"
   }
 }
