@@ -93,7 +93,7 @@
     "prettier": "^2.2.1",
     "redux-immutable-state-invariant": "^2.1.0",
     "redux-logger": "^3.0.6",
-    "sass": "^1.24.2",
+    "sass": "^1.32.2",
     "sass-loader": "^9.0.0",
     "snyk": "^1.437.3",
     "stylelint": "^13.0.0",
