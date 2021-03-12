@@ -49,12 +49,12 @@
     "reselect": "^4.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.0",
-    "@babel/plugin-proposal-class-properties": "^7.8.0",
-    "@babel/plugin-proposal-optional-catch-binding": "^7.8.0",
-    "@babel/preset-env": "^7.8.0",
-    "@babel/preset-react": "^7.8.0",
-    "@babel/preset-typescript": "^7.8.0",
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-optional-catch-binding": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "@babel/preset-typescript": "^7.12.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@types/jest": "^26.0.19",
     "@types/luxon": "^1.21.0",
