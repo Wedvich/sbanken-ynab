@@ -83,3 +83,6 @@ junit.xml
 # .NET Core build output
 [Bb]in
 [Oo]bj
+
+# Test output
+coverage
