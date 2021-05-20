@@ -2,6 +2,7 @@ import { ServiceWorkerActionTypes } from './constants';
 
 const revision = process.env.REVISION;
 const staticCacheName = `sbanken-ynab-${revision}`;
+const cacheRegExp = /.(css|js|woff2?)$/i;
 
 const serviceWorker: ServiceWorkerGlobalScope = self as any;
 
@@ -13,7 +14,7 @@ serviceWorker.addEventListener('install', (event) => {
         const manifest = await (await fetch('manifest.json')).json();
         Array.prototype.push.apply(
           assets,
-          Object.values<string>(manifest).filter((v) => v.includes(revision))
+          Object.values<string>(manifest).filter((v) => cacheRegExp.test(v))
         );
       } finally {
         await cache.addAll(assets);
