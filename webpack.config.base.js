@@ -29,21 +29,12 @@ const createBaseConfig = () => ({
           {
             loader: require.resolve('css-loader'),
             options: {
-              importLoaders: 2,
+              importLoaders: 1,
               sourceMap: isDev,
             },
           },
           {
             loader: require.resolve('postcss-loader'),
-            options: {
-              config: {
-                path: path.resolve(__dirname, 'postcss.config.js'),
-              },
-              sourceMap: isDev,
-            },
-          },
-          {
-            loader: require.resolve('sass-loader'),
             options: {
               sourceMap: isDev,
             },
@@ -85,6 +76,10 @@ const createBaseConfig = () => ({
     }),
   ],
   resolve: {
+    alias: {
+      react: 'preact/compat',
+      'react-dom': 'preact/compat',
+    },
     extensions: ['.js', '.ts', '.tsx', '.d.ts'],
   },
   stats: {
