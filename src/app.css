@@ -8,7 +8,9 @@
     font-family: 'Kulim Park';
     font-style: italic;
     font-weight: 400;
-    src: local('Kulim Park Italic'), local('KulimPark-Italic'),
+    src:
+      local('Kulim Park Italic'),
+      local('KulimPark-Italic'),
       url('./resources/fonts/kulimpark-italic.woff') format('woff');
   }
 
@@ -18,7 +20,9 @@
     font-family: 'Kulim Park';
     font-style: normal;
     font-weight: 400;
-    src: local('Kulim Park Regular'), local('KulimPark-Regular'),
+    src:
+      local('Kulim Park Regular'),
+      local('KulimPark-Regular'),
       url('./resources/fonts/kulimpark-regular.woff') format('woff');
   }
 
@@ -27,7 +31,9 @@
     font-family: 'Kulim Park';
     font-style: normal;
     font-weight: 600;
-    src: local('Kulim Park SemiBold'), local('KulimPark-SemiBold'),
+    src:
+      local('Kulim Park SemiBold'),
+      local('KulimPark-SemiBold'),
       url('./resources/fonts/kulimpark-semibold.woff') format('woff');
   }
 
@@ -36,7 +42,9 @@
     font-family: 'Lato';
     font-style: normal;
     font-weight: 400;
-    src: local('Lato Regular'), local('Lato-Regular'),
+    src:
+      local('Lato Regular'),
+      local('Lato-Regular'),
       url('./resources/fonts/lato-regular.woff') format('woff');
   }
 }
