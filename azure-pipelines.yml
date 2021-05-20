@@ -1,3 +1,6 @@
+variables:
+  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
+
 jobs:
   - job: frontend
     displayName: Build frontend
@@ -15,7 +18,7 @@ jobs:
         displayName: Cache dependencies
         inputs:
           key: yarn | "$(Agent.OS)" | yarn.lock
-          path: $(Pipeline.Workspace)/.yarn
+          path: $(YARN_CACHE_FOLDER)
           restoreKeys: |
             yarn | "$(Agent.OS)"
             yarn
