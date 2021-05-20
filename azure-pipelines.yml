@@ -11,8 +11,19 @@ jobs:
         inputs:
           version: 14.x
 
-      - script: yarn install --frozen-lockfile
+      - task: Cache@2
+        displayName: Cache dependencies
+        inputs:
+          key: yarn | "$(Agent.OS)" | yarn.lock
+          path: $(Pipeline.Workspace)/.yarn
+          restoreKeys: |
+            yarn | "$(Agent.OS)"
+            yarn
+          cacheHitVar: CACHE_RESTORED
+
+      - script: yarn --frozen-lockfile
         displayName: Install dependencies
+        condition: ne(variables.CACHE_RESTORED, 'true')
 
       - script: yarn lint-ci
         displayName: Lint code
