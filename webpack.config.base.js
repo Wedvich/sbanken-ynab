@@ -1,12 +1,17 @@
 const path = require('path');
+const { execSync } = require('child_process');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { DefinePlugin } = require('webpack');
+const { EnvironmentPlugin } = require('webpack');
 const WebpackBar = require('webpackbar');
+const EslintWebpackPlugin = require('eslint-webpack-plugin');
+const { DefinePlugin } = require('webpack');
 
 const isDev = process.env.NODE_ENV === 'development';
 
-module.exports = {
+const revision = execSync('git rev-parse HEAD').toString().trim().slice(0, 7);
+
+const createBaseConfig = () => ({
   entry: {
     app: [path.resolve(__dirname, 'src/index.tsx')],
   },
@@ -15,19 +20,12 @@ module.exports = {
       {
         test: /\.[jt]sx?$/i,
         exclude: /node_modules/,
-        use: [require.resolve('babel-loader'), require.resolve('eslint-loader')],
+        use: [require.resolve('babel-loader')],
       },
       {
         test: /\.s?css$/i,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: isDev,
-              reloadAll: isDev,
-              sourceMap: isDev,
-            },
-          },
+          MiniCssExtractPlugin.loader,
           {
             loader: require.resolve('css-loader'),
             options: {
@@ -73,9 +71,11 @@ module.exports = {
     publicPath: '/',
   },
   plugins: [
+    new EnvironmentPlugin(['NODE_ENV']),
     new DefinePlugin({
-      'process.env.NODE_ENV': `'${process.env.NODE_ENV || 'production'}'`,
+      'process.env.REVISION': `"${revision}"`,
     }),
+    new EslintWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
     }),
@@ -92,4 +92,9 @@ module.exports = {
     entrypoints: false,
     children: false,
   },
+});
+
+module.exports = {
+  createBaseConfig,
+  revision,
 };

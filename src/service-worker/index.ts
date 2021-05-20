@@ -1,63 +1,51 @@
-import { cacheName, cacheRegex, ServiceWorkerMessageType } from './constants';
+import { ServiceWorkerActionTypes } from './constants';
+
+const revision = process.env.REVISION;
+const staticCacheName = `sbanken-ynab-${revision}`;
 
 const serviceWorker: ServiceWorkerGlobalScope = self as any;
 
-let updated = false;
-
-serviceWorker.addEventListener('install', (event: ExtendableEvent) => {
-  event.waitUntil(serviceWorker.skipWaiting());
-  updated = true;
-});
-
-serviceWorker.addEventListener('activate', (event: ExtendableEvent) => {
-  event.waitUntil(serviceWorker.clients.claim());
-});
-
-serviceWorker.addEventListener('message', (event: MessageEvent) => {
-  switch (event.data?.type as ServiceWorkerMessageType) {
-    case ServiceWorkerMessageType.CheckForUpdates: {
-      event.ports[0].postMessage({ type: ServiceWorkerMessageType.HasUpdates, updated });
-      break;
-    }
-  }
-});
-
-serviceWorker.addEventListener('fetch', (event: FetchEvent) => {
-  let { request } = event;
-  const requestUrl = new URL(request.url);
-
-  // Don't cache external requests.
-  if (requestUrl.origin !== serviceWorker.origin) {
-    event.respondWith(fetch(request));
-    return;
-  }
-
-  // Rewrite SPA requests to the root URL.
-  if (!cacheRegex.test(requestUrl.pathname)) {
-    requestUrl.pathname = '/';
-    request = new Request(requestUrl.href, { ...request });
-  }
-
-  event.respondWith(
-    caches.open(cacheName).then((cache) =>
-      cache.match(request).then((cacheResponse) => {
-        if (requestUrl.pathname === '/') {
-          const networkResponse = fetch(request).then((networkResponse) => {
-            void cache.put(request, networkResponse.clone());
-            return networkResponse;
-          });
-          return cacheResponse || networkResponse;
-        }
-
-        if (cacheResponse) {
-          return cacheResponse;
-        }
-
-        return fetch(request).then((networkResponse) => {
-          void cache.put(request, networkResponse.clone());
-          return networkResponse;
-        });
-      })
-    )
+serviceWorker.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(staticCacheName).then(async (cache) => {
+      const assets = ['/'];
+      try {
+        const manifest = await (await fetch('manifest.json')).json();
+        Array.prototype.push.apply(
+          assets,
+          Object.values<string>(manifest).filter((v) => v.includes(revision))
+        );
+      } finally {
+        await cache.addAll(assets);
+      }
+    })
   );
+});
+
+serviceWorker.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches
+      .keys()
+      .then((cacheNames) =>
+        Promise.all(
+          cacheNames
+            .filter(
+              (cacheName) => cacheName.startsWith('sbanken-ynab-') && cacheName !== staticCacheName
+            )
+            .map((cacheName) => caches.delete(cacheName))
+        )
+      )
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => response ?? fetch(event.request))
+  );
+});
+
+serviceWorker.addEventListener('message', (event) => {
+  if (event.data.type === ServiceWorkerActionTypes.ApplyUpdate) {
+    void serviceWorker.skipWaiting();
+  }
 });

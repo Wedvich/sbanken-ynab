@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
@@ -80,12 +81,22 @@ namespace Sby
                 await next();
             });
 
-            app.UseStaticFiles(new StaticFileOptions {
+            app.UseStaticFiles(new StaticFileOptions
+            {
                 OnPrepareResponse = (context) =>
                 {
+                    if (env.IsDevelopment())
+                    {
+                        return;
+                    }
+
                     if (ImmutableFileExtensions.Contains(Path.GetExtension(context.File.Name)) && context.File.Name != "sw.js")
                     {
                         context.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000,immutable");
+                    }
+                    else if (context.File.Name == "index.html")
+                    {
+                        Console.WriteLine("Getting index!");
                     }
                 }
             });

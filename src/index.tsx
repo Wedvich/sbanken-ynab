@@ -1,19 +1,8 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { Router } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
-import App from './app';
-import createStore from './store';
+import { h, render } from 'preact';
+import { App } from './app';
 
-const history = createBrowserHistory();
-const store = createStore(history);
+const appElement = document.getElementById('sby');
 
-ReactDOM.render(
-  <Provider store={store}>
-    <Router history={history}>
-      <App />
-    </Router>
-  </Provider>,
-  document.getElementById('sby')
-);
+if (appElement) {
+  render(<App />, appElement);
+}

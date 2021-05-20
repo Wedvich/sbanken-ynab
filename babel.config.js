@@ -3,21 +3,28 @@ module.exports = (api) => {
 
   const presets = [
     [
-      '@babel/preset-env',
+      require.resolve('@babel/preset-env'),
       {
         corejs: 3,
         modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false,
         useBuiltIns: 'usage',
       },
     ],
-    '@babel/preset-typescript',
-    '@babel/preset-react',
+    [require.resolve('@babel/preset-typescript'), { jsxPragma: 'h' }],
   ];
 
-  const plugins = ['@babel/plugin-proposal-class-properties'];
+  const plugins = [
+    [
+      require.resolve('@babel/plugin-transform-react-jsx'),
+      {
+        pragma: 'h',
+        pragmaFrag: 'Fragment',
+      },
+    ],
+  ];
 
   if (process.env.NODE_ENV === 'development') {
-    plugins.push('react-refresh/babel');
+    plugins.push(require.resolve('@prefresh/babel-plugin'));
   }
 
   return {
