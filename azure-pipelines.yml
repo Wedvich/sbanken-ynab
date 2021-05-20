@@ -7,9 +7,9 @@ jobs:
 
     steps:
       - task: UseNode@1
-        displayName: Install Node 12
+        displayName: Install Node 14
         inputs:
-          version: 12.x
+          version: 14.x
 
       - script: yarn install --frozen-lockfile
         displayName: Install dependencies
@@ -62,10 +62,10 @@ jobs:
 
     steps:
       - task: UseDotNet@2
-        displayName: Install .NET Core 3.1 SDK
+        displayName: Install .NET 5 SDK
         inputs:
-          version: 3.1.x
-          performMultiLevelLookup: true
+          packageType: 'sdk'
+          version: '5.0.x'
 
       - task: DotNetCoreCLI@2
         displayName: Package artifacts
