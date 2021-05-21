@@ -4,9 +4,9 @@ const revision = process.env.REVISION;
 const staticCacheName = `sbanken-ynab-${revision}`;
 const cacheRegExp = /.(css|js|woff2?)$/i;
 
-const serviceWorker: ServiceWorkerGlobalScope = self as any;
+declare const self: ServiceWorkerGlobalScope & typeof globalThis;
 
-serviceWorker.addEventListener('install', (event) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(staticCacheName).then(async (cache) => {
       const assets = ['/'];
@@ -23,7 +23,7 @@ serviceWorker.addEventListener('install', (event) => {
   );
 });
 
-serviceWorker.addEventListener('activate', (event) => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
@@ -45,8 +45,8 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-serviceWorker.addEventListener('message', (event) => {
+self.addEventListener('message', (event) => {
   if (event.data.type === ServiceWorkerActionTypes.ApplyUpdate) {
-    void serviceWorker.skipWaiting();
+    void self.skipWaiting();
   }
 });
