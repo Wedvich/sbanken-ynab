@@ -40,9 +40,13 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => response ?? fetch(event.request))
-  );
+  if (event.request.headers.get('Accept')?.includes('text/html')) {
+    event.respondWith(caches.match('/'));
+  } else {
+    event.respondWith(
+      caches.match(event.request).then((response) => response ?? fetch(event.request))
+    );
+  }
 });
 
 self.addEventListener('message', (event) => {
