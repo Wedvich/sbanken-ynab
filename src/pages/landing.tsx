@@ -2,15 +2,27 @@ import { h } from 'preact';
 import { useCallback } from 'preact/hooks';
 import { FocusTrap } from '@headlessui/react';
 import Button from '../components/button';
+// import { useHistory } from 'react-router-dom';
 
-export function LandingPage() {
-  const handleNext = useCallback((e: Event) => {
-    e.preventDefault();
-  }, []);
+interface LandingPageProps {
+  onNext: () => void;
+}
+
+export function LandingPage(props: LandingPageProps) {
+  const handleNext = useCallback(
+    (e: Event) => {
+      e.preventDefault();
+      // history.push('/onboarding/sbanken');
+      props.onNext();
+    },
+    [props]
+  );
 
   const handleImport = useCallback((e: Event) => {
     e.preventDefault();
   }, []);
+
+  const paragraph = 'mt-8 text-gray-600';
 
   return (
     <FocusTrap className="h-full bg-white flex items-center">
@@ -23,23 +35,23 @@ export function LandingPage() {
               jobber med en ny versjon, og håper å ha den klar om ikke altfor lenge!
             </div>
           </div>
-          <h1 className="block text-3xl text-center leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+          <h1 className="block text-3xl text-center font-extrabold tracking-tight text-gray-900 sm:text-4xl">
             Sbanken → YNAB
           </h1>
-          <p className="mt-8 text-lg text-gray-600 leading-8">
+          <p className={paragraph}>
             Sbanken er en kjempebra nettbank, og YNAB er et kjempebra budsjetteringsverktøy. Sammen
             kan de jo ikke bli annet enn kjempebra!
           </p>
-          <p className="mt-8 text-lg text-gray-600 leading-8">
+          <p className={paragraph}>
             Denne appen gir deg et visuelt grensesnitt for å overføre transaksjoner fra Sbanken til
             YNAB og holde kontoene ajour.
           </p>
-          <p className="mt-8 text-lg text-gray-600 leading-8">
+          <p className={paragraph}>
             Data lagres kun lokalt i nettleseren din, og ingenting sendes til serveren. Den ligger
             for øvrig i Microsoft Azure sitt norske datasenter, så filene og trafikken går alltid
             innenfor Norges grenser.
           </p>
-          <p className="mt-8 text-lg text-gray-600 leading-8">
+          <p className={paragraph}>
             Appen har ingen tilhørighet til verken Sbanken eller You Need A Budget.
           </p>
           <p className="mt-8 flex justify-center gap-2">
@@ -52,7 +64,7 @@ export function LandingPage() {
             </Button>
             <Button
               type="button"
-              className="border-gray-300  text-gray-700 bg-white hover:bg-gray-50 focus:ring-pink-500"
+              className="border-gray-300  text-gray-700 bg-white hover:bg-gray-100 focus:ring-pink-500"
               onClick={handleImport}
             >
               Importer innstillinger

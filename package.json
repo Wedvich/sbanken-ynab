@@ -32,8 +32,12 @@
   "snyk": true,
   "dependencies": {
     "@headlessui/react": "^1.2.0",
+    "@reduxjs/toolkit": "^1.6.0",
     "core-js": "^3.12.1",
+    "luxon": "^1.27.0",
     "preact": "^10.5.13",
+    "react-redux": "^7.2.4",
+    "react-router-dom": "^5.2.0",
     "tailwindcss": "^2.1.2"
   },
   "devDependencies": {
@@ -43,6 +47,8 @@
     "@babel/preset-typescript": "^7.13.0",
     "@prefresh/babel-plugin": "^0.4.1",
     "@prefresh/webpack": "^3.2.3",
+    "@types/luxon": "^1.27.0",
+    "@types/react-router-dom": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
     "autoprefixer": "^10.2.5",
@@ -56,6 +62,7 @@
     "eslint-plugin-import": "^2.23.2",
     "eslint-plugin-jest": "^24.3.6",
     "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.23.2",
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-webpack-plugin": "^2.5.4",
@@ -72,7 +79,7 @@
     "postcss-import": "^14.0.2",
     "postcss-loader": "^5.3.0",
     "postcss-preset-env": "^6.7.0",
-    "prettier": "^2.3.0",
+    "prettier": "^2.3.1",
     "snyk": "^1.604.0",
     "style-loader": "^2.0.0",
     "stylelint": "^13.13.1",

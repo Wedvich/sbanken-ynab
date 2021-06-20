@@ -11,7 +11,7 @@ const { revision } = require('./webpack.config.base');
 module.exports = () => ({
   devtool: false,
   entry: {
-    sw: path.resolve(__dirname, 'src/service-worker/index.ts'),
+    sw: path.resolve(__dirname, 'src/service-worker/worker.ts'),
   },
   mode: process.env.NODE_ENV,
   module: {
