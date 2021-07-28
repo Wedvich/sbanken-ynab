@@ -95,7 +95,6 @@
     "webpackbar": "^5.0.0-3"
   },
   "resolutions": {
-    "multicast-dns": "^7.2.3",
-    "postcss": "^8.3.6"
+    "multicast-dns": "^7.2.3"
   }
 }
