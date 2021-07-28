@@ -2,11 +2,18 @@ import { h } from 'preact';
 import { useCallback } from 'preact/hooks';
 import { FocusTrap } from '@headlessui/react';
 import Button from '../components/button';
+import { useHistory } from 'react-router-dom';
 
 export function LandingPage() {
-  const handleNext = useCallback((e: Event) => {
-    e.preventDefault();
-  }, []);
+  const history = useHistory();
+
+  const handleNext = useCallback(
+    (e: Event) => {
+      e.preventDefault();
+      history.push('/onboarding');
+    },
+    [history]
+  );
 
   const handleImport = useCallback((e: Event) => {
     e.preventDefault();
@@ -16,13 +23,6 @@ export function LandingPage() {
     <FocusTrap className="h-full bg-white flex items-center">
       <form className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" onSubmit={handleNext}>
         <div className="max-w-2xl mx-auto">
-          <div class="bg-red-200 text-red-900 overflow-hidden rounded-lg mb-8">
-            <div class="px-4 py-5 sm:p-6">
-              Sbanken har endret på utvikler-API'et sitt, så{' '}
-              <b className="whitespace-nowrap">Sbanken → YNAB</b> fungerer ikke for øyeblikket. Jeg
-              jobber med en ny versjon, og håper å ha den klar om ikke altfor lenge!
-            </div>
-          </div>
           <h1 className="block text-3xl text-center leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
             Sbanken → YNAB
           </h1>
