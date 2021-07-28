@@ -3,22 +3,38 @@ import { useCallback, useState } from 'preact/hooks';
 import { FocusTrap } from '@headlessui/react';
 import Button from '../components/button';
 import { ynabApiBaseUrl, sbankenIdentityServerUrl } from '../config';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../services';
-import { putCredential } from '../services/sbanken';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../services';
+import { putCredential, validateSbankenToken } from '../services/sbanken';
+import { putToken } from '../services/ynab';
+import { useHistory } from 'react-router-dom';
 
 export function OnboardingPage() {
   const dispatch = useDispatch<AppDispatch>();
+  const history = useHistory();
 
-  const handleNext = useCallback((e: Event) => {
-    e.preventDefault();
-  }, []);
+  const sbankenCredentials = useSelector((state: RootState) => state.sbanken.credentials);
+  const ynabTokens = useSelector((state: RootState) => state.ynab.tokens);
 
-  const [ynabPersonalAccessToken, setYnabPersonalAccessToken] = useState('');
+  const hasValidConfiguration = validateSbankenToken(sbankenCredentials[0]?.token) && ynabTokens[0];
+
+  const handleNext = useCallback(
+    (e: Event) => {
+      e.preventDefault();
+      if (hasValidConfiguration) {
+        history.replace('/');
+      }
+    },
+    [hasValidConfiguration, history]
+  );
+
+  const [ynabPersonalAccessToken, setYnabPersonalAccessToken] = useState(ynabTokens[0] ?? '');
   const [ynabBudgets, setYnabBudgets] = useState([]);
-  const [sbankenClientId, setSbankenClientId] = useState('');
-  const [sbankenClientSecret, setSbankenClientSecret] = useState('');
-  const [sbankenToken, setSbankenToken] = useState('');
+  const [sbankenClientId, setSbankenClientId] = useState(sbankenCredentials[0]?.clientId ?? '');
+  const [sbankenClientSecret, setSbankenClientSecret] = useState(
+    sbankenCredentials[0]?.clientSecret ?? ''
+  );
+  const [sbankenToken, setSbankenToken] = useState(sbankenCredentials[0]?.token?.value ?? '');
 
   const fetchYnabBudgets = async () => {
     const response = await fetch(`${ynabApiBaseUrl}/budgets`, {
@@ -28,10 +44,13 @@ export function OnboardingPage() {
       }),
     });
 
-    if (response.ok) {
-      const budgets = await response.json();
-      setYnabBudgets(budgets.data.budgets);
+    if (!response.ok) {
+      alert('bad personal access token');
     }
+
+    const budgets = await response.json();
+    setYnabBudgets(budgets.data.budgets);
+    dispatch(putToken(ynabPersonalAccessToken));
   };
 
   const fetchSbankenToken = async () => {
@@ -96,7 +115,7 @@ export function OnboardingPage() {
               </label>
               <div class="mt-1">
                 <input
-                  type="text"
+                  type="password"
                   name="ynabPersonalAccessToken"
                   id="ynabPersonalAccessToken"
                   autoComplete="off"
@@ -207,7 +226,7 @@ export function OnboardingPage() {
               </label>
               <div class="mt-1">
                 <input
-                  type="text"
+                  type="password"
                   name="sbanken-client-secret"
                   id="sbanken-client-secret"
                   autoComplete="off"
@@ -257,7 +276,7 @@ export function OnboardingPage() {
               type="submit"
               className="border-transparent  text-white bg-pink-600 hover:bg-pink-700 focus:ring-pink-500"
               onClick={handleNext}
-              disabled={!ynabBudgets.length || !sbankenToken}
+              disabled={!hasValidConfiguration}
             >
               Gå videre
             </Button>

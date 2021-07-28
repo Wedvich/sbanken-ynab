@@ -15,9 +15,9 @@ export function LandingPage() {
     [history]
   );
 
-  const handleImport = useCallback((e: Event) => {
-    e.preventDefault();
-  }, []);
+  // const handleImport = useCallback((e: Event) => {
+  //   e.preventDefault();
+  // }, []);
 
   return (
     <FocusTrap className="h-full bg-white flex items-center">
@@ -45,18 +45,18 @@ export function LandingPage() {
           <p className="mt-8 flex justify-center gap-2">
             <Button
               type="submit"
-              className="border-transparent  text-white bg-pink-600 hover:bg-pink-700 focus:ring-pink-500"
+              className="border-transparent text-white bg-pink-600 hover:bg-pink-700 focus:ring-pink-500"
               onClick={handleNext}
             >
               Kom i gang
             </Button>
-            <Button
+            {/* <Button
               type="button"
-              className="border-gray-300  text-gray-700 bg-white hover:bg-gray-50 focus:ring-pink-500"
+              className="border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-pink-500"
               onClick={handleImport}
             >
               Importer innstillinger
-            </Button>
+            </Button> */}
           </p>
         </div>
       </form>
