@@ -4,7 +4,7 @@ import { LandingPage } from './pages/landing';
 import { OnboardingPage } from './pages/onboarding';
 import { Route, Switch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RootState } from './services';
+import type { RootState } from './services';
 import { validateSbankenToken } from './services/sbanken';
 import { MainPage } from './pages/main';
 

@@ -4,9 +4,9 @@ import { FocusTrap } from '@headlessui/react';
 import Button from '../components/button';
 import { ynabApiBaseUrl, sbankenIdentityServerUrl } from '../config';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../services';
+import type { AppDispatch, RootState } from '../services';
 import { putCredential, validateSbankenToken } from '../services/sbanken';
-import { putToken } from '../services/ynab';
+import { putToken, setBudget } from '../services/ynab';
 import { useHistory } from 'react-router-dom';
 
 export function OnboardingPage() {
@@ -14,9 +14,10 @@ export function OnboardingPage() {
   const history = useHistory();
 
   const sbankenCredentials = useSelector((state: RootState) => state.sbanken.credentials);
-  const ynabTokens = useSelector((state: RootState) => state.ynab.tokens);
+  const { tokens: ynabTokens, budget: ynabBudget } = useSelector((state: RootState) => state.ynab);
 
-  const hasValidConfiguration = validateSbankenToken(sbankenCredentials[0]?.token) && ynabTokens[0];
+  const hasValidConfiguration =
+    validateSbankenToken(sbankenCredentials[0]?.token) && !!ynabTokens[0] && !!ynabBudget;
 
   const handleNext = useCallback(
     (e: Event) => {
@@ -159,7 +160,7 @@ export function OnboardingPage() {
                 </div>
               )}
             </div>
-            {/* <div class="sm:col-span-3">
+            <div class="sm:col-span-3">
               <label htmlFor="ynab-budget" class="block font-medium text-gray-700">
                 Budsjett
               </label>
@@ -170,7 +171,7 @@ export function OnboardingPage() {
                   value={ynabBudget}
                   class="shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full border-gray-300 rounded-md"
                   onChange={(e: Event) =>
-                    setYnabBudget((e.target as HTMLSelectElement).value.trim())
+                    dispatch(setBudget((e.target as HTMLSelectElement).value.trim()))
                   }
                 >
                   <option disabled value="">
@@ -183,7 +184,7 @@ export function OnboardingPage() {
                   ))}
                 </select>
               </div>
-            </div> */}
+            </div>
           </div>
           <div class="pt-8 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             <div class="w-full col-span-6">
@@ -271,16 +272,18 @@ export function OnboardingPage() {
               )}
             </div>
           </div>
-          <div class="pt-8 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-            <Button
-              type="submit"
-              className="border-transparent  text-white bg-pink-600 hover:bg-pink-700 focus:ring-pink-500"
-              onClick={handleNext}
-              disabled={!hasValidConfiguration}
-            >
-              Gå videre
-            </Button>
-          </div>
+          {hasValidConfiguration && (
+            <div class="pt-8 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+              <Button
+                type="submit"
+                className="border-transparent  text-white bg-pink-600 hover:bg-pink-700 focus:ring-pink-500"
+                onClick={handleNext}
+                disabled={!hasValidConfiguration}
+              >
+                Gå videre
+              </Button>
+            </div>
+          )}
         </div>
       </form>
     </FocusTrap>

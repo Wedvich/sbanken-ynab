@@ -8,4 +8,9 @@ module.exports = {
       numbers: ['Lato'],
     },
   },
+  variants: {
+    extend: {
+      opacity: ['disabled'],
+    },
+  },
 };
