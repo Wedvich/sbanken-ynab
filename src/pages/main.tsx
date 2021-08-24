@@ -3,10 +3,12 @@ import { useEffect } from 'preact/hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, Route, Switch } from 'react-router-dom';
 import AccountEditor from '../components/account-editor';
-import type { AppDispatch, RootState } from '../services';
-import { createCompositeAccountId } from '../services/accounts';
+import { getEnrichedAccounts } from '../selectors/accounts';
+import type { AppDispatch } from '../services';
 import { fetchAllAccounts as fetchAllSbankenAccounts } from '../services/sbanken';
 import { fetchAllAccounts as fetchAllYnabAccounts } from '../services/ynab';
+
+const formatMoney = new Intl.NumberFormat('no', { style: 'currency', currency: 'NOK' }).format;
 
 export function MainPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,7 +17,7 @@ export function MainPage() {
     void dispatch(fetchAllYnabAccounts());
   }, [dispatch]);
 
-  const accounts = useSelector((state: RootState) => state.accounts.accounts);
+  const accounts = useSelector(getEnrichedAccounts);
 
   return (
     <div class="h-screen flex overflow-hidden">
@@ -31,20 +33,26 @@ export function MainPage() {
               </div>
               <nav class="mt-5 flex-1 px-2 bg-white space-y-1">
                 {accounts.map((account) => {
-                  const accountId = createCompositeAccountId(account);
                   return (
                     <NavLink
-                      key={accountId}
+                      key={account.compositeId}
                       className="flex-shrink-0 flex border-t border-gray-200 p-4"
-                      to={`/accounts/${accountId}`}
+                      to={`/accounts/${account.compositeId}`}
                     >
-                      <div class="flex-shrink-0 w-full group block">
-                        <p class="font-medium text-gray-700 group-hover:text-gray-900">
+                      <div class="flex-shrink-0 w-full group flex items-center justify-between">
+                        <div class="font-medium text-gray-700 group-hover:text-gray-900">
                           {account.name}
-                        </p>
-                        {/* <p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-                          Vis transaksjoner
-                        </p> */}
+                        </div>
+                        <div class="flex-grow-0 text-xs grid auto-cols-min grid-flow-col grid-rows-2 items-center gap-x-2">
+                          <div class="flex-shrink">S:</div>
+                          <div class="flex-shrink">Y:</div>
+                          <div class="text-right font-numbers tabular-nums">
+                            {formatMoney(account.sbankenWorkingBalance)}
+                          </div>
+                          <div class="text-right font-numbers tabular-nums">
+                            {formatMoney(account.ynabWorkingBalance)}
+                          </div>
+                        </div>
                       </div>
                     </NavLink>
                   );

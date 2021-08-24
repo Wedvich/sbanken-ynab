@@ -72,6 +72,8 @@ interface SbankenAccount {
   creditLimit: number;
 }
 
+export const getSbankenAccounts = (state: RootState) => state[SBANKEN_SLICE_NAME].accounts;
+
 export const fetchAllAccounts = createAsyncThunk(
   `${SBANKEN_SLICE_NAME}/fetchAllAccounts`,
   async (_, thunkAPI) => {

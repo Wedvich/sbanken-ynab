@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from '.';
 
 const ACCOUNTS_STATE_SLICE = 'accounts';
 
@@ -9,6 +10,8 @@ export interface LinkedAccount {
   sbankenAccountId: string;
   ynabAccountId: string;
 }
+
+export const getLinkedAccounts = (state: RootState) => state[ACCOUNTS_STATE_SLICE].accounts;
 
 export function validateLinkedAccount(account: Partial<LinkedAccount>): account is LinkedAccount {
   return !!account.name && !!account.sbankenAccountId && !!account.ynabAccountId;

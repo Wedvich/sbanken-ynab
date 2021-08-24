@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import keyBy from 'lodash-es/keyBy';
-import type { RootState } from '.';
 import { ynabApiBaseUrl } from '../config';
+import type { RootState } from '.';
 
 const YNAB_SLICE_NAME = 'ynab';
 
@@ -23,6 +23,8 @@ interface YnabAccount {
   direct_import_in_error: boolean;
   deleted: boolean;
 }
+
+export const getYnabAccounts = (state: RootState) => state[YNAB_SLICE_NAME].accounts;
 
 export interface YnabState {
   accounts: Array<YnabAccount>;
