@@ -5,6 +5,7 @@ import Transactions from './transactions';
 import { Redirect, useHistory } from 'react-router-dom';
 import { getEnrichedAccounts } from '../selectors/accounts';
 import Button from './button';
+import { formatMoney } from '../utils';
 
 interface AccountProps {
   accountId: string;
@@ -36,6 +37,50 @@ export default function Account({ accountId }: AccountProps) {
             Rediger
           </Button>
         </h1>
+        <div class="my-4">
+          <div class="inline-grid grid-flow-col-dense grid-rows-4 gap-2">
+            <div />
+            <div>Sbanken</div>
+            <div>YNAB</div>
+            <div>Differanse</div>
+            <div class="text-right italic">Saldo</div>
+            <div class="text-right font-numbers tabular-nums">
+              {formatMoney(existingAccount.sbankenClearedBalance)}
+            </div>
+            <div class="text-right font-numbers tabular-nums">
+              {formatMoney(existingAccount.ynabClearedBalance)}
+            </div>
+            <div class="text-right font-numbers tabular-nums">
+              {formatMoney(
+                existingAccount.sbankenClearedBalance - existingAccount.ynabClearedBalance
+              )}
+            </div>
+            <div class="text-right italic">Ikke bokført</div>
+            <div class="text-right font-numbers tabular-nums">
+              {formatMoney(existingAccount.sbankenUnclearedBalance)}
+            </div>
+            <div class="text-right font-numbers tabular-nums">
+              {formatMoney(existingAccount.ynabUnclearedBalance)}
+            </div>
+            <div class="text-right font-numbers tabular-nums">
+              {formatMoney(
+                existingAccount.sbankenUnclearedBalance - existingAccount.ynabUnclearedBalance
+              )}
+            </div>
+            <div class="text-right italic">Balanse</div>
+            <div class="text-right font-numbers tabular-nums">
+              {formatMoney(existingAccount.sbankenWorkingBalance)}
+            </div>
+            <div class="text-right font-numbers tabular-nums">
+              {formatMoney(existingAccount.ynabWorkingBalance)}
+            </div>
+            <div class="text-right font-numbers tabular-nums">
+              {formatMoney(
+                existingAccount.sbankenWorkingBalance - existingAccount.ynabWorkingBalance
+              )}
+            </div>
+          </div>
+        </div>
         <Transactions />
       </div>
     </FocusTrap>

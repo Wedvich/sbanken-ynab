@@ -8,8 +8,7 @@ import { getEnrichedAccounts } from '../selectors/accounts';
 import type { AppDispatch } from '../services';
 import { fetchAllAccounts as fetchAllSbankenAccounts } from '../services/sbanken';
 import { fetchAllAccounts as fetchAllYnabAccounts } from '../services/ynab';
-
-const formatMoney = new Intl.NumberFormat('no', { style: 'currency', currency: 'NOK' }).format;
+import { formatMoney } from '../utils';
 
 export function MainPage() {
   const dispatch = useDispatch<AppDispatch>();

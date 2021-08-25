@@ -5,7 +5,11 @@ import { getYnabAccounts } from '../services/ynab';
 
 export interface EnrichedAccount extends LinkedAccount {
   compositeId: string;
+  sbankenClearedBalance: number;
+  sbankenUnclearedBalance: number;
   sbankenWorkingBalance: number;
+  ynabClearedBalance: number;
+  ynabUnclearedBalance: number;
   ynabWorkingBalance: number;
 }
 
@@ -21,10 +25,22 @@ export const getEnrichedAccounts = createSelector(
       const ynabAccount = ynabAccounts.find((a) => a.id === linkedAccount.ynabAccountId);
       if (!ynabAccount) return linkedAccounts;
 
+      let sbankenUnclearedBalance = 0;
+      if (sbankenAccount.accountType === 'Creditcard account') {
+        sbankenUnclearedBalance =
+          -sbankenAccount.balance - (sbankenAccount.creditLimit - sbankenAccount.available);
+      } else {
+        sbankenUnclearedBalance = sbankenAccount.available - sbankenAccount.balance;
+      }
+
       const enrichedAccount: EnrichedAccount = {
         ...linkedAccount,
         compositeId: createCompositeAccountId(linkedAccount),
-        sbankenWorkingBalance: sbankenAccount.balance,
+        sbankenClearedBalance: sbankenAccount.balance,
+        sbankenUnclearedBalance,
+        sbankenWorkingBalance: sbankenAccount.balance + sbankenUnclearedBalance,
+        ynabClearedBalance: ynabAccount.cleared_balance / 1000,
+        ynabUnclearedBalance: ynabAccount.uncleared_balance / 1000,
         ynabWorkingBalance: ynabAccount.balance / 1000,
       };
 
