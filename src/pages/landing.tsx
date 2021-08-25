@@ -1,11 +1,17 @@
 import { h } from 'preact';
-import { useCallback } from 'preact/hooks';
+import { useCallback, useState } from 'preact/hooks';
 import { FocusTrap } from '@headlessui/react';
 import Button from '../components/button';
 import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { validateSbankenToken, fetchSbankenToken } from '../services/sbanken';
+import type { AppDispatch, RootState } from '../services';
 
 export function LandingPage() {
   const history = useHistory();
+  const dispatch = useDispatch<AppDispatch>();
+  const sbankenCredentials = useSelector((state: RootState) => state.sbanken.credentials);
+  const [hasRefreshedTokens, setHasRefreshedTokens] = useState(false);
 
   const handleNext = useCallback(
     (e: Event) => {
@@ -14,6 +20,26 @@ export function LandingPage() {
     },
     [history]
   );
+
+  let hasRefreshedAnyToken = false;
+  if (!hasRefreshedTokens) {
+    for (const credential of sbankenCredentials) {
+      if (!validateSbankenToken(sbankenCredentials[0]?.token)) {
+        void dispatch(
+          fetchSbankenToken({
+            clientId: credential.clientId,
+            clientSecret: credential.clientSecret,
+          })
+        );
+
+        hasRefreshedAnyToken = true;
+      }
+    }
+  }
+
+  if (hasRefreshedAnyToken) {
+    setHasRefreshedTokens(true);
+  }
 
   // const handleImport = useCallback((e: Event) => {
   //   e.preventDefault();

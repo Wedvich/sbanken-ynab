@@ -2,10 +2,10 @@ import { h } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
 import { FocusTrap } from '@headlessui/react';
 import Button from '../components/button';
-import { ynabApiBaseUrl, sbankenIdentityServerUrl } from '../config';
+import { ynabApiBaseUrl } from '../config';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../services';
-import { putCredential, validateSbankenToken } from '../services/sbanken';
+import { fetchSbankenToken, validateSbankenToken } from '../services/sbanken';
 import { putToken, setBudget } from '../services/ynab';
 import { useHistory } from 'react-router-dom';
 
@@ -54,41 +54,19 @@ export function OnboardingPage() {
     dispatch(putToken(ynabPersonalAccessToken));
   };
 
-  const fetchSbankenToken = async () => {
-    const credentials = btoa(
-      `${encodeURIComponent(sbankenClientId)}:${encodeURIComponent(sbankenClientSecret)}`
-    );
-    const response = await fetch(sbankenIdentityServerUrl, {
-      method: 'post',
-      headers: new Headers({
-        Accept: 'application/json',
-        Authorization: `Basic ${credentials}`,
-        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-      }),
-      body: 'grant_type=client_credentials',
-    });
-
-    if (!response.ok) {
-      alert('bad token');
-    }
-
-    const token = await response.json();
-    const parts = token.access_token.split('.');
-    const decoded = JSON.parse(atob(parts[1]));
-    const nbf = decoded.nbf * 1000;
-    const exp = decoded.exp * 1000;
-    setSbankenToken(token.access_token);
-    dispatch(
-      putCredential({
+  const handleFetchSbankenToken = async () => {
+    const result = await dispatch(
+      fetchSbankenToken({
         clientId: sbankenClientId,
         clientSecret: sbankenClientSecret,
-        token: {
-          value: token.access_token,
-          notBefore: nbf,
-          expires: exp,
-        },
       })
     );
+
+    if (fetchSbankenToken.fulfilled.match(result)) {
+      setSbankenToken(result.payload);
+    } else {
+      alert(result.error);
+    }
   };
 
   return (
@@ -244,7 +222,7 @@ export function OnboardingPage() {
                 <Button
                   type="button"
                   className="border-transparent  text-white bg-pink-600 hover:bg-pink-700 focus:ring-pink-500"
-                  onClick={fetchSbankenToken}
+                  onClick={handleFetchSbankenToken}
                   disabled={!sbankenClientId || !sbankenClientSecret}
                 >
                   Koble til

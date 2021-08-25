@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '.';
-import { sbankenApiBaseUrl } from '../config';
+import { sbankenApiBaseUrl, sbankenIdentityServerUrl } from '../config';
 import keyBy from 'lodash-es/keyBy';
 
 const SBANKEN_SLICE_NAME = 'sbanken';
@@ -22,6 +22,7 @@ export interface SbankenCredential {
 export interface SbankenState {
   accounts: Array<SbankenAccount>;
   credentials: Array<SbankenCredential>;
+  hasFetchedInitialTokens: boolean;
 }
 
 export function validateSbankenToken(token?: SbankenToken): boolean {
@@ -54,6 +55,7 @@ function getStoredCredentials() {
 const initialState: SbankenState = {
   accounts: [],
   credentials: getStoredCredentials(),
+  hasFetchedInitialTokens: false,
 };
 
 interface SbankenListObject<T> {
@@ -73,6 +75,46 @@ interface SbankenAccount {
 }
 
 export const getSbankenAccounts = (state: RootState) => state[SBANKEN_SLICE_NAME].accounts;
+
+export const fetchSbankenToken = createAsyncThunk(
+  `${SBANKEN_SLICE_NAME}/fetchSbankenToken`,
+  async (params: Pick<SbankenCredential, 'clientId' | 'clientSecret'>, thunkAPI) => {
+    const { clientId, clientSecret } = params;
+    const credentials = btoa(`${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`);
+    const response = await fetch(sbankenIdentityServerUrl, {
+      method: 'post',
+      headers: new Headers({
+        Accept: 'application/json',
+        Authorization: `Basic ${credentials}`,
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+      }),
+      body: 'grant_type=client_credentials',
+    });
+
+    if (!response.ok) {
+      throw new Error('bad token');
+    }
+
+    const token = await response.json();
+    const parts = token.access_token.split('.');
+    const decoded = JSON.parse(atob(parts[1]));
+    const nbf = decoded.nbf * 1000;
+    const exp = decoded.exp * 1000;
+    thunkAPI.dispatch(
+      putCredential({
+        clientId,
+        clientSecret,
+        token: {
+          value: token.access_token,
+          notBefore: nbf,
+          expires: exp,
+        },
+      })
+    );
+
+    return token.access_token as string;
+  }
+);
 
 export const fetchAllAccounts = createAsyncThunk(
   `${SBANKEN_SLICE_NAME}/fetchAllAccounts`,
