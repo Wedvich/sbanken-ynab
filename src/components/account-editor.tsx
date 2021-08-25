@@ -1,6 +1,6 @@
+import { h } from 'preact';
 import { FocusTrap } from '@headlessui/react';
 import classNames from 'classnames';
-import { h } from 'preact';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -93,6 +93,14 @@ export default function AccountEditor({ accountId }: AccountEditorProps) {
     dispatch(removeAccount(existingAccount));
     history.replace('/accounts/new');
   }, [dispatch, existingAccount, history]);
+
+  const handleCancel = useCallback(() => {
+    if (existingAccount) {
+      history.push(`/accounts/${accountId}`);
+    } else {
+      history.push('/');
+    }
+  }, [accountId, existingAccount, history]);
 
   return (
     <FocusTrap className="py-6">
@@ -195,7 +203,7 @@ export default function AccountEditor({ accountId }: AccountEditorProps) {
             className="border-transparent  text-white bg-pink-600 hover:bg-pink-700 focus:ring-pink-500 disabled:opacity-50"
             disabled={!isValid}
           >
-            Legg til
+            {existingAccount ? 'Lagre' : 'Legg til'}
           </Button>
           {!!existingAccount && (
             <Button
@@ -206,6 +214,13 @@ export default function AccountEditor({ accountId }: AccountEditorProps) {
               Fjern
             </Button>
           )}
+          <Button
+            type="button"
+            className="border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-pink-500"
+            onClick={handleCancel}
+          >
+            Avbryt
+          </Button>
         </div>
       </form>
     </FocusTrap>

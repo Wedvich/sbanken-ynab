@@ -2,6 +2,7 @@ import { h } from 'preact';
 import { useEffect } from 'preact/hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, Route, Switch } from 'react-router-dom';
+import Account from '../components/account';
 import AccountEditor from '../components/account-editor';
 import { getEnrichedAccounts } from '../selectors/accounts';
 import type { AppDispatch } from '../services';
@@ -106,10 +107,20 @@ export function MainPage() {
         <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
           <Switch>
             <Route
-              path="/accounts/:accountId"
+              path="/accounts/:accountId/edit"
               render={(routeProps) => (
                 <AccountEditor accountId={routeProps.match.params.accountId} />
               )}
+            />
+            <Route
+              path="/accounts/:accountId"
+              render={(routeProps) =>
+                routeProps.match.params.accountId === 'new' ? (
+                  <AccountEditor accountId={routeProps.match.params.accountId} />
+                ) : (
+                  <Account accountId={routeProps.match.params.accountId} />
+                )
+              }
             />
           </Switch>
           {/* <div class="py-6">
