@@ -50,10 +50,7 @@ const createBaseConfig = () => ({
       },
       {
         test: /\.woff$/i,
-        loader: require.resolve('file-loader'),
-        options: {
-          name: '[name].[contenthash].[ext]',
-        },
+        type: 'asset/resource',
       },
     ],
   },
