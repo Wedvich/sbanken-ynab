@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import type { DateTime } from 'luxon';
 import type { RootState } from '..';
 import { sbankenApiBaseUrl } from '../../config';
 import { getEnrichedAccounts } from '../../selectors/accounts';
@@ -7,11 +8,12 @@ import type { SbankenTransaction } from './types';
 
 interface FetchTransactionsForAccountParams {
   accountId: string;
+  fromDate: DateTime;
 }
 
 export const fetchTransactionsForAccount = createAsyncThunk(
   `${sbankenSlice.name}/fetchTransactionsForAccount`,
-  async ({ accountId }: FetchTransactionsForAccountParams, thunkAPI) => {
+  async ({ accountId, fromDate }: FetchTransactionsForAccountParams, thunkAPI) => {
     const rootState = thunkAPI.getState() as RootState;
     const linkedAccounts = getEnrichedAccounts(rootState);
     const account = linkedAccounts.find((account) => account.compositeId === accountId);
@@ -32,7 +34,9 @@ export const fetchTransactionsForAccount = createAsyncThunk(
     }
 
     const response = await fetch(
-      `${sbankenApiBaseUrl}/api/v2/Transactions/archive/${account.sbankenAccountId}`,
+      `${sbankenApiBaseUrl}/api/v2/Transactions/${
+        account.sbankenAccountId
+      }?startDate=${fromDate.toISODate()}`,
       {
         headers: {
           Accept: 'application/json',
