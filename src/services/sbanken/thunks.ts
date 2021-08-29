@@ -34,7 +34,7 @@ export const fetchTransactionsForAccount = createAsyncThunk(
     }
 
     const response = await fetch(
-      `${sbankenApiBaseUrl}/api/v2/Transactions/${
+      `${sbankenApiBaseUrl}/Transactions/${
         account.sbankenAccountId
       }?startDate=${fromDate.toISODate()}`,
       {

@@ -127,7 +127,7 @@ export const fetchAllAccounts = createAsyncThunk(
         return Promise.reject(`invalid token for client ID ${credential.clientId}`);
       }
 
-      const response = await fetch(`${sbankenApiBaseUrl}/api/v2/Accounts`, {
+      const response = await fetch(`${sbankenApiBaseUrl}/Accounts`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${credential.token.value}`,
