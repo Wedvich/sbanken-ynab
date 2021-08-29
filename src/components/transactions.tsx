@@ -1,23 +1,36 @@
+import { skipToken } from '@reduxjs/toolkit/query/react';
 import { DateTime } from 'luxon';
 import { h } from 'preact';
-import { useEffect } from 'preact/hooks';
-import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../services';
-import { fetchTransactionsForAccount } from '../services/sbanken/thunks';
-import { fetchTransactionsForYnabAccount } from '../services/ynab/thunks';
+import { useSelector } from 'react-redux';
+import { getEnrichedAccounts } from '../selectors/accounts';
+import type { RootState } from '../services';
+import { useGetTransactionsQuery as useGetYnabTransactionsQuery } from '../services/ynab/api';
+import { useGetTransactionsQuery as useGetSbankenTransactionsQuery } from '../services/sbanken/api';
+import { useSbankenTokenForAccountId } from '../services/sbanken/hooks';
 
 interface TransactionsProps {
   accountId: string;
 }
 
 export default function Transactions({ accountId }: TransactionsProps) {
-  const dispatch = useDispatch<AppDispatch>();
   const budgetId = useSelector((state: RootState) => state.ynab.budget);
-  useEffect(() => {
-    const fromDate = DateTime.now().minus({ days: 7 });
-    void dispatch(fetchTransactionsForAccount({ accountId, fromDate }));
-    void dispatch(fetchTransactionsForYnabAccount({ accountId, budgetId, fromDate }));
-  }, [accountId, budgetId, dispatch]);
+  const account = useSelector(getEnrichedAccounts).find((a) => a.compositeId === accountId);
+
+  const fromDate = DateTime.now().minus({ days: 7 });
+  const ynabResult = useGetYnabTransactionsQuery(
+    account
+      ? { fromDate: fromDate.toISODate(), budgetId, accountId: account.ynabAccountId }
+      : skipToken
+  );
+  const token = useSbankenTokenForAccountId(account?.sbankenAccountId);
+  const sbankenResult = useGetSbankenTransactionsQuery(
+    account && token
+      ? { fromDate: fromDate.toISODate(), accountId: account.sbankenAccountId, token }
+      : skipToken
+  );
+
+  console.log(ynabResult.data);
+  console.log(sbankenResult.data);
 
   return <div>(tabell med transaksjoner her)</div>;
 }
