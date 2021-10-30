@@ -43,7 +43,7 @@ export default function Account({ accountId }: AccountProps) {
             <div>Sbanken</div>
             <div>YNAB</div>
             <div>Differanse</div>
-            <div class="text-right italic">Saldo</div>
+            <div class="text-right italic">Bokført</div>
             <div class="text-right font-numbers tabular-nums">
               {formatMoney(existingAccount.sbankenClearedBalance)}
             </div>
@@ -52,7 +52,7 @@ export default function Account({ accountId }: AccountProps) {
             </div>
             <div class="text-right font-numbers tabular-nums">
               {formatMoney(
-                existingAccount.sbankenClearedBalance - existingAccount.ynabClearedBalance
+                Math.abs(existingAccount.sbankenClearedBalance - existingAccount.ynabClearedBalance)
               )}
             </div>
             <div class="text-right italic">Ikke bokført</div>
@@ -64,7 +64,9 @@ export default function Account({ accountId }: AccountProps) {
             </div>
             <div class="text-right font-numbers tabular-nums">
               {formatMoney(
-                existingAccount.sbankenUnclearedBalance - existingAccount.ynabUnclearedBalance
+                Math.abs(
+                  existingAccount.sbankenUnclearedBalance - existingAccount.ynabUnclearedBalance
+                )
               )}
             </div>
             <div class="text-right italic">Balanse</div>
@@ -76,12 +78,12 @@ export default function Account({ accountId }: AccountProps) {
             </div>
             <div class="text-right font-numbers tabular-nums">
               {formatMoney(
-                existingAccount.sbankenWorkingBalance - existingAccount.ynabWorkingBalance
+                Math.abs(existingAccount.sbankenWorkingBalance - existingAccount.ynabWorkingBalance)
               )}
             </div>
           </div>
         </div>
-        <Transactions />
+        <Transactions accountId={accountId} />
       </div>
     </FocusTrap>
   );

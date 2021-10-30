@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, Route, Switch } from 'react-router-dom';
 import Account from '../components/account';
 import AccountEditor from '../components/account-editor';
-import { getEnrichedAccounts } from '../selectors/accounts';
+import { getEnrichedAccounts, getHasLoadedAllAccounts } from '../selectors/accounts';
 import type { AppDispatch } from '../services';
 import { fetchAllAccounts as fetchAllSbankenAccounts } from '../services/sbanken';
 import { fetchAllAccounts as fetchAllYnabAccounts } from '../services/ynab';
@@ -18,6 +18,7 @@ export function MainPage() {
   }, [dispatch]);
 
   const accounts = useSelector(getEnrichedAccounts);
+  const hasLoadedAllAccounts = useSelector(getHasLoadedAllAccounts);
 
   return (
     <div class="h-screen flex overflow-hidden">
@@ -43,16 +44,28 @@ export function MainPage() {
                         <div class="font-medium text-gray-700 group-hover:text-gray-900">
                           {account.name}
                         </div>
-                        <div class="flex-grow-0 text-xs grid auto-cols-min grid-flow-col grid-rows-2 items-center gap-x-2">
-                          <div class="flex-shrink">S:</div>
-                          <div class="flex-shrink">Y:</div>
-                          <div class="text-right font-numbers tabular-nums">
-                            {formatMoney(account.sbankenWorkingBalance)}
+                        {hasLoadedAllAccounts ? (
+                          <div class="flex-grow-0 text-xs grid auto-cols-min grid-flow-col grid-rows-2 items-center gap-x-2">
+                            <div class="flex-shrink">S:</div>
+                            <div class="flex-shrink">Y:</div>
+                            <div class="text-right font-numbers tabular-nums">
+                              {
+                                account.sbankenLinkOk
+                                  ? formatMoney(account.sbankenWorkingBalance)
+                                  : '?' /* TODO: Show error */
+                              }
+                            </div>
+                            <div class="text-right font-numbers tabular-nums">
+                              {
+                                account.ynabLinkOk
+                                  ? formatMoney(account.ynabWorkingBalance)
+                                  : '?' /* TODO: Show error */
+                              }
+                            </div>
                           </div>
-                          <div class="text-right font-numbers tabular-nums">
-                            {formatMoney(account.ynabWorkingBalance)}
-                          </div>
-                        </div>
+                        ) : (
+                          <div class="flex flex-grow-0 items-center h-8">Loading...</div>
+                        )}
                       </div>
                     </NavLink>
                   );

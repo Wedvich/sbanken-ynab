@@ -21,6 +21,7 @@ export interface SbankenCredential {
 
 export interface SbankenState {
   accounts: Array<SbankenAccount>;
+  credentialIdByAccountId: Record<string, string>;
   credentials: Array<SbankenCredential>;
   hasFetchedInitialTokens: boolean;
 }
@@ -54,16 +55,17 @@ function getStoredCredentials() {
 
 const initialState: SbankenState = {
   accounts: [],
+  credentialIdByAccountId: {},
   credentials: getStoredCredentials(),
   hasFetchedInitialTokens: false,
 };
 
-interface SbankenListObject<T> {
+export interface SbankenListObject<T> {
   availableItems: number;
   items: Array<T>;
 }
 
-interface SbankenAccount {
+export interface SbankenAccount {
   accountId: string;
   accountNumber: string;
   ownerCustomerId: string;
@@ -95,8 +97,8 @@ export const fetchSbankenToken = createAsyncThunk(
       throw new Error('bad token');
     }
 
-    const token = await response.json();
-    const parts = token.access_token.split('.');
+    const token = await response.json(); // TODO: Type response
+    const parts = (token.access_token as string).split('.');
     const decoded = JSON.parse(atob(parts[1]));
     const nbf = decoded.nbf * 1000;
     const exp = decoded.exp * 1000;
@@ -125,7 +127,7 @@ export const fetchAllAccounts = createAsyncThunk(
         return Promise.reject(`invalid token for client ID ${credential.clientId}`);
       }
 
-      const response = await fetch(`${sbankenApiBaseUrl}/api/v2/Accounts`, {
+      const response = await fetch(`${sbankenApiBaseUrl}/Accounts`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${credential.token.value}`,
@@ -136,13 +138,22 @@ export const fetchAllAccounts = createAsyncThunk(
         return Promise.reject(response.statusText); // TODO: Handle errors
       }
 
-      return (await response.json()) as SbankenListObject<SbankenAccount>;
+      return {
+        credentialId: credential.clientId,
+        data: (await response.json()) as SbankenListObject<SbankenAccount>,
+      };
     });
 
     const results = await Promise.allSettled(requests);
     return results.reduce<Array<SbankenAccount>>((accounts, result) => {
       if (result.status === 'rejected') return accounts; // TODO: Handle errors
-      Array.prototype.push.apply(accounts, result.value.items);
+      Array.prototype.push.apply(accounts, result.value.data.items);
+      thunkAPI.dispatch(
+        sbankenSlice.actions.putCredentialIdsByAccountIds({
+          accountIds: result.value.data.items.map((account) => account.accountId),
+          credentialId: result.value.credentialId,
+        })
+      );
       return accounts;
     }, []);
   }
@@ -152,6 +163,15 @@ export const sbankenSlice = createSlice({
   name: SBANKEN_SLICE_NAME,
   initialState,
   reducers: {
+    putCredentialIdsByAccountIds: (
+      state,
+      action: PayloadAction<{ credentialId: string; accountIds: Array<string> }>
+    ) => {
+      const { credentialId, accountIds } = action.payload;
+      for (const accountId of accountIds) {
+        state.credentialIdByAccountId[accountId] = credentialId;
+      }
+    },
     putCredential: (state, action: PayloadAction<SbankenCredential>) => {
       const existingCredential = state.credentials.find(
         (c) => c.clientId === action.payload.clientId
@@ -177,4 +197,4 @@ export const sbankenSlice = createSlice({
   },
 });
 
-export const { putCredential } = sbankenSlice.actions;
+export const { putCredential, putCredentialIdsByAccountIds } = sbankenSlice.actions;

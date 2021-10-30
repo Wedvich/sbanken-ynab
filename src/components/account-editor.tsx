@@ -60,19 +60,38 @@ export default function AccountEditor({ accountId }: AccountEditorProps) {
     }));
   }, []);
 
-  const handleUpdateYnabAccountId = useCallback((e: Event) => {
-    setAccount((account) => ({
-      ...account,
-      ynabAccountId: (e.target as HTMLInputElement).value,
-    }));
-  }, []);
+  const handleUpdateYnabAccountId = useCallback(
+    (e: Event) => {
+      setAccount((account) => {
+        const ynabAccountId = (e.target as HTMLInputElement).value;
+        return {
+          ...account,
+          ynabAccountId,
+          name:
+            account.name ||
+            ynabAccounts.find((ynabAccount) => ynabAccount.id === ynabAccountId)?.name,
+        };
+      });
+    },
+    [ynabAccounts]
+  );
 
-  const handleUpdateSbankenAccountId = useCallback((e: Event) => {
-    setAccount((account) => ({
-      ...account,
-      sbankenAccountId: (e.target as HTMLInputElement).value,
-    }));
-  }, []);
+  const handleUpdateSbankenAccountId = useCallback(
+    (e: Event) => {
+      setAccount((account) => {
+        const sbankenAccountId = (e.target as HTMLInputElement).value;
+        return {
+          ...account,
+          sbankenAccountId,
+          name:
+            account.name ||
+            sbankenAccounts.find((sbankenAccount) => sbankenAccount.accountId === sbankenAccountId)
+              ?.name,
+        };
+      });
+    },
+    [sbankenAccounts]
+  );
 
   const isValid = validateLinkedAccount(account);
 
@@ -129,6 +148,38 @@ export default function AccountEditor({ accountId }: AccountEditorProps) {
           </div>
         </fieldset>
         <fieldset class="mt-6">
+          <legend class="font-medium text-gray-900">Velg Sbanken-konto</legend>
+          <div class="mt-4 space-y-4">
+            {sbankenAccounts.map((sbankenAccount) => {
+              const disabled =
+                existingAccount?.sbankenAccountId !== sbankenAccount.accountId &&
+                disabledSbankenAccounts.has(sbankenAccount.accountId);
+              return (
+                <div key={sbankenAccount.accountId} class="flex items-center">
+                  <input
+                    id={`sbanken-account-${sbankenAccount.accountId}`}
+                    name="sbanken-account"
+                    type="radio"
+                    class="focus:ring-pink-500 h-4 w-4 text-pink-600 border-gray-300 disabled:opacity-50"
+                    disabled={disabled}
+                    checked={account.sbankenAccountId === sbankenAccount.accountId}
+                    value={sbankenAccount.accountId}
+                    onChange={handleUpdateSbankenAccountId}
+                  />
+                  <label
+                    htmlFor={`sbanken-account-${sbankenAccount.accountId}`}
+                    class={classNames('ml-3 block font-medium text-gray-700 ', {
+                      'text-gray-300': disabled,
+                    })}
+                  >
+                    {sbankenAccount.name}
+                  </label>
+                </div>
+              );
+            })}
+          </div>
+        </fieldset>
+        <fieldset class="mt-6">
           <div>
             <legend class="font-medium text-gray-900">Velg YNAB-konto</legend>
             <p class="text-sm text-gray-500">
@@ -159,38 +210,6 @@ export default function AccountEditor({ accountId }: AccountEditorProps) {
                     })}
                   >
                     {ynabAccount.name}
-                  </label>
-                </div>
-              );
-            })}
-          </div>
-        </fieldset>
-        <fieldset class="mt-6">
-          <legend class="font-medium text-gray-900">Velg Sbanken-konto</legend>
-          <div class="mt-4 space-y-4">
-            {sbankenAccounts.map((sbankenAccount) => {
-              const disabled =
-                existingAccount?.sbankenAccountId !== sbankenAccount.accountId &&
-                disabledSbankenAccounts.has(sbankenAccount.accountId);
-              return (
-                <div key={sbankenAccount.accountId} class="flex items-center">
-                  <input
-                    id={`sbanken-account-${sbankenAccount.accountId}`}
-                    name="sbanken-account"
-                    type="radio"
-                    class="focus:ring-pink-500 h-4 w-4 text-pink-600 border-gray-300 disabled:opacity-50"
-                    disabled={disabled}
-                    checked={account.sbankenAccountId === sbankenAccount.accountId}
-                    value={sbankenAccount.accountId}
-                    onChange={handleUpdateSbankenAccountId}
-                  />
-                  <label
-                    htmlFor={`sbanken-account-${sbankenAccount.accountId}`}
-                    class={classNames('ml-3 block font-medium text-gray-700 ', {
-                      'text-gray-300': disabled,
-                    })}
-                  >
-                    {sbankenAccount.name}
                   </label>
                 </div>
               );

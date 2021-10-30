@@ -24,6 +24,40 @@ interface YnabAccount {
   deleted: boolean;
 }
 
+export interface YnabTransaction {
+  id: string;
+  date: string;
+  amount: number;
+  memo: string;
+  cleared: string;
+  approved: boolean;
+  flag_color: string;
+  account_id: string;
+  payee_id: string;
+  category_id: string;
+  transfer_account_id: string;
+  transfer_transaction_id: string;
+  matched_transaction_id: string;
+  import_id: string;
+  deleted: boolean;
+  account_name: string;
+  payee_name: string;
+  category_name: string;
+  subtransactions: Array<{
+    id: string;
+    transaction_id: string;
+    amount: number;
+    memo: string;
+    payee_id: string;
+    payee_name: string;
+    category_id: string;
+    category_name: string;
+    transfer_account_id: string;
+    transfer_transaction_id: string;
+    deleted: boolean;
+  }>;
+}
+
 export const getYnabAccounts = (state: RootState) => state[YNAB_SLICE_NAME].accounts;
 
 export interface YnabState {

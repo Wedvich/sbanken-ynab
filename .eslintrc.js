@@ -39,13 +39,7 @@ module.exports = {
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/unbound-method': 'off',
     'arrow-parens': ['warn', 'always'],
-    indent: [
-      'warn',
-      2,
-      {
-        SwitchCase: 1,
-      },
-    ],
+    indent: 'off',
     'jsx-a11y/no-onchange': 'off',
     'jsx-quotes': ['warn', 'prefer-double'],
     'no-multiple-empty-lines': [
@@ -64,6 +58,7 @@ module.exports = {
     semi: ['warn', 'always'],
   },
   settings: {
+    'import/ignore': [/node_modules/],
     'import/resolver': {
       node: {
         extensions: ['.js', '.ts', '.tsx'],

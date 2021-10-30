@@ -1,16 +1,39 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { getSbankenAccounts } from '../services/sbanken';
-import { createCompositeAccountId, getLinkedAccounts, LinkedAccount } from '../services/accounts';
+import { getSbankenAccounts, SbankenAccount } from '../services/sbanken';
+import {
+  accountsSlice,
+  createCompositeAccountId,
+  getLinkedAccounts,
+  LinkedAccount,
+} from '../services/accounts';
 import { getYnabAccounts } from '../services/ynab';
+import type { RootState } from '../services';
 
 export interface EnrichedAccount extends LinkedAccount {
   compositeId: string;
+  sbankenLinkOk: boolean;
   sbankenClearedBalance: number;
   sbankenUnclearedBalance: number;
   sbankenWorkingBalance: number;
+  ynabLinkOk: boolean;
   ynabClearedBalance: number;
   ynabUnclearedBalance: number;
   ynabWorkingBalance: number;
+}
+
+export const getHasLoadedAllAccounts = (state: RootState) => {
+  const slice = state[accountsSlice.name];
+  return slice.hasLoadedSbankenAccounts && slice.hasLoadedYnabAccounts;
+};
+
+function getSbankenUnclearedBalance(sbankenAccount?: SbankenAccount): number {
+  if (!sbankenAccount) return 0;
+
+  if (sbankenAccount.accountType === 'Creditcard account') {
+    return -sbankenAccount.balance - (sbankenAccount.creditLimit - sbankenAccount.available);
+  }
+
+  return sbankenAccount.available - sbankenAccount.balance;
 }
 
 export const getEnrichedAccounts = createSelector(
@@ -20,28 +43,22 @@ export const getEnrichedAccounts = createSelector(
       const sbankenAccount = sbankenAccounts.find(
         (a) => a.accountId === linkedAccount.sbankenAccountId
       );
-      if (!sbankenAccount) return linkedAccounts;
 
       const ynabAccount = ynabAccounts.find((a) => a.id === linkedAccount.ynabAccountId);
-      if (!ynabAccount) return linkedAccounts;
 
-      let sbankenUnclearedBalance = 0;
-      if (sbankenAccount.accountType === 'Creditcard account') {
-        sbankenUnclearedBalance =
-          -sbankenAccount.balance - (sbankenAccount.creditLimit - sbankenAccount.available);
-      } else {
-        sbankenUnclearedBalance = sbankenAccount.available - sbankenAccount.balance;
-      }
+      const sbankenUnclearedBalance = getSbankenUnclearedBalance(sbankenAccount);
 
       const enrichedAccount: EnrichedAccount = {
         ...linkedAccount,
         compositeId: createCompositeAccountId(linkedAccount),
-        sbankenClearedBalance: sbankenAccount.balance,
+        sbankenLinkOk: !!sbankenAccount,
+        sbankenClearedBalance: sbankenAccount?.balance ?? 0,
         sbankenUnclearedBalance,
-        sbankenWorkingBalance: sbankenAccount.balance + sbankenUnclearedBalance,
-        ynabClearedBalance: ynabAccount.cleared_balance / 1000,
-        ynabUnclearedBalance: ynabAccount.uncleared_balance / 1000,
-        ynabWorkingBalance: ynabAccount.balance / 1000,
+        sbankenWorkingBalance: (sbankenAccount?.balance ?? 0) + sbankenUnclearedBalance,
+        ynabLinkOk: !!ynabAccount,
+        ynabClearedBalance: (ynabAccount?.cleared_balance ?? 0) / 1000,
+        ynabUnclearedBalance: (ynabAccount?.uncleared_balance ?? 0) / 1000,
+        ynabWorkingBalance: (ynabAccount?.balance ?? 0) / 1000,
       };
 
       linkedAccounts.push(enrichedAccount);
