@@ -11,10 +11,12 @@ self.addEventListener('install', (event) => {
     caches.open(staticCacheName).then(async (cache) => {
       const assets = ['/'];
       try {
-        const manifest = await (await fetch('manifest.json')).json();
+        const manifest: any = await (await fetch('manifest.json')).json();
         Array.prototype.push.apply(
           assets,
-          Object.values<string>(manifest).filter((v) => cacheRegExp.test(v))
+          Object.values<string>(manifest as { [s: string]: string } | ArrayLike<string>).filter(
+            (v) => cacheRegExp.test(v)
+          )
         );
       } finally {
         await cache.addAll(assets);
