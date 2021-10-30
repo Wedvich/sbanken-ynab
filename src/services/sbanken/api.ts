@@ -1,5 +1,19 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
+import type { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers';
+import {
+  createApi,
+  fetchBaseQuery,
+  FetchBaseQueryError,
+  FetchBaseQueryMeta,
+} from '@reduxjs/toolkit/query/react';
+import { DateTime } from 'luxon';
 import { sbankenApiBaseUrl } from '../../config';
+import type { SbankenTransaction } from './types';
+
+export interface SbankenTransactionsResponse {
+  availableItems: number;
+  items: Array<SbankenTransaction>;
+}
 
 const api = createApi({
   reducerPath: 'sbankenApi',
@@ -7,10 +21,39 @@ const api = createApi({
     baseUrl: sbankenApiBaseUrl,
   }),
   endpoints: (build) => ({
-    getTransactions: build.query<any, { accountId: string; token: string; fromDate: string }>({
+    getTransactions: build.query<
+      SbankenTransactionsResponse,
+      { accountId: string; token: string; fromDate: string }
+    >({
       queryFn: async ({ accountId, token, fromDate }, api, extraOptions, baseQuery) => {
         const url = `/Transactions/${accountId}?startDate=${fromDate}`;
-        return baseQuery({ url, headers: { Authorization: `Bearer ${token}` } });
+        const response = await (baseQuery({
+          url,
+          headers: { Authorization: `Bearer ${token}` },
+        }) as MaybePromise<
+          QueryReturnValue<SbankenTransactionsResponse, FetchBaseQueryError, FetchBaseQueryMeta>
+        >);
+
+        if (response.error) {
+          return { error: response.error };
+        }
+
+        const transformedData: SbankenTransactionsResponse = {
+          ...response.data,
+          items: response.data.items.map((item) => {
+            const transformedItem = { ...item };
+            if (item.accountingDate) {
+              transformedItem.accountingDate = DateTime.fromISO(item.accountingDate).toISODate();
+            }
+            if (item.interestDate) {
+              transformedItem.interestDate = DateTime.fromISO(item.interestDate).toISODate();
+            }
+
+            return transformedItem;
+          }),
+        };
+
+        return { data: transformedData };
       },
     }),
   }),

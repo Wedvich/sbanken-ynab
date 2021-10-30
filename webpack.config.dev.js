@@ -3,7 +3,7 @@ process.env.NODE_ENV = 'development';
 
 const { merge } = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { DefinePlugin, HotModuleReplacementPlugin } = require('webpack');
+const { DefinePlugin } = require('webpack');
 const PreactRefreshPlugin = require('@prefresh/webpack');
 const { createBaseConfig } = require('./webpack.config.base');
 
@@ -25,7 +25,6 @@ module.exports = (env = {}) =>
             '"http://localhost:4300/sbanken/identity/token"',
           'process.env.YNAB_API_BASE_URL': '"http://localhost:4300/ynab/api"',
         }),
-      new HotModuleReplacementPlugin(),
       new PreactRefreshPlugin(),
     ].filter(Boolean),
   });

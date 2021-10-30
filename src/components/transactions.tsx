@@ -7,9 +7,19 @@ import type { RootState } from '../services';
 import { useGetTransactionsQuery as useGetYnabTransactionsQuery } from '../services/ynab/api';
 import { useGetTransactionsQuery as useGetSbankenTransactionsQuery } from '../services/sbanken/api';
 import { useSbankenTokenForAccountId } from '../services/sbanken/hooks';
+import { formatMoney } from '../utils';
+import { useMemo } from 'preact/hooks';
+import type { SbankenTransaction } from '../services/sbanken/types';
+import type { YnabTransaction } from '../services/ynab';
 
 interface TransactionsProps {
   accountId: string;
+}
+
+function isYnabTransaction(
+  transaction: SbankenTransaction | YnabTransaction
+): transaction is YnabTransaction {
+  return (transaction as YnabTransaction).account_id !== undefined;
 }
 
 export default function Transactions({ accountId }: TransactionsProps) {
@@ -29,8 +39,84 @@ export default function Transactions({ accountId }: TransactionsProps) {
       : skipToken
   );
 
-  console.log(ynabResult.data);
-  console.log(sbankenResult.data);
+  const linkedTransactions = useMemo(() => {
+    const transactions: Array<SbankenTransaction | YnabTransaction> = [
+      ...(sbankenResult.data?.items ?? []),
+      ...(ynabResult.data?.transactions ?? []),
+    ].sort((a, b) => {
+      const aSort = isYnabTransaction(a) ? a.date : a.accountingDate;
+      const bSort = isYnabTransaction(b) ? b.date : b.accountingDate;
 
-  return <div>(tabell med transaksjoner her)</div>;
+      return bSort.localeCompare(aSort);
+    });
+
+    return transactions;
+  }, [sbankenResult.data?.items, ynabResult.data?.transactions]);
+
+  return (
+    <div>
+      <h2 class="text-xl font-semibold text-gray-900 flex items-center mb-2">Transaksjoner</h2>
+      <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Dato
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Kilde
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Tekst
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-right"
+              >
+                Beløp
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {linkedTransactions.map((item, index) => {
+              if (isYnabTransaction(item)) {
+                return (
+                  <tr key={item.id}>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">YNAB</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.memo}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-numbers tabular-nums">
+                      {formatMoney(+item.amount)}
+                    </td>
+                  </tr>
+                );
+              }
+
+              return (
+                <tr key={`${index}-${Date.now() * Math.random()}`}>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {DateTime.fromISO(item.accountingDate).toISODate()}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Sbanken</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.text}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-numbers tabular-nums">
+                    {formatMoney(+item.amount)}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }
