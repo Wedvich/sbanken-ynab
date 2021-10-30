@@ -1,7 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '.';
+import { fetchAllAccounts as fetchAllSbankenAccounts } from './sbanken';
+import { fetchAllAccounts as fetchAllYnabAccounts } from './ynab';
 
-const ACCOUNTS_STATE_SLICE = 'accounts';
+const ACCOUNTS_SLICE_NAME = 'accounts';
 
 const ACCOUNTS_STORAGE_KEY = 'accounts';
 
@@ -11,7 +13,7 @@ export interface LinkedAccount {
   ynabAccountId: string;
 }
 
-export const getLinkedAccounts = (state: RootState) => state[ACCOUNTS_STATE_SLICE].accounts;
+export const getLinkedAccounts = (state: RootState) => state[ACCOUNTS_SLICE_NAME].accounts;
 
 export function validateLinkedAccount(account: Partial<LinkedAccount>): account is LinkedAccount {
   return !!account.name && !!account.sbankenAccountId && !!account.ynabAccountId;
@@ -23,14 +25,18 @@ export function createCompositeAccountId(account: LinkedAccount): string {
 
 export interface AccountsState {
   accounts: Array<LinkedAccount>;
+  hasLoadedSbankenAccounts: boolean;
+  hasLoadedYnabAccounts: boolean;
 }
 
 const initialState: AccountsState = {
   accounts: JSON.parse(localStorage.getItem(ACCOUNTS_STORAGE_KEY) || '[]'),
+  hasLoadedSbankenAccounts: false,
+  hasLoadedYnabAccounts: false,
 };
 
 export const accountsSlice = createSlice({
-  name: ACCOUNTS_STATE_SLICE,
+  name: ACCOUNTS_SLICE_NAME,
   initialState,
   reducers: {
     putAccount: (state, action: PayloadAction<LinkedAccount>) => {
@@ -64,6 +70,20 @@ export const accountsSlice = createSlice({
 
       localStorage.setItem(ACCOUNTS_STORAGE_KEY, JSON.stringify(state.accounts));
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchAllSbankenAccounts.fulfilled, (state) => {
+      state.hasLoadedSbankenAccounts = true;
+    });
+    builder.addCase(fetchAllSbankenAccounts.rejected, (state) => {
+      state.hasLoadedSbankenAccounts = true;
+    });
+    builder.addCase(fetchAllYnabAccounts.fulfilled, (state) => {
+      state.hasLoadedYnabAccounts = true;
+    });
+    builder.addCase(fetchAllYnabAccounts.rejected, (state) => {
+      state.hasLoadedYnabAccounts = true;
+    });
   },
 });
 

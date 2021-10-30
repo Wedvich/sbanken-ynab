@@ -65,6 +65,7 @@ module.exports = {
     semi: ['warn', 'always'],
   },
   settings: {
+    'import/ignore': [/node_modules/],
     'import/resolver': {
       node: {
         extensions: ['.js', '.ts', '.tsx'],
