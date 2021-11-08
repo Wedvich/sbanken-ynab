@@ -19,7 +19,14 @@ self.addEventListener('install', (event) => {
           )
         );
       } finally {
-        await cache.addAll(assets);
+        await cache.addAll(
+          assets.map(
+            (url) =>
+              new Request(url, {
+                cache: 'reload',
+              })
+          )
+        );
       }
     })
   );
