@@ -3,6 +3,7 @@ import { ServiceWorkerActionTypes } from './constants';
 const revision = process.env.REVISION;
 const staticCacheName = `sbanken-ynab-${revision}`;
 const cacheRegExp = /.(css|js|woff2?)$/i;
+const unversionedAssets = ['/', '/index.html', '/robots.txt'];
 
 declare const self: ServiceWorkerGlobalScope & typeof globalThis;
 
@@ -20,11 +21,12 @@ self.addEventListener('install', (event) => {
         );
       } finally {
         await cache.addAll(
-          assets.map(
-            (url) =>
-              new Request(url, {
-                cache: 'reload',
-              })
+          assets.map((asset) =>
+            unversionedAssets.includes(asset)
+              ? new Request(asset, {
+                  cache: 'reload',
+                })
+              : asset
           )
         );
       }
