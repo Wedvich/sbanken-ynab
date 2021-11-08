@@ -11,7 +11,7 @@ self.addEventListener('install', (event) => {
     caches.open(staticCacheName).then(async (cache) => {
       const assets = ['/'];
       try {
-        const manifest: any = await (await fetch('manifest.json')).json();
+        const manifest: any = await (await fetch('manifest.json', { cache: 'reload' })).json();
         Array.prototype.push.apply(
           assets,
           Object.values<string>(manifest as { [s: string]: string } | ArrayLike<string>).filter(
