@@ -80,7 +80,7 @@ const initialState: YnabState = {
 
 export const fetchAllAccounts = createAsyncThunk(
   `${YNAB_SLICE_NAME}/fetchAllAccounts`,
-  async (_, thunkAPI) => {
+  async (_, thunkAPI): Promise<Array<YnabAccount>> => {
     const { tokens, budget } = (thunkAPI.getState() as RootState).ynab;
     const [token] = tokens;
 
