@@ -1,8 +1,8 @@
 # Based on https://rsbh.dev/blog/dockerize-react-app
 FROM node:17-alpine AS builder
 WORKDIR /app
-COPY ../package.json ./
-COPY ../yarn.lock ./
+COPY package.json ./
+COPY yarn.lock ./
 RUN yarn install --frozen-lockfile
 COPY . .
 RUN yarn build
