@@ -56,6 +56,7 @@ namespace Sby
                 .ObjectSources(action => action.None())
                 .ScriptSources(action => action.Self())
                 .StyleSources(action => action.Self().UnsafeInline())
+                .FrameAncestors(action => action.Self())
             );
 
             app.UseDefaultFiles(new DefaultFilesOptions
