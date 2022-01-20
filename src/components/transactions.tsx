@@ -9,17 +9,10 @@ import { useGetTransactionsQuery as useGetSbankenTransactionsQuery } from '../se
 import { useSbankenTokenForAccountId } from '../services/sbanken/hooks';
 import { formatMoney } from '../utils';
 import { useMemo } from 'preact/hooks';
-import type { SbankenTransaction } from '../services/sbanken/types';
-import type { YnabTransaction } from '../services/ynab';
+import { linkTransactions, isYnabTransaction, isLinkedTransaction } from '../services/transactions';
 
 interface TransactionsProps {
   accountId: string;
-}
-
-function isYnabTransaction(
-  transaction: SbankenTransaction | YnabTransaction
-): transaction is YnabTransaction {
-  return (transaction as YnabTransaction).account_id !== undefined;
 }
 
 export default function Transactions({ accountId }: TransactionsProps) {
@@ -39,19 +32,10 @@ export default function Transactions({ accountId }: TransactionsProps) {
       : skipToken
   );
 
-  const linkedTransactions = useMemo(() => {
-    const transactions: Array<SbankenTransaction | YnabTransaction> = [
-      ...(sbankenResult.data?.items ?? []),
-      ...(ynabResult.data?.transactions ?? []),
-    ].sort((a, b) => {
-      const aSort = isYnabTransaction(a) ? a.date : a.accountingDate;
-      const bSort = isYnabTransaction(b) ? b.date : b.accountingDate;
-
-      return bSort.localeCompare(aSort);
-    });
-
-    return transactions;
-  }, [sbankenResult.data?.items, ynabResult.data?.transactions]);
+  const linkedTransactions = useMemo(
+    () => linkTransactions(sbankenResult.data?.items ?? [], ynabResult.data?.transactions ?? []),
+    [sbankenResult.data?.items, ynabResult.data?.transactions]
+  );
 
   return (
     <div>
@@ -88,6 +72,10 @@ export default function Transactions({ accountId }: TransactionsProps) {
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             {linkedTransactions.map((item, index) => {
+              if (isLinkedTransaction(item)) {
+                return null;
+              }
+
               if (isYnabTransaction(item)) {
                 return (
                   <tr key={item.id}>

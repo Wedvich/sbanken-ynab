@@ -39,7 +39,6 @@ export const fetchTransactionsForYnabAccount = createAsyncThunk(
     }
 
     const { data } = (await response.json()) as { data: { transactions: Array<YnabTransaction> } };
-    console.log(data.transactions);
 
     return data.transactions;
   }

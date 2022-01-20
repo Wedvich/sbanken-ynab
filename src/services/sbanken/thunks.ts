@@ -50,7 +50,6 @@ export const fetchTransactionsForAccount = createAsyncThunk(
     }
 
     const transactions = (await response.json()) as SbankenListObject<SbankenTransaction>;
-    console.log(transactions);
 
     return transactions;
   }
