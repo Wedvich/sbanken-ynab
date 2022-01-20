@@ -16,7 +16,7 @@ export default function ServiceWorkerManager() {
     };
 
     if (process.env.NODE_ENV !== 'production' || location.search.endsWith('no-sw')) {
-      navigator.serviceWorker?.getRegistration('/sw.js').then(async (registration) => {
+      void navigator.serviceWorker?.getRegistration('/sw.js').then(async (registration) => {
         if (registration) {
           await registration.unregister();
           window.location.reload();
