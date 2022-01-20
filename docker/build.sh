@@ -2,7 +2,7 @@
 
 # Copy nescecary files from  parent folder
 mkdir ./tmp/
-cp -r ../. ./tmp/
+rsync -av ../. ./tmp/ --exclude docker
 
 # Build docker image
 docker build --no-cache -t sbanken-ynab .
