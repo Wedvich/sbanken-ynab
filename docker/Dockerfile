@@ -1,5 +1,6 @@
 # Based on https://rsbh.dev/blog/dockerize-react-app
 FROM node:17 AS builder
+LABEL stage=builder
 WORKDIR /app
 COPY tmp/ ./ 
 RUN yarn install --frozen-lockfile
