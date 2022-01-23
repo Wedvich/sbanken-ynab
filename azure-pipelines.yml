@@ -29,8 +29,8 @@ jobs:
       - script: yarn lint-ci
         displayName: Lint code
 
-      - script: yarn stylelint
-        displayName: Lint styles
+      # - script: yarn stylelint
+      #   displayName: Lint styles
 
       - script: yarn typecheck
         displayName: Check types
