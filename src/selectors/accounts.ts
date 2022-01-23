@@ -66,3 +66,5 @@ export const getEnrichedAccounts = createSelector(
     }, []);
   }
 );
+
+export const getTransactionsRange = (state: RootState) => state.accounts.range;

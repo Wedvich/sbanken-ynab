@@ -56,6 +56,7 @@ export interface YnabTransaction {
     transfer_transaction_id: string;
     deleted: boolean;
   }>;
+  _checksum?: number;
 }
 
 export const getYnabAccounts = (state: RootState) => state[YNAB_SLICE_NAME].accounts;

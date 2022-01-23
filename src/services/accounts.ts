@@ -6,6 +6,7 @@ import { fetchAllAccounts as fetchAllYnabAccounts } from './ynab';
 const ACCOUNTS_SLICE_NAME = 'accounts';
 
 const ACCOUNTS_STORAGE_KEY = 'accounts';
+const RANGE_STORAGE_KEY = 'range';
 
 export interface LinkedAccount {
   name: string;
@@ -27,12 +28,14 @@ export interface AccountsState {
   accounts: Array<LinkedAccount>;
   hasLoadedSbankenAccounts: boolean;
   hasLoadedYnabAccounts: boolean;
+  range: number;
 }
 
 const initialState: AccountsState = {
   accounts: JSON.parse(localStorage.getItem(ACCOUNTS_STORAGE_KEY) || '[]'),
   hasLoadedSbankenAccounts: false,
   hasLoadedYnabAccounts: false,
+  range: +(localStorage.getItem(RANGE_STORAGE_KEY) || 7),
 };
 
 export const accountsSlice = createSlice({
@@ -70,6 +73,11 @@ export const accountsSlice = createSlice({
 
       localStorage.setItem(ACCOUNTS_STORAGE_KEY, JSON.stringify(state.accounts));
     },
+
+    setRange: (state, action: PayloadAction<number>) => {
+      state.range = action.payload;
+      localStorage.setItem(RANGE_STORAGE_KEY, state.range.toString());
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAllSbankenAccounts.fulfilled, (state) => {
@@ -87,4 +95,4 @@ export const accountsSlice = createSlice({
   },
 });
 
-export const { putAccount, removeAccount } = accountsSlice.actions;
+export const { putAccount, removeAccount, setRange } = accountsSlice.actions;

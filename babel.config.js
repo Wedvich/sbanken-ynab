@@ -21,6 +21,7 @@ module.exports = (api) => {
         pragmaFrag: 'Fragment',
       },
     ],
+    require.resolve('babel-plugin-ts-nameof'),
   ];
 
   if (process.env.NODE_ENV === 'development') {

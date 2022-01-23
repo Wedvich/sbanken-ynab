@@ -40,6 +40,12 @@ module.exports = {
     '@typescript-eslint/unbound-method': 'off',
     'arrow-parens': ['warn', 'always'],
     indent: 'off',
+    'jest/valid-title': [
+      'error',
+      {
+        ignoreTypeOfDescribeName: true,
+      },
+    ],
     'jsx-a11y/no-onchange': 'off',
     'jsx-quotes': ['warn', 'prefer-double'],
     'no-multiple-empty-lines': [

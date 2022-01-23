@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '..';
 import { ynabApiBaseUrl } from '../../config';
+import { crc32 } from '../../utils';
 import type { YnabTransaction } from '../ynab';
 
 export interface YnabTransactionsResponse {
@@ -28,10 +29,14 @@ const api = createApi({
         const transformedData: YnabTransactionsResponse = {
           ...response.data,
           transactions: response.data.transactions.map((transaction: YnabTransaction) => {
-            return {
+            const transformedItem = {
               ...transaction,
               amount: transaction.amount / 1000,
             };
+
+            transformedItem._checksum = crc32(JSON.stringify(transformedItem));
+
+            return transformedItem;
           }),
         };
 

@@ -8,7 +8,9 @@ import {
 } from '@reduxjs/toolkit/query/react';
 import { DateTime } from 'luxon';
 import { sbankenApiBaseUrl } from '../../config';
+import { crc32 } from '../../utils';
 import type { SbankenTransaction } from './types';
+import { inferDate } from './utils';
 
 export interface SbankenTransactionsResponse {
   availableItems: number;
@@ -47,6 +49,13 @@ const api = createApi({
             }
             if (item.interestDate) {
               transformedItem.interestDate = DateTime.fromISO(item.interestDate).toISODate();
+            }
+
+            transformedItem._checksum = crc32(JSON.stringify(transformedItem));
+
+            const inferredDate = inferDate(transformedItem);
+            if (inferredDate !== transformedItem.accountingDate) {
+              transformedItem._inferredDate = inferredDate;
             }
 
             return transformedItem;

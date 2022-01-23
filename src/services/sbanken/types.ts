@@ -10,6 +10,8 @@ export interface SbankenTransactionBase {
 }
 
 export interface SbankenTransaction extends SbankenTransactionBase {
+  _checksum?: number;
+  _inferredDate?: string;
   cardDetails?: unknown;
   cardDetailsSpecified?: boolean;
   isReservation?: boolean;
