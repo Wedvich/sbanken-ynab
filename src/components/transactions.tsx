@@ -79,7 +79,9 @@ export default function Transactions({ accountId }: TransactionsProps) {
               if (isYnabTransaction(item)) {
                 return (
                   <tr key={item.id}>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-numbers tabular-nums">
+                      {item.date}
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">YNAB</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.memo}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-numbers tabular-nums">
@@ -91,7 +93,7 @@ export default function Transactions({ accountId }: TransactionsProps) {
 
               return (
                 <tr key={`${index}-${Date.now() * Math.random()}`}>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-numbers tabular-nums">
                     {DateTime.fromISO(item.accountingDate).toISODate()}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Sbanken</td>
