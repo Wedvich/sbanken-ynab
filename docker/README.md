@@ -13,3 +13,16 @@ Denne kommandoen vil kjøre containeren i docker på port 8080
 ```sh
 docker run -p 8080:80 -d sbanken-ynab
 ```
+
+# Docker Compose
+Forslag på et docker-compose oppsett.
+```sh
+version: "3.5"
+  services:
+    sbanken-ynab:
+      image: sbanken-ynab:latest
+      container_name: sbanken-ynab
+      ports:
+        - "80:80"
+      restart: unless-stopped
+```
