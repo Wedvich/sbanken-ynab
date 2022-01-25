@@ -52,6 +52,9 @@ export function OnboardingPage() {
     const budgets = await response.json();
     setYnabBudgets(budgets.data.budgets as Array<any>); // TODO: type response
     dispatch(putToken(ynabPersonalAccessToken));
+    if (budgets.data.budgets.length) {
+      dispatch(setBudget(budgets.data.budgets[0].id as string));
+    }
   };
 
   const handleFetchSbankenToken = async () => {
