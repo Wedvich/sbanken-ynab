@@ -5,64 +5,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RadioGroup } from '@headlessui/react';
 import { getEnrichedAccounts, getTransactionsRange } from '../selectors/accounts';
 import type { AppDispatch, RootState } from '../services';
-import { useGetTransactionsQuery as useGetYnabTransactionsQuery } from '../services/ynab/api';
+import {
+  useCreateTransactionMutation as useCreateYnabTransactionMutation,
+  useGetTransactionsQuery as useGetYnabTransactionsQuery,
+} from '../services/ynab/api';
 import { useGetTransactionsQuery as useGetSbankenTransactionsQuery } from '../services/sbanken/api';
 import { useSbankenTokenForAccountId } from '../services/sbanken/hooks';
-import { formatMoney, usePrevious } from '../utils';
-import { StateUpdater, useCallback, useMemo, useRef, useState } from 'preact/hooks';
-import { linkTransactions, type Transaction, TransactionSource } from '../services/transactions';
+import { formatMoney } from '../utils';
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
+import { linkTransactions, TransactionSource } from '../services/transactions';
 import classNames from 'classnames';
 import { setRange } from '../services/accounts';
+import Button from './button';
 
 interface TransactionsProps {
   accountId: string;
 }
 
 const options = [7, 30];
-
-function useYnabDaysOutsideRange(
-  sbankenRequestId: string,
-  sbankenSuccess: boolean,
-  currentValue: number,
-  setValue: StateUpdater<number>,
-  fromDate: DateTime,
-  linkedTransactions: Array<Transaction>,
-  ynabSuccess: boolean
-) {
-  const { current: map } = useRef(new Map<string, number>());
-  const prevSbankenRequestId = usePrevious(sbankenRequestId);
-  const watchForChanges = useRef(false);
-
-  if (map.has(sbankenRequestId) && sbankenSuccess) {
-    const valueForRequest = map.get(sbankenRequestId);
-    if (currentValue !== valueForRequest) {
-      setValue(valueForRequest);
-    }
-    return;
-  }
-
-  if (sbankenRequestId !== prevSbankenRequestId) {
-    watchForChanges.current = true;
-    return;
-  }
-
-  if (sbankenSuccess && ynabSuccess && watchForChanges.current) {
-    watchForChanges.current = false;
-
-    let daysOutsideRange = 0;
-    for (const transaction of linkedTransactions) {
-      if (transaction.source === TransactionSource.Sbanken && +transaction.date < +fromDate) {
-        daysOutsideRange = Math.max(
-          daysOutsideRange,
-          Math.ceil(fromDate.diff(transaction.date).as('days'))
-        );
-      }
-    }
-
-    map.set(sbankenRequestId, daysOutsideRange);
-    setValue(daysOutsideRange);
-  }
-}
 
 export default function Transactions({ accountId }: TransactionsProps) {
   const budgetId = useSelector((state: RootState) => state.ynab.budget);
@@ -73,17 +33,19 @@ export default function Transactions({ accountId }: TransactionsProps) {
   const dispatch = useDispatch<AppDispatch>();
   const handleSetRange = useCallback(
     (value: number) => {
+      setYnabDaysOutsideRange(0);
       dispatch(setRange(value));
     },
     [dispatch]
   );
 
-  const fromDate = DateTime.now().minus({ days: range });
+  const fromDate = DateTime.now().minus({ days: range }).startOf('day');
+  const fromDateForYnab = fromDate.minus({ days: ynabDaysOutsideRange });
 
   const ynabResult = useGetYnabTransactionsQuery(
     account
       ? {
-          fromDate: fromDate.minus({ days: ynabDaysOutsideRange }).toISODate(),
+          fromDate: fromDateForYnab.toISODate(),
           budgetId,
           accountId: account.ynabAccountId,
         }
@@ -97,19 +59,29 @@ export default function Transactions({ accountId }: TransactionsProps) {
       : skipToken
   );
 
+  const [createYnabTransaction, { isLoading: isCreatingTransaction }] =
+    useCreateYnabTransactionMutation();
+
   const linkedTransactions = useMemo(() => {
     return linkTransactions(sbankenResult.data?.items ?? [], ynabResult.data?.transactions ?? []);
   }, [sbankenResult.data?.items, ynabResult.data?.transactions]);
 
-  useYnabDaysOutsideRange(
-    sbankenResult.requestId,
-    sbankenResult.isSuccess,
-    ynabDaysOutsideRange,
-    setYnabDaysOutsideRange,
-    fromDate,
-    linkedTransactions,
-    ynabResult.isSuccess
-  );
+  useEffect(() => {
+    if (!sbankenResult.data?.items?.length) return;
+
+    const daysOutside = sbankenResult.data.items.reduce((c, t) => {
+      if (!t._inferredDate) return c;
+
+      const days = fromDate.diff(DateTime.fromISO(t._inferredDate)).as('days');
+      if (days > 0) {
+        return Math.max(c, Math.ceil(days));
+      }
+
+      return c;
+    }, 0);
+
+    setYnabDaysOutsideRange(daysOutside);
+  }, [fromDate, sbankenResult.data?.items]);
 
   return (
     <div>
@@ -176,8 +148,25 @@ export default function Transactions({ accountId }: TransactionsProps) {
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-numbers tabular-nums">
                     {transaction.date.toISODate()}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 group">
                     {!!(transaction.source & TransactionSource.Sbanken) && 'Sbanken'}
+                    {!!(transaction.source & TransactionSource.Sbanken) &&
+                      !(transaction.source & TransactionSource.Ynab) && (
+                        <Button
+                          className="ml-1 px-2 py-0.5 invisible group-hover:visible"
+                          disabled={isCreatingTransaction}
+                          onClick={() => {
+                            void createYnabTransaction({
+                              budgetId,
+                              accountId: account.ynabAccountId,
+                              fromDate: fromDateForYnab.toISODate(), // TODO: How to update this across all items?
+                              ...transaction,
+                            });
+                          }}
+                        >
+                          ⚯ YNAB
+                        </Button>
+                      )}
                     {!!(transaction.source & TransactionSource.Sbanken) &&
                       !!(transaction.source & TransactionSource.Ynab) && (
                         <span class="text-gray-500"> ⚯ </span>

@@ -33,6 +33,7 @@ export default function Account({ accountId }: AccountProps) {
           <Button
             className="ml-4 px-2 py-0.5 border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-pink-500"
             onClick={handleEdit}
+            autofocus={false}
           >
             Rediger
           </Button>
