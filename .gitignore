@@ -27,8 +27,7 @@ coverage
 build/Release
 
 # Dependency directories
-node_modules/*
-!node_modules/.yarn-state.yml
+node_modules/
 
 # Optional npm cache directory
 .npm
@@ -83,3 +82,4 @@ coverage
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+!.yarn/unplugged
