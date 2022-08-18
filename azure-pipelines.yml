@@ -9,22 +9,10 @@ jobs:
       vmImage: ubuntu-20.04
 
     steps:
-      - task: UseNode@1
-        displayName: Install Node 14
+      - task: NodeTool@0
+        displayName: Install Node
         inputs:
-          version: 14.x
-
-      - task: Cache@2
-        displayName: Cache dependencies
-        inputs:
-          key: yarn | "$(Agent.OS)" | yarn.lock
-          path: $(YARN_CACHE_FOLDER)
-          restoreKeys: |
-            yarn | "$(Agent.OS)"
-            yarn
-
-      - script: yarn --frozen-lockfile
-        displayName: Install dependencies
+          versionSpec: '18.x'
 
       - script: yarn lint-ci
         displayName: Lint code
@@ -70,15 +58,9 @@ jobs:
     displayName: Build backend
 
     pool:
-      vmImage: windows-2019
+      vmImage: windows-2022
 
     steps:
-      - task: UseDotNet@2
-        displayName: Install .NET 5 SDK
-        inputs:
-          packageType: 'sdk'
-          version: '5.0.x'
-
       - task: DotNetCoreCLI@2
         displayName: Package artifacts
         inputs:

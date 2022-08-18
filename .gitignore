@@ -86,3 +86,12 @@ junit.xml
 
 # Test output
 coverage
+
+# Yarn 3
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

@@ -29,6 +29,7 @@
     "typecheck": "tsc"
   },
   "snyk": true,
+  "packageManager": "yarn@3.2.0",
   "dependencies": {
     "@headlessui/react": "^1.4.3",
     "@reduxjs/toolkit": "^1.6.2",
