@@ -1,0 +1,5 @@
+{
+  "CALL_GRAPH_GENERATOR_URL": "https://storage.googleapis.com/snyk-java-callgraph-generator/W3jTdXePWDEk7sZmaxNxgDAPCXnzFa6AWsvgeEN7yg/callgraph-generator-1.6.4-jar-with-dependencies.jar",
+  "CALL_GRAPH_GENERATOR_CHECKSUM": "6a66f4b5b141080bfd01f42f344f7a2fbc314c93d1fa4ba8931beabadd9e38bd",
+  "_COMMENT": "use sha256 to generate CALL_GRAPH_GENERATOR_CHECKSUM"
+}

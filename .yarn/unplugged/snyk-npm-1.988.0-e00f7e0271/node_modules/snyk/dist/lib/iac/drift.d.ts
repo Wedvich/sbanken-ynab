@@ -1,0 +1,10 @@
+import { DescribeOptions, DriftAnalysis, DriftctlExecutionResult, DriftCTLOptions, GenDriftIgnoreOptions } from './types';
+import { Policy } from '../policy/find-and-load-policy';
+export declare const DescribeExclusiveArgs: string[];
+export declare const DescribeRequiredArgs: string[];
+export declare const validateArgs: (options: DriftCTLOptions) => void;
+export declare const parseDriftAnalysisResults: (input: string) => DriftAnalysis;
+export declare function driftignoreFromPolicy(policy: Policy | undefined): string[];
+export declare const updateExcludeInPolicy: (policy: Policy, analysis: DriftAnalysis, options: GenDriftIgnoreOptions) => void;
+export declare function processAnalysis(options: DescribeOptions, describe: DriftctlExecutionResult): Promise<string>;
+export declare function processHTMLOutput(options: DescribeOptions, stdout: string): string;
