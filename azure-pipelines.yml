@@ -12,7 +12,7 @@ jobs:
       - task: NodeTool@0
         displayName: Install Node
         inputs:
-          versionSpec: '18.x'
+          versionSpec: '18.7'
 
       - script: yarn lint-ci
         displayName: Lint code
