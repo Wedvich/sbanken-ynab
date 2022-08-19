@@ -14,6 +14,8 @@ jobs:
         inputs:
           versionSpec: '18.7'
 
+      - script: corepack enable
+
       - script: yarn lint-ci
         displayName: Lint code
 
