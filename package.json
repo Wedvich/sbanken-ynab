@@ -83,7 +83,7 @@
     "postcss-loader": "^6.2.1",
     "postcss-preset-env": "^7.2.3",
     "prettier": "^2.5.1",
-    "snyk": "^1.834.0",
+    "snyk": "^1.996.0",
     "style-loader": "^2.0.0",
     "stylelint": "^14.2.0",
     "stylelint-config-standard": "^24.0.0",
