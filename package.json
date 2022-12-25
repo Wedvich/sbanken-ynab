@@ -57,7 +57,7 @@
     "@typescript-eslint/parser": "^5.10.0",
     "autoprefixer": "^10.2.5",
     "babel-jest": "^27.4.6",
-    "babel-loader": "^8.2.3",
+    "babel-loader": "^8.2.4",
     "babel-plugin-ts-nameof": "^4.2.1",
     "classnames": "^2.3.1",
     "copy-webpack-plugin": "^8.1.1",
