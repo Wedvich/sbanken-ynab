@@ -13,6 +13,7 @@
   },
   "homepage": "https://github.com/Wedvich/sbanken-ynab#readme",
   "main": "server.js",
+  "packageManager": "yarn@3.3.1",
   "scripts": {
     "build": "git clean -xdf wwwroot && webpack --config webpack.config.prod.js",
     "dev": "webpack serve --config webpack.config.dev.js",
@@ -32,7 +33,7 @@
   "dependencies": {
     "@headlessui/react": "^1.4.3",
     "@reduxjs/toolkit": "^1.6.2",
-    "core-js": "^3.16.3",
+    "core-js": "^3.27.0",
     "lodash-es": "^4.17.21",
     "luxon": "^2.3.0",
     "preact": "^10.5.14",

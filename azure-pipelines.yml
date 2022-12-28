@@ -10,20 +10,11 @@ jobs:
 
     steps:
       - task: UseNode@1
-        displayName: Install Node 14
+        displayName: Install Node 18
         inputs:
-          version: 14.x
+          version: 18.x
 
-      - task: Cache@2
-        displayName: Cache dependencies
-        inputs:
-          key: yarn | "$(Agent.OS)" | yarn.lock
-          path: $(YARN_CACHE_FOLDER)
-          restoreKeys: |
-            yarn | "$(Agent.OS)"
-            yarn
-
-      - script: yarn --frozen-lockfile
+      - script: yarn --immutable-cache
         displayName: Install dependencies
 
       - script: yarn lint-ci
