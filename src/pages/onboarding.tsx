@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { useCallback, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import { FocusTrap } from '@headlessui/react';
 import Button from '../components/button';
 import { ynabApiBaseUrl } from '../config';
@@ -16,8 +16,8 @@ export function OnboardingPage() {
   const sbankenCredentials = useSelector((state: RootState) => state.sbanken.credentials);
   const { tokens: ynabTokens, budget: ynabBudget } = useSelector((state: RootState) => state.ynab);
 
-  const hasValidConfiguration =
-    validateSbankenToken(sbankenCredentials[0]?.token) && !!ynabTokens[0] && !!ynabBudget;
+  const hasValidSbankenToken = validateSbankenToken(sbankenCredentials[0]?.token);
+  const hasValidConfiguration = hasValidSbankenToken && !!ynabTokens[0] && !!ynabBudget;
 
   const handleNext = useCallback(
     (e: Event) => {
@@ -71,6 +71,16 @@ export function OnboardingPage() {
       alert(result.error);
     }
   };
+
+  useEffect(() => {
+    if (ynabPersonalAccessToken && !ynabBudgets.length) {
+      void fetchYnabBudgets();
+    }
+    if (sbankenClientId && sbankenClientSecret && !hasValidSbankenToken) {
+      void handleFetchSbankenToken();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <FocusTrap className="h-full flex items-center">
