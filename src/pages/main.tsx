@@ -1,7 +1,7 @@
 import { h } from 'preact';
 import { useEffect } from 'preact/hooks';
 import { useDispatch, useSelector } from 'react-redux';
-import { NavLink, Route, Switch } from 'react-router-dom';
+import { NavLink, Route, Routes } from 'react-router-dom';
 import Account from '../components/account';
 import AccountEditor from '../components/account-editor';
 import { getEnrichedAccounts, getHasLoadedAllAccounts } from '../selectors/accounts';
@@ -117,24 +117,11 @@ export function MainPage() {
           </button>
         </div>
         <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
-          <Switch>
-            <Route
-              path="/accounts/:accountId/edit"
-              render={(routeProps) => (
-                <AccountEditor accountId={routeProps.match.params.accountId} />
-              )}
-            />
-            <Route
-              path="/accounts/:accountId"
-              render={(routeProps) =>
-                routeProps.match.params.accountId === 'new' ? (
-                  <AccountEditor accountId={routeProps.match.params.accountId} />
-                ) : (
-                  <Account accountId={routeProps.match.params.accountId} />
-                )
-              }
-            />
-          </Switch>
+          <Routes>
+            <Route path="accounts/:accountId/edit" element={<AccountEditor />} />
+            <Route path="accounts/new" element={<AccountEditor />} />
+            <Route path="accounts/:accountId" element={<Account />} />
+          </Routes>
           {/* <div class="py-6">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
               <h1 class="text-2xl font-semibold text-gray-900">Navn på konto og noen stats</h1>

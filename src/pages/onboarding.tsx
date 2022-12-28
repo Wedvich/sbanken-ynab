@@ -7,11 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../services';
 import { fetchSbankenToken, validateSbankenToken } from '../services/sbanken';
 import { putToken, setBudget } from '../services/ynab';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export function OnboardingPage() {
   const dispatch = useDispatch<AppDispatch>();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const sbankenCredentials = useSelector((state: RootState) => state.sbanken.credentials);
   const { tokens: ynabTokens, budget: ynabBudget } = useSelector((state: RootState) => state.ynab);
@@ -23,10 +23,10 @@ export function OnboardingPage() {
     (e: Event) => {
       e.preventDefault();
       if (hasValidConfiguration) {
-        history.replace('/');
+        navigate('/', { replace: true });
       }
     },
-    [hasValidConfiguration, history]
+    [hasValidConfiguration, navigate]
   );
 
   const [ynabPersonalAccessToken, setYnabPersonalAccessToken] = useState(ynabTokens[0] ?? '');

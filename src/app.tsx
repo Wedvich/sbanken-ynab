@@ -2,7 +2,7 @@ import { h } from 'preact';
 import './app.css';
 import { LandingPage } from './pages/landing';
 import { OnboardingPage } from './pages/onboarding';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { validateSbankenToken } from './services/sbanken';
 import { MainPage } from './pages/main';
@@ -21,12 +21,10 @@ export const App = () => {
   return (
     <div className="h-full">
       {/* <Modal isOpen={isOpen} onCancel={() => setIsOpen(false)} onConfirm={() => setIsOpen(false)} /> */}
-      <Switch>
-        <Route path="/onboarding">
-          <OnboardingPage />
-        </Route>
-        <Route path="/">{!hasValidConfiguration ? <LandingPage /> : <MainPage />}</Route>
-      </Switch>
+      <Routes>
+        <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="/*" element={!hasValidConfiguration ? <LandingPage /> : <MainPage />} />
+      </Routes>
     </div>
   );
 };

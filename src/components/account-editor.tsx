@@ -3,7 +3,7 @@ import { FocusTrap } from '@headlessui/react';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { AppDispatch, RootState } from '../services';
 import {
   createCompositeAccountId,
@@ -14,13 +14,10 @@ import {
 } from '../services/accounts';
 import Button from './button';
 
-interface AccountEditorProps {
-  accountId: string;
-}
-
-export default function AccountEditor({ accountId }: AccountEditorProps) {
+export default function AccountEditor() {
   const dispatch = useDispatch<AppDispatch>();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const { accountId } = useParams();
 
   // TODO: Consolidate these selectors
   const linkedAccounts = useSelector((state: RootState) => state.accounts.accounts);
@@ -102,24 +99,24 @@ export default function AccountEditor({ accountId }: AccountEditorProps) {
       dispatch(putAccount(account));
       if (!existingAccount) {
         const updatedId = createCompositeAccountId(account);
-        history.replace(`/accounts/${updatedId}`);
+        navigate(`/accounts/${updatedId}`, { replace: true });
       }
     },
-    [account, dispatch, existingAccount, history, isValid]
+    [account, dispatch, existingAccount, isValid, navigate]
   );
 
   const handleRemove = useCallback(() => {
     dispatch(removeAccount(existingAccount));
-    history.replace('/accounts/new');
-  }, [dispatch, existingAccount, history]);
+    navigate('/accounts/new', { replace: true });
+  }, [dispatch, existingAccount, navigate]);
 
   const handleCancel = useCallback(() => {
     if (existingAccount) {
-      history.push(`/accounts/${accountId}`);
+      navigate(`/accounts/${accountId}`);
     } else {
-      history.push('/');
+      navigate('/');
     }
-  }, [accountId, existingAccount, history]);
+  }, [accountId, existingAccount, navigate]);
 
   return (
     <FocusTrap className="py-6">

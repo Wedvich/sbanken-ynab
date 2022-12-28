@@ -2,27 +2,24 @@ import { FocusTrap } from '@headlessui/react';
 import { h } from 'preact';
 import { useSelector } from 'react-redux';
 import Transactions from './transactions';
-import { Redirect, useHistory } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { getEnrichedAccounts } from '../selectors/accounts';
 import Button from './button';
 import { formatMoney } from '../utils';
 
-interface AccountProps {
-  accountId: string;
-}
-
-export default function Account({ accountId }: AccountProps) {
+export default function Account() {
   const accounts = useSelector(getEnrichedAccounts);
-  const history = useHistory();
+  const navigate = useNavigate();
+  const { accountId } = useParams();
 
   const existingAccount = accounts.find((account) => account.compositeId === accountId);
 
   if (!existingAccount) {
-    return <Redirect to="/accounts/new" />;
+    return <Navigate to="/accounts/new" />;
   }
 
   const handleEdit = () => {
-    history.push(`/accounts/${accountId}/edit`);
+    navigate(`/accounts/${accountId}/edit`);
   };
 
   return (

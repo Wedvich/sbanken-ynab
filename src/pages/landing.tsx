@@ -2,13 +2,13 @@ import { h } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
 import { FocusTrap } from '@headlessui/react';
 import Button from '../components/button';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { validateSbankenToken, fetchSbankenToken } from '../services/sbanken';
 import type { AppDispatch, RootState } from '../services';
 
 export function LandingPage() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const sbankenCredentials = useSelector((state: RootState) => state.sbanken.credentials);
   const [hasRefreshedTokens, setHasRefreshedTokens] = useState(false);
@@ -16,9 +16,9 @@ export function LandingPage() {
   const handleNext = useCallback(
     (e: Event) => {
       e.preventDefault();
-      history.push('/onboarding');
+      navigate('/onboarding');
     },
-    [history]
+    [navigate]
   );
 
   let hasRefreshedAnyToken = false;
