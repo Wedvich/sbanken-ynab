@@ -21,7 +21,7 @@ const createProdConfig = (env = {}) =>
         filename: `[name].${revision}.css`,
       }),
       new CopyWebpackPlugin({
-        patterns: [{ from: 'src/resources/robots.txt' }],
+        patterns: [{ from: 'src/resources/robots.txt' }, { from: 'src/resources/app.json' }],
       }),
       new WebpackManifestPlugin(),
     ].filter(Boolean),

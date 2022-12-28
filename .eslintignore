@@ -1,4 +1,5 @@
 !.eslintrc*.js
+.yarn
 coverage
 node_modules
 wwwroot
