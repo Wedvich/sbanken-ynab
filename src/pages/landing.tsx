@@ -61,9 +61,8 @@ export function LandingPage() {
             YNAB og holde kontoene ajour.
           </p>
           <p className="mt-8 text-lg text-gray-600 leading-8">
-            Data lagres kun lokalt i nettleseren din, og ingenting sendes til serveren. Den ligger
-            for øvrig i Microsoft Azure sitt norske datasenter, så filene og trafikken går alltid
-            innenfor Norges grenser.
+            Data lagres kun lokalt i nettleseren din, og ingenting sendes til serveren, som for
+            øvrig ligger i Microsoft Azure sitt norske datasenter.
           </p>
           <p className="mt-8 text-lg text-gray-600 leading-8">
             Appen har ingen tilhørighet til verken Sbanken eller You Need A Budget.

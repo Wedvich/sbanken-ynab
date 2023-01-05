@@ -135,7 +135,7 @@ export default function Transactions({ accountId }: TransactionsProps) {
               </th>
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-right"
+                class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
                 Beløp
               </th>
