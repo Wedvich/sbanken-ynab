@@ -1,4 +1,24 @@
 {
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "id": "sbanken-ynab",
   "name": "Sbanken → YNAB",
-  "lang": "nb"
+  "short_name": "Sbanken → YNAB",
+  "description": "Overfør transaksjoner fra Sbanken til YNAB og hold kontoene ajour.",
+  "lang": "nb",
+  "display": "minimal-ui",
+  "theme_color": "#db2777",
+  "start_url": "./",
+  "icons": [
+    {
+      "src": "/icon_round.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    },
+    {
+      "src": "/icon_square.png",
+      "type": "image/png",
+      "sizes": "1024x1024",
+      "purpose": "maskable"
+    }
+  ]
 }
