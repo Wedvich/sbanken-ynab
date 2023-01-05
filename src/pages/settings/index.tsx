@@ -1,32 +1,9 @@
 import { Fragment, h } from 'preact';
 import { useCallback, useEffect, useId, useState } from 'preact/hooks';
 import classNames from 'classnames';
-import Button from '../components/button';
+import Button from '../../components/button';
 import { FocusTrap } from '@headlessui/react';
-
-interface SectionProps {
-  children: h.JSX.Element | h.JSX.Element[];
-  title: string;
-  description: string | h.JSX.Element;
-}
-
-const Section = ({ children, title, description }: SectionProps) => {
-  return (
-    <div className="mt-8">
-      <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="min-w-full py-2 align-middle md:px-6 lg:px-8">
-          <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded">
-            <div className="bg-gray-50 py-3 px-4">
-              <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-              <p class="mt-2 text-sm text-gray-700">{description}</p>
-            </div>
-            <div className="border-t border-gray-300 bg-white p-4">{children}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { Section } from './section';
 
 interface YnabTokenEditorProps {
   token?: string;
@@ -86,8 +63,9 @@ const YnabTokenEditor = ({ token }: YnabTokenEditorProps) => {
             />
           ) : (
             !!token && (
-              <span className="font-medium text-gray-900">
-                {token?.slice(0, 8)}…{token?.slice(-8)}
+              <span className="font-semibold text-gray-900 group mr-auto">
+                <span className="group-hover:hidden">…{token.slice(-6)}</span>
+                <span className="hidden group-hover:inline">{token}</span>
               </span>
             )
           )}
@@ -97,7 +75,12 @@ const YnabTokenEditor = ({ token }: YnabTokenEditorProps) => {
       <span className="mt-2 flex flex-col sm:flex-row text-sm sm:mt-0 sm:ml-6 gap-2 items-center">
         {!isEditing ? (
           <Fragment>
-            <Button key="edit" onClick={beginEditing}>
+            <Button
+              key="edit"
+              onClick={beginEditing}
+              size={!token ? 'lg' : undefined}
+              importance={!token ? 'primary' : undefined}
+            >
               {token ? 'Endre' : 'Legg til ny'}
             </Button>
             {!!token && <Button key="remove">Fjern</Button>}
@@ -119,19 +102,19 @@ const YnabTokenEditor = ({ token }: YnabTokenEditorProps) => {
       id={id}
       className={classNames('relative block focus:outline-none sm:flex sm:justify-between', {
         'py-4 px-4 sm:px-6 border border-gray-300 shadow-sm rounded': token || isEditing,
-        'border-pink-500 ring-1 ring-pink-300': isEditing,
+        'border-pink-600 ring-1 ring-pink-300': isEditing,
       })}
     >
-      {isEditing ? (
-        <FocusTrap
-          className="contents"
-          features={FocusTrap.features.InitialFocus | FocusTrap.features.TabLock}
-        >
-          {contents}
-        </FocusTrap>
-      ) : (
-        contents
-      )}
+      <FocusTrap
+        className="contents"
+        features={
+          isEditing
+            ? FocusTrap.features.InitialFocus | FocusTrap.features.TabLock
+            : FocusTrap.features.None
+        }
+      >
+        {contents}
+      </FocusTrap>
     </li>
   );
 };
