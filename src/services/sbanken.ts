@@ -2,10 +2,9 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '.';
 import { sbankenApiBaseUrl, sbankenIdentityServerUrl } from '../config';
 import keyBy from 'lodash-es/keyBy';
+import { SBANKEN_CREDENTIALS_KEY } from './storage';
 
 const SBANKEN_SLICE_NAME = 'sbanken';
-
-const SBANKEN_CREDENTIALS_KEY = 'sbanken:credentials';
 
 interface SbankenToken {
   value: string;

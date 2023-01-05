@@ -2,11 +2,9 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import keyBy from 'lodash-es/keyBy';
 import { ynabApiBaseUrl } from '../config';
 import type { RootState } from '.';
+import { YNAB_TOKENS_KEY, YNAB_BUDGET_KEY } from './storage';
 
 const YNAB_SLICE_NAME = 'ynab';
-
-const YNAB_BUDGET_KEY = 'ynab:budget';
-const YNAB_TOKENS_KEY = 'ynab:tokens';
 
 interface YnabAccount {
   id: string;

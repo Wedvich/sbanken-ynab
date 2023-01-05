@@ -1,12 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '.';
 import { fetchAllAccounts as fetchAllSbankenAccounts } from './sbanken';
+import { ACCOUNTS_STORAGE_KEY, RANGE_STORAGE_KEY } from './storage';
 import { fetchAllAccounts as fetchAllYnabAccounts } from './ynab';
 
 const ACCOUNTS_SLICE_NAME = 'accounts';
-
-const ACCOUNTS_STORAGE_KEY = 'accounts';
-const RANGE_STORAGE_KEY = 'range';
 
 export interface LinkedAccount {
   name: string;

@@ -61,7 +61,7 @@ const api = createApi({
           amount: rest.amount * 1000,
           memo: rest.description,
           account_id: accountId,
-          import_id: rest.sbankenTransactionId || rest.checksum.toString(),
+          import_id: rest.sbankenTransactionId || rest.checksum?.toString(),
         };
 
         return {
