@@ -9796,7 +9796,6 @@ __metadata:
     prettier: ^2.8.1
     react-redux: ^8.0.5
     react-router-dom: ^6.6.1
-    snyk: ^1.1064.0
     style-loader: ^3.3.1
     stylelint: ^14.2.0
     stylelint-config-standard: ^24.0.0
@@ -10087,15 +10086,6 @@ __metadata:
   version: 4.2.0
   resolution: "smart-buffer@npm:4.2.0"
   checksum: b5167a7142c1da704c0e3af85c402002b597081dd9575031a90b4f229ca5678e9a36e8a374f1814c8156a725d17008ae3bde63b92f9cfd132526379e580bec8b
-  languageName: node
-  linkType: hard
-
-"snyk@npm:^1.1064.0":
-  version: 1.1064.0
-  resolution: "snyk@npm:1.1064.0"
-  bin:
-    snyk: bin/snyk
-  checksum: 0e10bd48f4689b2b84c02c3dc63a84422183a5d5e3036376af2c03b2a0884d9a4459922094a027e40011beecf40302be0e70c2ba508566e12b86db62bf35c2a8
   languageName: node
   linkType: hard
 

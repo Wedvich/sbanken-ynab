@@ -21,7 +21,7 @@
     "lint-ci": "eslint .",
     "lint-staged": "lint-staged",
     "mock-api": "dotnet run -p mock-api/mock-api.csproj",
-    "prepare": "husky install && snyk protect",
+    "prepare": "husky install",
     "prettier": "prettier --write 'src/**/*.{js,ts,tsx,json,scss}'",
     "start": "dotnet run",
     "stylelint": "stylelint src/**/*.css --fix",
@@ -29,7 +29,6 @@
     "test-ci": "jest --ci --coverage",
     "typecheck": "tsc"
   },
-  "snyk": true,
   "dependencies": {
     "@headlessui/react": "^1.7.7",
     "@reduxjs/toolkit": "^1.9.1",
@@ -86,7 +85,6 @@
     "postcss-loader": "^7.0.2",
     "postcss-preset-env": "^7.8.3",
     "prettier": "^2.8.1",
-    "snyk": "^1.1064.0",
     "style-loader": "^3.3.1",
     "stylelint": "^14.2.0",
     "stylelint-config-standard": "^24.0.0",
