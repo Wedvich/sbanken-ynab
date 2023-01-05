@@ -3,7 +3,7 @@ import { ServiceWorkerActionTypes } from './constants';
 const revision = process.env.REVISION;
 const staticCacheName = `sbanken-ynab-${revision}`;
 const cacheRegExp = /.(css|js|woff2?)$/i;
-const unversionedAssets = ['/', '/index.html', '/robots.txt'];
+const unversionedAssets = ['/', '/index.html', '/robots.txt', '/app.json'];
 
 declare const self: ServiceWorkerGlobalScope & typeof globalThis;
 
