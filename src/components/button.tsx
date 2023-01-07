@@ -17,7 +17,7 @@ export default function Button({
   return (
     <button
       className={classNames(
-        'inline-flex items-center border font-medium focus:outline-none shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-pink-500',
+        'inline-flex justify-center items-center border font-medium focus:outline-none shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-pink-500',
         className,
         {
           'border-transparent bg-pink-600 text-white hover:bg-pink-700': importance === 'primary',

@@ -77,18 +77,25 @@ const YnabTokenEditor = ({ token }: YnabTokenEditorProps) => {
           <Fragment>
             <Button
               key="edit"
+              className="w-full"
               onClick={beginEditing}
               size={!token ? 'lg' : undefined}
               importance={!token ? 'primary' : undefined}
             >
-              {token ? 'Endre' : 'Legg til ny'}
+              {token ? 'Endre' : 'Legg til'}
             </Button>
-            {!!token && <Button key="remove">Fjern</Button>}
+            {!!token && (
+              <Button key="remove" className="w-full">
+                Fjern
+              </Button>
+            )}
           </Fragment>
         ) : (
           <Fragment>
-            <Button key="save">Lagre</Button>
-            <Button key="cancel" onClick={stopEditing}>
+            <Button key="save" className="w-full">
+              Lagre
+            </Button>
+            <Button key="cancel" className="w-full" onClick={stopEditing}>
               Avbryt
             </Button>
           </Fragment>
@@ -120,6 +127,7 @@ const YnabTokenEditor = ({ token }: YnabTokenEditorProps) => {
 };
 
 export const Settings = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tokens, setTokens] = useState([
     '48a4a693469a4233b8f4970781a04b97be816fd89ea84f8285419d28e48e1f19',
     '7555aed3e850406cbda876695dfe557a68f8c00deab54f32b41ffe738854116c',
@@ -127,7 +135,7 @@ export const Settings = () => {
 
   return (
     <div className="py-10">
-      <div className="max-w-7xl">
+      <div className="max-w-5xl">
         <div className="px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-semibold text-gray-900">Innstillinger</h1>
           <Section
@@ -153,6 +161,8 @@ export const Settings = () => {
               })}
               <YnabTokenEditor />
             </ul>
+            <h3 className="mt-4 text-lg font-semibold">Budsjetter</h3>
+            <p className="text-gray-500 italic">Ingen Personal Access Tokens er lagt til.</p>
           </Section>
         </div>
       </div>
