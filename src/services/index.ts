@@ -1,9 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { autoBatchEnhancer, configureStore } from '@reduxjs/toolkit';
 import { accountsSlice } from './accounts';
 import { sbankenSlice } from './sbanken';
 import { ynabSlice } from './ynab';
 import sbankenApi from './sbanken/api';
 import ynabApi from './ynab/api';
+import { listenerMiddleware } from './listener';
 
 export const store = configureStore({
   reducer: {
@@ -14,7 +15,10 @@ export const store = configureStore({
     [ynabSlice.name]: ynabSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(sbankenApi.middleware, ynabApi.middleware),
+    getDefaultMiddleware()
+      .prepend(listenerMiddleware.middleware)
+      .concat(sbankenApi.middleware, ynabApi.middleware),
+  enhancers: (existingEnhancers) => existingEnhancers.concat(autoBatchEnhancer()),
 });
 
 export type AppDispatch = typeof store.dispatch;

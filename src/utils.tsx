@@ -1,4 +1,5 @@
 import { useRef } from 'preact/hooks';
+import { createAction } from '@reduxjs/toolkit';
 
 export const formatMoney = new Intl.NumberFormat('no', { style: 'currency', currency: 'NOK' })
   .format;
@@ -31,3 +32,5 @@ export function usePrevious<T>(value: T) {
   ref.current = value;
   return current;
 }
+
+export const fetchInitialData = createAction('fetchInitialData');

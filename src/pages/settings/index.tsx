@@ -4,12 +4,24 @@ import classNames from 'classnames';
 import Button from '../../components/button';
 import { FocusTrap } from '@headlessui/react';
 import { Section } from './section';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getYnabBudgetsRequestStatus,
+  getYnabTokens,
+  saveToken,
+  RequestStatus,
+  getYnabBudgets,
+} from '../../services/ynab';
+import { DateTime } from 'luxon';
 
 interface YnabTokenEditorProps {
+  fetchStatus?: RequestStatus;
+  onSaveToken: (token: string, originalToken?: string) => void;
   token?: string;
+  tokens: Array<string>;
 }
 
-const YnabTokenEditor = ({ token }: YnabTokenEditorProps) => {
+const YnabTokenEditor = ({ fetchStatus, onSaveToken, token, tokens }: YnabTokenEditorProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [tokenValue, setTokenValue] = useState(token);
   const id = useId();
@@ -47,6 +59,14 @@ const YnabTokenEditor = ({ token }: YnabTokenEditorProps) => {
     };
   }, [id, isEditing, stopEditing]);
 
+  const canSave = !!tokenValue && !tokens.includes(tokenValue) && !fetchStatus;
+
+  const handleSaveToken = useCallback(() => {
+    if (!canSave) return;
+    onSaveToken(tokenValue, token);
+    setIsEditing(false);
+  }, [canSave, onSaveToken, token, tokenValue]);
+
   const contents = (
     <Fragment>
       <span className="flex items-center flex-grow">
@@ -56,7 +76,7 @@ const YnabTokenEditor = ({ token }: YnabTokenEditorProps) => {
               type="text"
               value={tokenValue}
               onChange={(e) => setTokenValue((e.target as HTMLInputElement).value)}
-              className="text-lg bg-pink-50 m-0 border-0 border-b border-transparent focus:border-pink-600 -mb-[1px] selection:bg-pink-300 focus:ring-0"
+              className="font-code bg-pink-50 m-0 border-0 border-b border-transparent leading-7 focus:border-pink-600 -mb-[1px] selection:bg-pink-300 focus:ring-0"
               onFocus={(e) => {
                 (e.target as HTMLInputElement).select();
               }}
@@ -69,7 +89,15 @@ const YnabTokenEditor = ({ token }: YnabTokenEditorProps) => {
               </span>
             )
           )}
-          {!!token && !isEditing && <span className="text-gray-500 mt-1">Connecting…</span>}
+          {!!token && !isEditing && !!fetchStatus && (
+            <span className="text-gray-500 mt-1">
+              {fetchStatus === 'pending'
+                ? 'Connecting…'
+                : fetchStatus === 'fulfilled'
+                ? 'Connected'
+                : 'Error'}
+            </span>
+          )}
         </span>
       </span>
       <span className="mt-2 flex flex-col sm:flex-row text-sm sm:mt-0 sm:ml-6 gap-2 items-center">
@@ -92,7 +120,7 @@ const YnabTokenEditor = ({ token }: YnabTokenEditorProps) => {
           </Fragment>
         ) : (
           <Fragment>
-            <Button key="save" className="w-full">
+            <Button key="save" className="w-full" disabled={!canSave} onClick={handleSaveToken}>
               Lagre
             </Button>
             <Button key="cancel" className="w-full" onClick={stopEditing}>
@@ -127,11 +155,16 @@ const YnabTokenEditor = ({ token }: YnabTokenEditorProps) => {
 };
 
 export const Settings = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [tokens, setTokens] = useState([
-    '48a4a693469a4233b8f4970781a04b97be816fd89ea84f8285419d28e48e1f19',
-    '7555aed3e850406cbda876695dfe557a68f8c00deab54f32b41ffe738854116c',
-  ]);
+  const tokens = useSelector(getYnabTokens);
+  const dispatch = useDispatch();
+  const handleSaveToken = useCallback(
+    (token: string, originalToken?: string) => {
+      dispatch(saveToken({ token, originalToken }));
+    },
+    [dispatch]
+  );
+  const tokenFetchStatuses = useSelector(getYnabBudgetsRequestStatus);
+  const budgets = useSelector(getYnabBudgets);
 
   return (
     <div className="py-10">
@@ -157,12 +190,51 @@ export const Settings = () => {
           >
             <ul className="space-y-4">
               {tokens.map((token) => {
-                return <YnabTokenEditor key={token} token={token} />;
+                return (
+                  <YnabTokenEditor
+                    key={token}
+                    token={token}
+                    onSaveToken={handleSaveToken}
+                    tokens={tokens}
+                    fetchStatus={tokenFetchStatuses[token]}
+                  />
+                );
               })}
-              <YnabTokenEditor />
+              <YnabTokenEditor onSaveToken={handleSaveToken} tokens={tokens} />
             </ul>
             <h3 className="mt-4 text-lg font-semibold">Budsjetter</h3>
-            <p className="text-gray-500 italic">Ingen Personal Access Tokens er lagt til.</p>
+            {!budgets.length ? (
+              <p className="text-gray-500 italic">Ingen Personal Access Tokens er lagt til.</p>
+            ) : (
+              <ul className="mt-4 space-y-4">
+                {budgets.map((budget) => {
+                  return (
+                    <li key={budget.id} className="relative flex items-start">
+                      <div class="flex h-5 items-center">
+                        <input
+                          id={`budget-${budget.id}`}
+                          aria-describedby="comments-description"
+                          name={`budget-${budget.id}`}
+                          type="checkbox"
+                          class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
+                        />
+                      </div>
+                      <div class="ml-3 text-sm">
+                        <label for={`budget-${budget.id}`} class="font-semibold">
+                          {budget.name}
+                        </label>
+                        <p class="text-gray-500">
+                          sist oppdatert{' '}
+                          {DateTime.fromISO(budget.last_modified_on).toRelativeCalendar({
+                            locale: 'nb',
+                          })}
+                        </p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </Section>
         </div>
       </div>
