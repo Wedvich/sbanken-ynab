@@ -8,7 +8,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import type { RootState } from '.';
-import { sbankenIdentityServerUrl } from '../config';
+import { sbankenApiBaseUrl, sbankenIdentityServerUrl } from '../config';
 import { SBANKEN_CREDENTIALS_KEY } from './storage';
 import { startAppListening } from './listener';
 import { fetchInitialData, RequestStatus } from '../utils';
@@ -29,14 +29,18 @@ const credentialsAdapter = createEntityAdapter<SbankenCredential>({
   selectId: (credential) => credential.clientId,
 });
 
+const accountsAdapter = createEntityAdapter<SbankenAccountWithClientId>({
+  selectId: (account) => account.accountId,
+});
+
 export interface SbankenState {
-  accounts: Array<SbankenAccount>;
+  accounts: EntityState<SbankenAccountWithClientId>;
   credentialIdByAccountId: Record<string, string>;
   credentials: EntityState<SbankenCredential>;
   requestStatusByCredentialId: Record<string, RequestStatus | undefined>;
 }
 
-export function validateSbankenToken(token?: SbankenToken): boolean {
+export function validateSbankenToken(token?: SbankenToken): token is SbankenToken {
   if (!token?.value || !token.notBefore || !token.expires) {
     return false;
   }
@@ -69,7 +73,7 @@ const initialCredentials = credentialsAdapter.setAll(
 );
 
 const initialState: SbankenState = {
-  accounts: [],
+  accounts: accountsAdapter.getInitialState(),
   credentialIdByAccountId: {},
   credentials: initialCredentials,
   requestStatusByCredentialId: credentialsAdapter
@@ -99,7 +103,13 @@ export interface SbankenAccount {
   creditLimit: number;
 }
 
-export const getSbankenAccounts = (state: RootState) => state.sbanken.accounts;
+export interface SbankenAccountWithClientId extends SbankenAccount {
+  clientId: string;
+}
+
+export const getSbankenAccounts = accountsAdapter.getSelectors(
+  (state: RootState) => state.sbanken.accounts
+).selectAll;
 export const getSbankenCredentials = credentialsAdapter.getSelectors(
   (state: RootState) => state.sbanken.credentials
 ).selectAll;
@@ -154,6 +164,10 @@ export const sbankenSlice = createSlice({
       const credential = { ...action.meta.arg, token: action.payload };
       credentialsAdapter.upsertOne(state.credentials, credential);
     });
+
+    builder.addMatcher(fetchSbankenAccounts.fulfilled.match, (state, action) => {
+      accountsAdapter.setMany(state.accounts, action.payload);
+    });
   },
 });
 
@@ -199,37 +213,30 @@ export const fetchSbankenToken = createAsyncThunk<SbankenToken, SbankenCredentia
 );
 
 export const fetchAllAccounts = createAsyncThunk(`${sbankenSlice.name}/fetchAllAccounts`, () => {
-  // const { credentials } = (thunkAPI.getState() as RootState).sbanken;
-  // const requests = credentials.map(async (credential) => {
-  //   if (!validateSbankenToken(credential.token)) {
-  //     return Promise.reject(`invalid token for client ID ${credential.clientId}`);
-  //   }
-  //   const response = await fetch(`${sbankenApiBaseUrl}/Accounts`, {
-  //     headers: {
-  //       Accept: 'application/json',
-  //       Authorization: `Bearer ${credential.token?.value}`,
-  //     },
-  //   });
-  //   if (!response.ok) {
-  //     return Promise.reject(response.statusText); // TODO: Handle errors
-  //   }
-  //   return {
-  //     credentialId: credential.clientId,
-  //     data: (await response.json()) as SbankenListObject<SbankenAccount>,
-  //   };
-  // });
-  // const results = await Promise.allSettled(requests);
-  // return results.reduce<Array<SbankenAccount>>((accounts, result) => {
-  //   if (result.status === 'rejected') return accounts; // TODO: Handle errors
-  //   Array.prototype.push.apply(accounts, result.value.data.items);
-  //   thunkAPI.dispatch(
-  //     sbankenSlice.actions.putCredentialIdsByAccountIds({
-  //       accountIds: result.value.data.items.map((account) => account.accountId),
-  //       credentialId: result.value.credentialId,
-  //     })
-  //   );
-  //   return accounts;
-  // }, []);
+  /**/
+});
+
+export const fetchSbankenAccounts = createAsyncThunk<
+  Array<SbankenAccountWithClientId>,
+  SbankenCredential
+>(`${sbankenSlice.name}/fetchAccountsForClient`, async (credential, {}) => {
+  if (!validateSbankenToken(credential.token)) {
+    return Promise.reject('invalid token');
+  }
+
+  const response = await fetch(`${sbankenApiBaseUrl}/Accounts`, {
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${credential.token.value}`,
+    },
+  });
+
+  if (!response.ok) {
+    return Promise.reject(response.statusText); // TODO: Handle errors
+  }
+
+  const responseData: SbankenListObject<SbankenAccount> = await response.json();
+  return responseData.items.map((account) => ({ ...account, clientId: credential.clientId }));
 });
 
 /** Stores changes to credentials in localStorage */
@@ -256,6 +263,10 @@ startAppListening({
     const expiredCredentials = getExpiredCredentials(getState());
     await Promise.allSettled(
       expiredCredentials.map((credential) => dispatch(fetchSbankenToken(credential)))
+    );
+    const credentials = getSbankenCredentials(getState());
+    await Promise.allSettled(
+      credentials.map((credential) => dispatch(fetchSbankenAccounts(credential)))
     );
   },
 });

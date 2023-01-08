@@ -108,11 +108,9 @@ interface YnabRateLimit {
 const budgetsAdapter = createEntityAdapter<YnabBudget>({
   selectId: (budget) => budget.id,
 });
-const accountsAdapter = createEntityAdapter<YnabAccount>({
+const accountsAdapter = createEntityAdapter<YnabAccountWithBudgetId>({
   selectId: (account) => account.id,
 });
-
-export const getYnabAccounts = (state: RootState) => state.ynab.accounts;
 export const getYnabTokens = (state: RootState) => state.ynab.tokens;
 export const getYnabBudgetsRequestStatus = (state: RootState) => state.ynab.requestStatusByToken;
 export const getIncludedBudgets = (state: RootState) => state.ynab.includedBudgets;
@@ -126,8 +124,18 @@ export const getYnabBudgets = createSelector(
   }
 );
 
+export const getYnabAccounts = createSelector(
+  accountsAdapter.getSelectors((state: RootState) => state.ynab.accounts).selectAll,
+  getIncludedBudgets,
+  (accounts, includedBudgets) => {
+    return accounts
+      .filter((account) => !account.deleted && includedBudgets.includes(account.budget_id))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+);
+
 export interface YnabState {
-  accounts: EntityState<YnabAccount>;
+  accounts: EntityState<YnabAccountWithBudgetId>;
   budgets: EntityState<YnabBudget>;
   includedBudgets: Array<string>;
   rateLimitByToken: Record<string, YnabRateLimit | undefined>;
