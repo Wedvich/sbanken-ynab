@@ -34,3 +34,5 @@ export function usePrevious<T>(value: T) {
 }
 
 export const fetchInitialData = createAction('fetchInitialData');
+
+export type RequestStatus = 'pending' | 'fulfilled' | 'rejected';

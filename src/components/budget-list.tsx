@@ -17,10 +17,10 @@ export const BudgetList = () => {
     <ul className="mt-4">
       {budgets.map((budget) => {
         return (
-          <li key={budget.id} className="-mx-4 py-2.5 hover:bg-gray-100">
+          <li key={budget.id} className="-mx-4 hover:bg-gray-100">
             <label
               for={`budget-${budget.id}`}
-              class="px-4 font-medium relative flex items-start cursor-pointer"
+              class="px-4 py-2.5 font-medium relative flex items-start cursor-pointer"
             >
               <span class="flex h-5 items-center">
                 <input

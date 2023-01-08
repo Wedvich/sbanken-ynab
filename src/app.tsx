@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import './app.css';
-import { Route, Routes } from 'react-router-dom';
+import { Outlet, Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Settings } from './pages/settings';
 import { fetchInitialData } from './utils';
@@ -21,7 +21,10 @@ export const App = () => {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route index={!enableLandingPage} element={<AccountsPage />} />
+        <Route index={!enableLandingPage} element={<AccountsPage />} handle="Kontoer" />
+        <Route path="kontoer/*" element={<Outlet />}>
+          <Route index element={<AccountsPage />} handle="Kontoer" />
+        </Route>
         <Route path="innstillinger" element={<Settings />} />
       </Route>
       {enableLandingPage && (

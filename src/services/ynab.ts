@@ -12,7 +12,7 @@ import { ynabApiBaseUrl } from '../config';
 import type { RootState } from '.';
 import { YNAB_TOKENS_KEY, YNAB_BUDGET_KEY } from './storage';
 import { startAppListening } from './listener';
-import { fetchInitialData } from '../utils';
+import { fetchInitialData, RequestStatus } from '../utils';
 import { DateTime } from 'luxon';
 
 interface YnabAccount {
@@ -125,11 +125,6 @@ export const getYnabBudgets = createSelector(
     );
   }
 );
-
-// export const getYnabBudgets = budgetsAdapter.getSelectors(
-//   (state: RootState) => state.ynab.budgets
-// ).selectAll;
-export type RequestStatus = 'pending' | 'fulfilled' | 'rejected';
 
 export interface YnabState {
   accounts: EntityState<YnabAccount>;
@@ -244,27 +239,7 @@ export const ynabSlice = createSlice({
   },
 });
 
-export const fetchAllAccounts = createAsyncThunk(`${ynabSlice.name}/fetchAllAccounts`, () => {
-  //async (_, thunkAPI): Promise<Array<YnabAccount>> => {
-  // const { tokens, budget } = (thunkAPI.getState() as RootState).ynab;
-  // const [token] = tokens;
-  // if (!token || !budget) {
-  //   return Promise.reject('invalid YNAB access token or budget');
-  // }
-  // const response = await fetch(`${ynabApiBaseUrl}/budgets/${budget}/accounts`, {
-  //   headers: {
-  //     Accept: 'application/json',
-  //     Authorization: `Bearer ${token}`,
-  //   },
-  // });
-  // if (!response.ok) {
-  //   return Promise.reject(response.statusText); // TODO: Handle errors
-  // }
-  // const { data } = (await response.json()) as { data: { accounts: Array<YnabAccount> } };
-  // return data.accounts.filter(
-  //   (account) => !account.deleted && !account.closed && account.on_budget
-  // );
-});
+export const { deleteToken, saveToken, toggleBudget } = ynabSlice.actions;
 
 export const fetchBudgetsAndAccounts = createAsyncThunk<YnabBudgetsResponse, string>(
   `${ynabSlice.name}/fetchBudgetsAndAccounts`,
@@ -305,15 +280,15 @@ export const fetchBudgetsAndAccounts = createAsyncThunk<YnabBudgetsResponse, str
 startAppListening({
   matcher: isAnyOf(ynabSlice.actions.saveToken.match, ynabSlice.actions.deleteToken.match),
   effect: async (action, { dispatch, getState }) => {
-    const { tokens } = getState().ynab;
-    localStorage.setItem(YNAB_TOKENS_KEY, JSON.stringify(tokens));
-
     if (ynabSlice.actions.saveToken.match(action)) {
       await dispatch(fetchBudgetsAndAccounts(action.payload.token));
       if (action.payload.originalToken) {
         dispatch(ynabSlice.actions.deleteToken(action.payload.originalToken));
       }
     }
+
+    const { tokens } = getState().ynab;
+    localStorage.setItem(YNAB_TOKENS_KEY, JSON.stringify(tokens));
   },
 });
 
@@ -334,5 +309,3 @@ startAppListening({
     await Promise.allSettled(tokens.map((token) => dispatch(fetchBudgetsAndAccounts(token))));
   },
 });
-
-export const { deleteToken, saveToken, toggleBudget } = ynabSlice.actions;

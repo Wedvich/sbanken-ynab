@@ -1,9 +1,9 @@
-import { h } from 'preact';
+import { ComponentChildren, h } from 'preact';
 
 interface SectionProps {
-  children: h.JSX.Element | h.JSX.Element[];
+  children: ComponentChildren;
   title: string;
-  description: string | h.JSX.Element;
+  description?: string | h.JSX.Element;
 }
 
 export const Section = ({ children, title, description }: SectionProps) => {

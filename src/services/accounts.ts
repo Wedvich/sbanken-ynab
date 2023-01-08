@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '.';
-import { fetchAllAccounts as fetchAllSbankenAccounts } from './sbanken';
 import { ACCOUNTS_STORAGE_KEY, RANGE_STORAGE_KEY } from './storage';
-import { fetchAllAccounts as fetchAllYnabAccounts } from './ynab';
 
 const ACCOUNTS_SLICE_NAME = 'accounts';
 
@@ -77,19 +75,19 @@ export const accountsSlice = createSlice({
       localStorage.setItem(RANGE_STORAGE_KEY, state.range.toString());
     },
   },
-  extraReducers: (builder) => {
-    builder.addCase(fetchAllSbankenAccounts.fulfilled, (state) => {
-      state.hasLoadedSbankenAccounts = true;
-    });
-    builder.addCase(fetchAllSbankenAccounts.rejected, (state) => {
-      state.hasLoadedSbankenAccounts = true;
-    });
-    builder.addCase(fetchAllYnabAccounts.fulfilled, (state) => {
-      state.hasLoadedYnabAccounts = true;
-    });
-    builder.addCase(fetchAllYnabAccounts.rejected, (state) => {
-      state.hasLoadedYnabAccounts = true;
-    });
+  extraReducers: () => {
+    // builder.addCase(fetchAllSbankenAccounts.fulfilled, (state) => {
+    //   state.hasLoadedSbankenAccounts = true;
+    // });
+    // builder.addCase(fetchAllSbankenAccounts.rejected, (state) => {
+    //   state.hasLoadedSbankenAccounts = true;
+    // });
+    // builder.addCase(fetchAllYnabAccounts.fulfilled, (state) => {
+    //   state.hasLoadedYnabAccounts = true;
+    // });
+    // builder.addCase(fetchAllYnabAccounts.rejected, (state) => {
+    //   state.hasLoadedYnabAccounts = true;
+    // });
   },
 });
 
