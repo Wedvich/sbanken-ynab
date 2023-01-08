@@ -1,49 +1,19 @@
 import { h } from 'preact';
-import { useCallback, useState } from 'preact/hooks';
+import { useCallback } from 'preact/hooks';
 import { FocusTrap } from '@headlessui/react';
 import Button from '../components/button';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { validateSbankenToken, fetchSbankenToken } from '../services/sbanken';
-import type { AppDispatch, RootState } from '../services';
 
 export function LandingPage() {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const sbankenCredentials = useSelector((state: RootState) => state.sbanken.credentials);
-  const [hasRefreshedTokens, setHasRefreshedTokens] = useState(false);
 
   const handleNext = useCallback(
     (e: Event) => {
       e.preventDefault();
-      navigate('/onboarding');
+      navigate('/innstillinger', { replace: true });
     },
     [navigate]
   );
-
-  let hasRefreshedAnyToken = false;
-  if (!hasRefreshedTokens) {
-    for (const credential of sbankenCredentials) {
-      if (!validateSbankenToken(sbankenCredentials[0]?.token)) {
-        void dispatch(
-          fetchSbankenToken({
-            clientId: credential.clientId,
-            clientSecret: credential.clientSecret,
-          })
-        );
-
-        hasRefreshedAnyToken = true;
-      }
-    }
-  }
-
-  if (hasRefreshedAnyToken) {
-    setHasRefreshedTokens(true);
-  }
-
-  // const handleImport = useCallback((e: Event) => {
-  //   e.preventDefault();
-  // }, []);
 
   return (
     <FocusTrap className="h-full bg-white flex items-center">
@@ -72,6 +42,7 @@ export function LandingPage() {
               type="submit"
               className="border-transparent text-white bg-pink-600 hover:bg-pink-700 focus:ring-pink-500"
               onClick={handleNext}
+              importance="primary"
             >
               Kom i gang
             </Button>

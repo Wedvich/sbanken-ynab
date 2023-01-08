@@ -12,7 +12,7 @@ import {
   RequestStatus,
   deleteToken,
 } from '../../services/ynab';
-import { BudgetList } from './budget-list';
+import { BudgetList } from '../../components/budget-list';
 
 interface YnabTokenEditorProps {
   fetchStatus?: RequestStatus;
