@@ -10,18 +10,25 @@ import {
   getYnabTokens,
   saveToken,
   RequestStatus,
-  getYnabBudgets,
+  deleteToken,
 } from '../../services/ynab';
-import { DateTime } from 'luxon';
+import { BudgetList } from './budget-list';
 
 interface YnabTokenEditorProps {
   fetchStatus?: RequestStatus;
+  onDeleteToken?: (token: string) => void;
   onSaveToken: (token: string, originalToken?: string) => void;
   token?: string;
   tokens: Array<string>;
 }
 
-const YnabTokenEditor = ({ fetchStatus, onSaveToken, token, tokens }: YnabTokenEditorProps) => {
+const YnabTokenEditor = ({
+  fetchStatus,
+  onDeleteToken,
+  onSaveToken,
+  token,
+  tokens,
+}: YnabTokenEditorProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [tokenValue, setTokenValue] = useState(token);
   const id = useId();
@@ -59,7 +66,7 @@ const YnabTokenEditor = ({ fetchStatus, onSaveToken, token, tokens }: YnabTokenE
     };
   }, [id, isEditing, stopEditing]);
 
-  const canSave = !!tokenValue && !tokens.includes(tokenValue) && !fetchStatus;
+  const canSave = !!tokenValue && !tokens.includes(tokenValue) && fetchStatus !== 'pending';
 
   const handleSaveToken = useCallback(() => {
     if (!canSave) return;
@@ -67,70 +74,10 @@ const YnabTokenEditor = ({ fetchStatus, onSaveToken, token, tokens }: YnabTokenE
     setIsEditing(false);
   }, [canSave, onSaveToken, token, tokenValue]);
 
-  const contents = (
-    <Fragment>
-      <span className="flex items-center flex-grow">
-        <span className="flex flex-col text-sm flex-grow">
-          {isEditing ? (
-            <input
-              type="text"
-              value={tokenValue}
-              onChange={(e) => setTokenValue((e.target as HTMLInputElement).value)}
-              className="font-code bg-pink-50 m-0 border-0 border-b border-transparent leading-7 focus:border-pink-600 -mb-[1px] selection:bg-pink-300 focus:ring-0"
-              onFocus={(e) => {
-                (e.target as HTMLInputElement).select();
-              }}
-            />
-          ) : (
-            !!token && (
-              <span className="font-semibold text-gray-900 group mr-auto">
-                <span className="group-hover:hidden">…{token.slice(-6)}</span>
-                <span className="hidden group-hover:inline">{token}</span>
-              </span>
-            )
-          )}
-          {!!token && !isEditing && !!fetchStatus && (
-            <span className="text-gray-500 mt-1">
-              {fetchStatus === 'pending'
-                ? 'Connecting…'
-                : fetchStatus === 'fulfilled'
-                ? 'Connected'
-                : 'Error'}
-            </span>
-          )}
-        </span>
-      </span>
-      <span className="mt-2 flex flex-col sm:flex-row text-sm sm:mt-0 sm:ml-6 gap-2 items-center">
-        {!isEditing ? (
-          <Fragment>
-            <Button
-              key="edit"
-              className="w-full"
-              onClick={beginEditing}
-              size={!token ? 'lg' : undefined}
-              importance={!token ? 'primary' : undefined}
-            >
-              {token ? 'Endre' : 'Legg til'}
-            </Button>
-            {!!token && (
-              <Button key="remove" className="w-full">
-                Fjern
-              </Button>
-            )}
-          </Fragment>
-        ) : (
-          <Fragment>
-            <Button key="save" className="w-full" disabled={!canSave} onClick={handleSaveToken}>
-              Lagre
-            </Button>
-            <Button key="cancel" className="w-full" onClick={stopEditing}>
-              Avbryt
-            </Button>
-          </Fragment>
-        )}
-      </span>
-    </Fragment>
-  );
+  const handleDeleteToken = useCallback(() => {
+    if (!token) return;
+    onDeleteToken?.(token);
+  }, [onDeleteToken, token]);
 
   return (
     <li
@@ -148,7 +95,100 @@ const YnabTokenEditor = ({ fetchStatus, onSaveToken, token, tokens }: YnabTokenE
             : FocusTrap.features.None
         }
       >
-        {contents}
+        <span className="flex items-center flex-grow">
+          <span className="flex flex-col text-sm flex-grow">
+            {isEditing ? (
+              <input
+                type="text"
+                value={tokenValue}
+                onChange={(e) => setTokenValue((e.target as HTMLInputElement).value)}
+                className="font-code bg-pink-50 m-0 border-0 border-b border-transparent leading-7 focus:border-pink-600 -mb-[1px] selection:bg-pink-300 focus:ring-0"
+                onFocus={(e) => {
+                  (e.target as HTMLInputElement).select();
+                }}
+              />
+            ) : (
+              !!token && (
+                <span className="font-semibold text-gray-900 group mr-auto">
+                  <span className="group-hover:hidden">… {token.slice(-6)}</span>
+                  <span className="hidden group-hover:inline">{token}</span>
+                </span>
+              )
+            )}
+            {!!token && !isEditing && !!fetchStatus && (
+              <span className="text-gray-500 flex items-center mt-1">
+                {fetchStatus === 'pending' ? (
+                  'Kobler til…'
+                ) : fetchStatus === 'fulfilled' ? (
+                  <>
+                    <svg
+                      className="w-4 h-4 inline-flex mr-1 text-green-600"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M22 11.0857V12.0057C21.9988 14.1621 21.3005 16.2604 20.0093 17.9875C18.7182 19.7147 16.9033 20.9782 14.8354 21.5896C12.7674 22.201 10.5573 22.1276 8.53447 21.3803C6.51168 20.633 4.78465 19.2518 3.61096 17.4428C2.43727 15.6338 1.87979 13.4938 2.02168 11.342C2.16356 9.19029 2.99721 7.14205 4.39828 5.5028C5.79935 3.86354 7.69279 2.72111 9.79619 2.24587C11.8996 1.77063 14.1003 1.98806 16.07 2.86572M22 4L12 14.01L9 11.01"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    Tilkoblet
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-4 h-4 inline-flex mr-1 text-red-600"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M18 6L6 18M6 6L18 18"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    Feil ved tilkobling
+                  </>
+                )}
+              </span>
+            )}
+          </span>
+        </span>
+        <span className="mt-2 flex flex-col sm:flex-row text-sm sm:mt-0 sm:ml-6 gap-2 items-center">
+          {!isEditing ? (
+            <Fragment>
+              <Button
+                key="edit"
+                className="w-full"
+                onClick={beginEditing}
+                size={!token ? 'lg' : undefined}
+                importance={!token ? 'primary' : undefined}
+              >
+                {token ? 'Endre' : 'Legg til token'}
+              </Button>
+              {!!token && (
+                <Button key="remove" className="w-full" onClick={handleDeleteToken}>
+                  Fjern
+                </Button>
+              )}
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Button key="save" className="w-full" disabled={!canSave} onClick={handleSaveToken}>
+                Lagre
+              </Button>
+              <Button key="cancel" className="w-full" onClick={stopEditing}>
+                Avbryt
+              </Button>
+            </Fragment>
+          )}
+        </span>
       </FocusTrap>
     </li>
   );
@@ -163,8 +203,13 @@ export const Settings = () => {
     },
     [dispatch]
   );
+  const handleDeleteToken = useCallback(
+    (token: string) => {
+      dispatch(deleteToken(token));
+    },
+    [dispatch]
+  );
   const tokenFetchStatuses = useSelector(getYnabBudgetsRequestStatus);
-  const budgets = useSelector(getYnabBudgets);
 
   return (
     <div className="py-10">
@@ -184,7 +229,7 @@ export const Settings = () => {
                 >
                   Personal Access Token
                 </a>{' '}
-                fra YNAB og velg hvilke budsjetter du vil inkludere
+                fra YNAB og velg hvilke budsjetter du vil inkludere.
               </Fragment>
             }
           >
@@ -195,6 +240,7 @@ export const Settings = () => {
                     key={token}
                     token={token}
                     onSaveToken={handleSaveToken}
+                    onDeleteToken={handleDeleteToken}
                     tokens={tokens}
                     fetchStatus={tokenFetchStatuses[token]}
                   />
@@ -203,38 +249,10 @@ export const Settings = () => {
               <YnabTokenEditor onSaveToken={handleSaveToken} tokens={tokens} />
             </ul>
             <h3 className="mt-4 text-lg font-semibold">Budsjetter</h3>
-            {!budgets.length ? (
-              <p className="text-gray-500 italic">Ingen Personal Access Tokens er lagt til.</p>
-            ) : (
-              <ul className="mt-4 space-y-4">
-                {budgets.map((budget) => {
-                  return (
-                    <li key={budget.id} className="relative flex items-start">
-                      <div class="flex h-5 items-center">
-                        <input
-                          id={`budget-${budget.id}`}
-                          aria-describedby="comments-description"
-                          name={`budget-${budget.id}`}
-                          type="checkbox"
-                          class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
-                        />
-                      </div>
-                      <div class="ml-3 text-sm">
-                        <label for={`budget-${budget.id}`} class="font-semibold">
-                          {budget.name}
-                        </label>
-                        <p class="text-gray-500">
-                          sist oppdatert{' '}
-                          {DateTime.fromISO(budget.last_modified_on).toRelativeCalendar({
-                            locale: 'nb',
-                          })}
-                        </p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+            <p className="mt-2 text-sm text-gray-700">
+              Du kan koble samme kontoer fra de valgte budsjettene med Sbanken-kontoer.
+            </p>
+            <BudgetList />
           </Section>
         </div>
       </div>

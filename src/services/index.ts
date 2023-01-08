@@ -1,10 +1,11 @@
-import { autoBatchEnhancer, configureStore } from '@reduxjs/toolkit';
+import { autoBatchEnhancer, configureStore, createAsyncThunk } from '@reduxjs/toolkit';
 import { accountsSlice } from './accounts';
 import { sbankenSlice } from './sbanken';
 import { ynabSlice } from './ynab';
 import sbankenApi from './sbanken/api';
 import ynabApi from './ynab/api';
 import { listenerMiddleware } from './listener';
+import { useDispatch } from 'react-redux';
 
 export const store = configureStore({
   reducer: {
@@ -23,3 +24,10 @@ export const store = configureStore({
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
+
+export const createAppAsyncThunk = createAsyncThunk.withTypes<{
+  state: RootState;
+  dispatch: AppDispatch;
+}>();
+
+export const useAppDispatch = useDispatch<AppDispatch>;

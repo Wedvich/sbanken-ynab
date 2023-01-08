@@ -11,10 +11,9 @@ import {
 import { ynabApiBaseUrl } from '../config';
 import type { RootState } from '.';
 import { YNAB_TOKENS_KEY, YNAB_BUDGET_KEY } from './storage';
-import { listenerMiddleware } from './listener';
+import { startAppListening } from './listener';
 import { fetchInitialData } from '../utils';
-
-const YNAB_SLICE_NAME = 'ynab';
+import { DateTime } from 'luxon';
 
 interface YnabAccount {
   id: string;
@@ -30,6 +29,10 @@ interface YnabAccount {
   direct_import_linked: boolean;
   direct_import_in_error: boolean;
   deleted: boolean;
+}
+
+interface YnabAccountWithBudgetId extends YnabAccount {
+  budget_id: string;
 }
 
 export interface YnabTransaction {
@@ -109,31 +112,33 @@ const accountsAdapter = createEntityAdapter<YnabAccount>({
   selectId: (account) => account.id,
 });
 
-export const getYnabAccounts = (state: RootState) => state[YNAB_SLICE_NAME].accounts;
-export const getYnabTokens = (state: RootState) => state[YNAB_SLICE_NAME].tokens;
-export const getYnabBudgetsRequestStatus = (state: RootState) =>
-  state[YNAB_SLICE_NAME].budgetRequestStatusByToken;
+export const getYnabAccounts = (state: RootState) => state.ynab.accounts;
+export const getYnabTokens = (state: RootState) => state.ynab.tokens;
+export const getYnabBudgetsRequestStatus = (state: RootState) => state.ynab.requestStatusByToken;
+export const getIncludedBudgets = (state: RootState) => state.ynab.includedBudgets;
 
 export const getYnabBudgets = createSelector(
-  budgetsAdapter.getSelectors((state: RootState) => state[YNAB_SLICE_NAME].budgets).selectAll,
+  budgetsAdapter.getSelectors((state: RootState) => state.ynab.budgets).selectAll,
   (budgets) => {
-    return budgets.sort((a, b) => a.name.localeCompare(b.name));
+    return budgets.sort(
+      (a, b) => +DateTime.fromISO(b.last_modified_on) - +DateTime.fromISO(a.last_modified_on)
+    );
   }
 );
 
 // export const getYnabBudgets = budgetsAdapter.getSelectors(
-//   (state: RootState) => state[YNAB_SLICE_NAME].budgets
+//   (state: RootState) => state.ynab.budgets
 // ).selectAll;
 export type RequestStatus = 'pending' | 'fulfilled' | 'rejected';
 
 export interface YnabState {
   accounts: EntityState<YnabAccount>;
   budgets: EntityState<YnabBudget>;
-  budgetIdByToken: Record<string, string>;
-  budgetRequestStatusByToken: Record<string, RequestStatus | undefined>;
   includedBudgets: Array<string>;
-  tokens: Array<string>;
   rateLimitByToken: Record<string, YnabRateLimit | undefined>;
+  requestStatusByToken: Record<string, RequestStatus | undefined>;
+  tokens: Array<string>;
+  tokensByBudgetId: Record<string, Array<string>>;
 }
 
 function getStoredTokens() {
@@ -148,15 +153,98 @@ function getStoredBudgets() {
 
 const initialState: YnabState = {
   accounts: accountsAdapter.getInitialState(),
-  budgetIdByToken: {},
-  budgetRequestStatusByToken: {},
   budgets: budgetsAdapter.getInitialState(),
   includedBudgets: getStoredBudgets(),
-  tokens: getStoredTokens(),
   rateLimitByToken: {},
+  requestStatusByToken: {},
+  tokens: getStoredTokens(),
+  tokensByBudgetId: {},
 };
 
-export const fetchAllAccounts = createAsyncThunk(`${YNAB_SLICE_NAME}/fetchAllAccounts`, () => {
+export const ynabSlice = createSlice({
+  name: 'ynab',
+  initialState,
+  reducers: {
+    saveToken(state, action: PayloadAction<{ token: string; originalToken?: string }>) {
+      state.tokens.push(action.payload.token);
+    },
+    deleteToken(state, action: PayloadAction<string>) {
+      const index = state.tokens.indexOf(action.payload);
+      if (index !== -1) {
+        state.tokens.splice(index, 1);
+      }
+
+      delete state.requestStatusByToken[action.payload];
+      delete state.rateLimitByToken[action.payload];
+
+      // Delete budgets for this token if they have no other tokens associated with them
+      const budgetsIdsToRemove: Array<string> = [];
+      for (const budgetId of Object.keys(state.tokensByBudgetId)) {
+        const budgetTokens = state.tokensByBudgetId[budgetId];
+        const tokenIndex = budgetTokens.indexOf(action.payload);
+        if (tokenIndex === -1) continue;
+
+        budgetTokens.splice(tokenIndex, 1);
+        if (budgetTokens.length === 0) {
+          delete state.tokensByBudgetId[budgetId];
+          budgetsIdsToRemove.push(budgetId);
+        }
+      }
+      budgetsAdapter.removeMany(state.budgets, budgetsIdsToRemove);
+    },
+    setRateLimit: {
+      reducer(state, action: PayloadAction<{ token: string; rateLimit: YnabRateLimit }>) {
+        state.rateLimitByToken[action.payload.token] = action.payload.rateLimit;
+      },
+      prepare: prepareAutoBatched<{ token: string; rateLimit: YnabRateLimit }>(),
+    },
+    toggleBudget(state, action: PayloadAction<string>) {
+      const budgetId = action.payload;
+      const index = state.includedBudgets.indexOf(budgetId);
+      if (index === -1) {
+        state.includedBudgets.push(budgetId);
+      } else {
+        state.includedBudgets.splice(index, 1);
+      }
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      isAnyOf(
+        fetchBudgetsAndAccounts.pending.match,
+        fetchBudgetsAndAccounts.fulfilled.match,
+        fetchBudgetsAndAccounts.rejected.match
+      ),
+      (state, action) => {
+        state.requestStatusByToken[action.meta.arg] = action.meta.requestStatus;
+      }
+    );
+
+    builder.addMatcher(fetchBudgetsAndAccounts.fulfilled.match, (state, action) => {
+      const allAccounts: Array<YnabAccountWithBudgetId> = [];
+      const budgets = action.payload.budgets.map(({ accounts, ...budget }) => {
+        // Extract and enrich accounts with budget ID so they can be mapped back later
+        const accountsWithBudgetId = accounts.map<YnabAccountWithBudgetId>((account) => ({
+          ...account,
+          budget_id: budget.id,
+        }));
+
+        Array.prototype.push.apply(allAccounts, accountsWithBudgetId);
+
+        if (!state.tokensByBudgetId[budget.id]?.includes(action.meta.arg)) {
+          (state.tokensByBudgetId[budget.id] ??= []).push(action.meta.arg);
+        }
+
+        return budget;
+      });
+
+      budgetsAdapter.setMany(state.budgets, budgets);
+      accountsAdapter.setMany(state.accounts, allAccounts);
+    });
+  },
+});
+
+export const fetchAllAccounts = createAsyncThunk(`${ynabSlice.name}/fetchAllAccounts`, () => {
   //async (_, thunkAPI): Promise<Array<YnabAccount>> => {
   // const { tokens, budget } = (thunkAPI.getState() as RootState).ynab;
   // const [token] = tokens;
@@ -178,54 +266,8 @@ export const fetchAllAccounts = createAsyncThunk(`${YNAB_SLICE_NAME}/fetchAllAcc
   // );
 });
 
-export const ynabSlice = createSlice({
-  name: YNAB_SLICE_NAME,
-  initialState,
-  reducers: {
-    saveToken(state, action: PayloadAction<{ token: string; originalToken?: string }>) {
-      state.tokens.push(action.payload.token);
-    },
-    setRateLimit: {
-      reducer(state, action: PayloadAction<{ token: string; rateLimit: YnabRateLimit }>) {
-        state.rateLimitByToken[action.payload.token] = action.payload.rateLimit;
-      },
-      prepare: prepareAutoBatched<{ token: string; rateLimit: YnabRateLimit }>(),
-    },
-  },
-  extraReducers: (builder) => {
-    builder.addMatcher(
-      isAnyOf(
-        fetchBudgetsAndAccounts.pending.match,
-        fetchBudgetsAndAccounts.fulfilled.match,
-        fetchBudgetsAndAccounts.rejected.match
-      ),
-      (state, action) => {
-        state.budgetRequestStatusByToken[action.meta.arg] = action.meta.requestStatus;
-      }
-    );
-
-    builder.addMatcher(fetchBudgetsAndAccounts.fulfilled.match, (state, action) => {
-      const accounts: Array<YnabAccount> = [];
-      const budgets = action.payload.budgets.map(({ accounts, ...budget }) => {
-        accounts.push(...accounts);
-        return budget;
-      });
-
-      budgetsAdapter.setMany(state.budgets, budgets);
-      accountsAdapter.setMany(state.accounts, accounts);
-    });
-
-    // builder.addMatcher(
-    //   (action) => action.type?.beginsWith(fetchBudgets.typePrefix),
-    //   (state, action) => {
-    //     console.log('action.meta.arg', action.meta.arg);
-    //   }
-    // );
-  },
-});
-
 export const fetchBudgetsAndAccounts = createAsyncThunk<YnabBudgetsResponse, string>(
-  `${YNAB_SLICE_NAME}/fetchBudgetsAndAccounts`,
+  `${ynabSlice.name}/fetchBudgetsAndAccounts`,
   async (token, { dispatch }) => {
     const response = await fetch(`${ynabApiBaseUrl}/budgets?include_accounts=true`, {
       headers: {
@@ -243,13 +285,15 @@ export const fetchBudgetsAndAccounts = createAsyncThunk<YnabBudgetsResponse, str
       );
     }
 
+    if (!response.ok) {
+      return Promise.reject(response.statusText);
+    }
+
     return (await response.json()).data;
   },
   {
     condition: (token, { getState }) => {
-      const fetchStatus = (getState() as RootState)[YNAB_SLICE_NAME].budgetRequestStatusByToken[
-        token
-      ];
+      const fetchStatus = (getState() as RootState).ynab.requestStatusByToken[token];
       if (fetchStatus === 'pending' || fetchStatus === 'fulfilled') {
         return false;
       }
@@ -257,21 +301,38 @@ export const fetchBudgetsAndAccounts = createAsyncThunk<YnabBudgetsResponse, str
   }
 );
 
-listenerMiddleware.startListening({
-  actionCreator: ynabSlice.actions.saveToken,
+/** Stores changes to tokens in localStorage */
+startAppListening({
+  matcher: isAnyOf(ynabSlice.actions.saveToken.match, ynabSlice.actions.deleteToken.match),
   effect: async (action, { dispatch, getState }) => {
-    const { tokens } = (getState() as RootState)[YNAB_SLICE_NAME];
+    const { tokens } = getState().ynab;
     localStorage.setItem(YNAB_TOKENS_KEY, JSON.stringify(tokens));
-    await dispatch(fetchBudgetsAndAccounts(action.payload.token));
+
+    if (ynabSlice.actions.saveToken.match(action)) {
+      await dispatch(fetchBudgetsAndAccounts(action.payload.token));
+      if (action.payload.originalToken) {
+        dispatch(ynabSlice.actions.deleteToken(action.payload.originalToken));
+      }
+    }
   },
 });
 
-listenerMiddleware.startListening({
+/** Stores changes to included budgets in localStorage */
+startAppListening({
+  actionCreator: ynabSlice.actions.toggleBudget,
+  effect: (_, { getState }) => {
+    const { includedBudgets } = getState().ynab;
+    localStorage.setItem(YNAB_BUDGET_KEY, JSON.stringify(includedBudgets));
+  },
+});
+
+/** Loads all existing budgets and accounts on app initialization */
+startAppListening({
   actionCreator: fetchInitialData,
   effect: async (_, { dispatch, getState }) => {
-    const { tokens } = (getState() as RootState)[YNAB_SLICE_NAME];
+    const { tokens } = getState().ynab;
     await Promise.allSettled(tokens.map((token) => dispatch(fetchBudgetsAndAccounts(token))));
   },
 });
 
-export const { saveToken } = ynabSlice.actions;
+export const { deleteToken, saveToken, toggleBudget } = ynabSlice.actions;
