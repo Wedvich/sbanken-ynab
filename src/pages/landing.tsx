@@ -4,15 +4,16 @@ import { FocusTrap } from '@headlessui/react';
 import Button from '../components/button';
 import { useNavigate } from 'react-router-dom';
 
-export function LandingPage() {
+export function LandingPage(props: { onNavigate: () => void }) {
   const navigate = useNavigate();
 
   const handleNext = useCallback(
     (e: Event) => {
       e.preventDefault();
       navigate('/innstillinger', { replace: true });
+      props.onNavigate();
     },
-    [navigate]
+    [navigate, props]
   );
 
   return (

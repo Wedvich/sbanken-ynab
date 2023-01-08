@@ -36,10 +36,7 @@ export const BudgetList = () => {
               <span class="ml-3 text-sm flex-grow">
                 <span class="font-medium block">{budget.name}</span>
                 <span class="text-gray-500 block">
-                  sist brukt{' '}
-                  {DateTime.fromISO(budget.last_modified_on).toRelativeCalendar({
-                    locale: 'nb',
-                  })}
+                  sist brukt {DateTime.fromISO(budget.last_modified_on).toRelativeCalendar()}
                 </span>
               </span>
             </label>

@@ -5,7 +5,7 @@ import { ynabSlice } from './ynab';
 import sbankenApi from './sbanken/api';
 import ynabApi from './ynab/api';
 import { listenerMiddleware } from './listener';
-import { useDispatch } from 'react-redux';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 export const store = configureStore({
   reducer: {
@@ -31,3 +31,4 @@ export const createAppAsyncThunk = createAsyncThunk.withTypes<{
 }>();
 
 export const useAppDispatch = useDispatch<AppDispatch>;
+export const useAppSelector = useSelector as TypedUseSelectorHook<RootState>;

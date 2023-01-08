@@ -68,13 +68,13 @@ const YnabTokenEditor = ({
 
   const canSave = !!tokenValue && !tokens.includes(tokenValue) && fetchStatus !== 'pending';
 
-  const handleSaveToken = useCallback(() => {
+  const handleSave = useCallback(() => {
     if (!canSave) return;
     onSaveToken(tokenValue, token);
     setIsEditing(false);
   }, [canSave, onSaveToken, token, tokenValue]);
 
-  const handleDeleteToken = useCallback(() => {
+  const handleDelete = useCallback(() => {
     if (!token) return;
     onDeleteToken?.(token);
   }, [onDeleteToken, token]);
@@ -82,113 +82,117 @@ const YnabTokenEditor = ({
   return (
     <li
       id={id}
-      className={classNames('relative block focus:outline-none sm:flex sm:justify-between', {
+      className={classNames({
         'py-4 px-4 sm:px-6 border border-gray-300 shadow-sm rounded': token || isEditing,
         'border-pink-600 ring-1 ring-pink-300': isEditing,
       })}
     >
       <FocusTrap
-        className="contents"
         features={
           isEditing
             ? FocusTrap.features.InitialFocus | FocusTrap.features.TabLock
             : FocusTrap.features.None
         }
       >
-        <span className="flex items-center flex-grow">
-          <span className="flex flex-col text-sm flex-grow">
-            {isEditing ? (
-              <input
-                type="text"
-                value={tokenValue}
-                onChange={(e) => setTokenValue((e.target as HTMLInputElement).value)}
-                className="font-code bg-pink-50 m-0 border-0 border-b border-transparent leading-7 focus:border-pink-600 -mb-[1px] selection:bg-pink-300 focus:ring-0"
-                onFocus={(e) => {
-                  (e.target as HTMLInputElement).select();
-                }}
-              />
-            ) : (
-              !!token && (
-                <span className="font-semibold text-gray-900 group mr-auto">
-                  <span className="group-hover:hidden">… {token.slice(-6)}</span>
-                  <span className="hidden group-hover:inline">{token}</span>
+        <form
+          className="relative block focus:outline-none sm:flex sm:justify-between"
+          onSubmit={handleSave}
+        >
+          <span className="flex items-center flex-grow">
+            <span className="flex flex-col text-sm flex-grow">
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={tokenValue}
+                  onChange={(e) => setTokenValue((e.target as HTMLInputElement).value)}
+                  className="font-code bg-pink-50 m-0 border-0 border-b border-transparent leading-7 focus:border-pink-600 -mb-[1px] selection:bg-pink-300 focus:ring-0"
+                  onFocus={(e) => {
+                    (e.target as HTMLInputElement).select();
+                  }}
+                />
+              ) : (
+                !!token && (
+                  <span className="font-semibold text-gray-900 group mr-auto">
+                    <span className="group-hover:hidden">… {token.slice(-6)}</span>
+                    <span className="hidden group-hover:inline">{token}</span>
+                  </span>
+                )
+              )}
+              {!!token && !isEditing && !!fetchStatus && (
+                <span className="text-gray-500 flex items-center mt-1">
+                  {fetchStatus === 'pending' ? (
+                    'Kobler til…'
+                  ) : fetchStatus === 'fulfilled' ? (
+                    <>
+                      <svg
+                        className="w-4 h-4 inline-flex mr-1 text-green-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M22 11.0857V12.0057C21.9988 14.1621 21.3005 16.2604 20.0093 17.9875C18.7182 19.7147 16.9033 20.9782 14.8354 21.5896C12.7674 22.201 10.5573 22.1276 8.53447 21.3803C6.51168 20.633 4.78465 19.2518 3.61096 17.4428C2.43727 15.6338 1.87979 13.4938 2.02168 11.342C2.16356 9.19029 2.99721 7.14205 4.39828 5.5028C5.79935 3.86354 7.69279 2.72111 9.79619 2.24587C11.8996 1.77063 14.1003 1.98806 16.07 2.86572M22 4L12 14.01L9 11.01"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      Tilkoblet
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-4 h-4 inline-flex mr-1 text-red-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M18 6L6 18M6 6L18 18"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      Feil ved tilkobling
+                    </>
+                  )}
                 </span>
-              )
-            )}
-            {!!token && !isEditing && !!fetchStatus && (
-              <span className="text-gray-500 flex items-center mt-1">
-                {fetchStatus === 'pending' ? (
-                  'Kobler til…'
-                ) : fetchStatus === 'fulfilled' ? (
-                  <>
-                    <svg
-                      className="w-4 h-4 inline-flex mr-1 text-green-600"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M22 11.0857V12.0057C21.9988 14.1621 21.3005 16.2604 20.0093 17.9875C18.7182 19.7147 16.9033 20.9782 14.8354 21.5896C12.7674 22.201 10.5573 22.1276 8.53447 21.3803C6.51168 20.633 4.78465 19.2518 3.61096 17.4428C2.43727 15.6338 1.87979 13.4938 2.02168 11.342C2.16356 9.19029 2.99721 7.14205 4.39828 5.5028C5.79935 3.86354 7.69279 2.72111 9.79619 2.24587C11.8996 1.77063 14.1003 1.98806 16.07 2.86572M22 4L12 14.01L9 11.01"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    Tilkoblet
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="w-4 h-4 inline-flex mr-1 text-red-600"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M18 6L6 18M6 6L18 18"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    Feil ved tilkobling
-                  </>
+              )}
+            </span>
+          </span>
+          <span className="mt-2 flex flex-col sm:flex-row text-sm sm:mt-0 sm:ml-6 gap-2 items-center">
+            {!isEditing ? (
+              <Fragment>
+                <Button
+                  key="edit"
+                  className="w-full"
+                  onClick={beginEditing}
+                  size={!token ? 'lg' : undefined}
+                  importance={!token ? 'primary' : undefined}
+                >
+                  {token ? 'Endre' : 'Legg til token'}
+                </Button>
+                {!!token && (
+                  <Button key="remove" className="w-full" onClick={handleDelete}>
+                    Fjern
+                  </Button>
                 )}
-              </span>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <Button key="save" className="w-full" disabled={!canSave} onClick={handleSave}>
+                  Lagre
+                </Button>
+                <Button key="cancel" className="w-full" onClick={stopEditing}>
+                  Avbryt
+                </Button>
+              </Fragment>
             )}
           </span>
-        </span>
-        <span className="mt-2 flex flex-col sm:flex-row text-sm sm:mt-0 sm:ml-6 gap-2 items-center">
-          {!isEditing ? (
-            <Fragment>
-              <Button
-                key="edit"
-                className="w-full"
-                onClick={beginEditing}
-                size={!token ? 'lg' : undefined}
-                importance={!token ? 'primary' : undefined}
-              >
-                {token ? 'Endre' : 'Legg til token'}
-              </Button>
-              {!!token && (
-                <Button key="remove" className="w-full" onClick={handleDeleteToken}>
-                  Fjern
-                </Button>
-              )}
-            </Fragment>
-          ) : (
-            <Fragment>
-              <Button key="save" className="w-full" disabled={!canSave} onClick={handleSaveToken}>
-                Lagre
-              </Button>
-              <Button key="cancel" className="w-full" onClick={stopEditing}>
-                Avbryt
-              </Button>
-            </Fragment>
-          )}
-        </span>
+        </form>
       </FocusTrap>
     </li>
   );
