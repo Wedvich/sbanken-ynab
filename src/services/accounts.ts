@@ -7,7 +7,9 @@ const ACCOUNTS_SLICE_NAME = 'accounts';
 export interface LinkedAccount {
   name: string;
   sbankenAccountId: string;
+  sbankenClientId: string;
   ynabAccountId: string;
+  ynabBudgetId: string;
 }
 
 export const getLinkedAccounts = (state: RootState) => state[ACCOUNTS_SLICE_NAME].accounts;
