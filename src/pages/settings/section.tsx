@@ -14,7 +14,7 @@ export const Section = ({ children, title, description }: SectionProps) => {
           <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded">
             <div className="bg-gray-50 py-3 px-4">
               <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-              <p className="mt-2 text-sm text-gray-700">{description}</p>
+              {description && <p className="mt-2 text-sm text-gray-700">{description}</p>}
             </div>
             <div className="border-t border-gray-300 bg-white p-4">{children}</div>
           </div>

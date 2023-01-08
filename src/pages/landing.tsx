@@ -47,13 +47,6 @@ export function LandingPage(props: { onNavigate: () => void }) {
             >
               Kom i gang
             </Button>
-            {/* <Button
-              type="button"
-              className="border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-pink-500"
-              onClick={handleImport}
-            >
-              Importer innstillinger
-            </Button> */}
           </p>
         </div>
       </form>

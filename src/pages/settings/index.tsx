@@ -1,5 +1,5 @@
 import { Fragment, h } from 'preact';
-import { useCallback } from 'preact/hooks';
+import { useCallback, useState } from 'preact/hooks';
 import { Section } from './section';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -16,6 +16,13 @@ import {
   getSbankenTokenRequestStatus,
   saveCredential,
 } from '../../services/sbanken';
+import Button from '../../components/button';
+import { Dialog } from '@headlessui/react';
+
+const resetEverything = () => {
+  localStorage.clear();
+  window.location.href = '/';
+};
 
 export const Settings = () => {
   const tokens = useSelector(getYnabTokens);
@@ -48,6 +55,8 @@ export const Settings = () => {
     [dispatch]
   );
   const sbankenFetchStatuses = useSelector(getSbankenTokenRequestStatus);
+
+  const [showResetDialog, setShowResetDialog] = useState(false);
 
   const externalLinkIcon = (
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4">
@@ -147,8 +156,57 @@ export const Settings = () => {
               />
             </ul>
           </Section>
+          <Section title="Andre innstillinger">
+            <h3 className="text-lg font-semibold">Fjern alle data</h3>
+            <p className="mt-2 text-sm text-gray-700">
+              Dersom du har problemer med Sbanken → YNAB eller ikke ønsker å bruke det mer, kan du
+              fjerne alle data som ligger lagret i nettleseren din.
+            </p>
+            <Button key="reset" className="mt-4" onClick={() => setShowResetDialog(true)}>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4 mr-1"
+              >
+                <path
+                  d="M16 6V5.2C16 4.0799 16 3.51984 15.782 3.09202C15.5903 2.71569 15.2843 2.40973 14.908 2.21799C14.4802 2 13.9201 2 12.8 2H11.2C10.0799 2 9.51984 2 9.09202 2.21799C8.71569 2.40973 8.40973 2.71569 8.21799 3.09202C8 3.51984 8 4.0799 8 5.2V6M10 11.5V16.5M14 11.5V16.5M3 6H21M19 6V17.2C19 18.8802 19 19.7202 18.673 20.362C18.3854 20.9265 17.9265 21.3854 17.362 21.673C16.7202 22 15.8802 22 14.2 22H9.8C8.11984 22 7.27976 22 6.63803 21.673C6.07354 21.3854 5.6146 20.9265 5.32698 20.362C5 19.7202 5 18.8802 5 17.2V6"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Fjern alle data
+            </Button>
+          </Section>
         </div>
       </div>
+      <Dialog
+        open={showResetDialog}
+        onClose={() => setShowResetDialog(false)}
+        className="relative z-10"
+      >
+        <div className="fixed inset-0 bg-black bg-opacity-25" />
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center">
+            <Dialog.Panel className="bg-white p-8 sm:rounded-lg shadow-2xl">
+              <Dialog.Title className="text-lg font-semibold">Fjern alle data</Dialog.Title>
+              <Dialog.Description className="mt-4">
+                <p>
+                  Er du sikker på at du vil slette innstillingene? Dette vil fjerne alle tokens og
+                  data i appen permanent.
+                </p>
+                <p>Ingenting blir slettet fra YNAB eller Sbanken.</p>
+              </Dialog.Description>
+              <div className="mt-4 space-x-2">
+                <Button onClick={resetEverything}>Fjern</Button>
+                <Button onClick={() => setShowResetDialog(false)}>Avbryt</Button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };
