@@ -123,19 +123,25 @@ export const getYnabBudgets = createSelector(budgetSelectors.selectAll, (budgets
     (a, b) => +DateTime.fromISO(b.last_modified_on) - +DateTime.fromISO(a.last_modified_on)
   );
 });
+export const getYnabBudgetsLookup = budgetSelectors.selectEntities;
 
-export const getYnabBudgetsMap = budgetSelectors.selectEntities;
+const accountsSelectors = accountsAdapter.getSelectors((state: RootState) => state.ynab.accounts);
 
 export const getYnabAccounts = createSelector(
-  accountsAdapter.getSelectors((state: RootState) => state.ynab.accounts).selectAll,
+  accountsSelectors.selectAll,
   getIncludedBudgets,
   (accounts, includedBudgets) => {
     const prepareName = memoize((name: string) => stripEmojis(name).trim());
     return accounts
-      .filter((account) => !account.deleted && includedBudgets.includes(account.budget_id))
+      .filter(
+        (account) =>
+          !account.deleted && !account.closed && includedBudgets.includes(account.budget_id)
+      )
       .sort((a, b) => prepareName(a.name).localeCompare(prepareName(b.name)));
   }
 );
+
+export const getYnabAccountsLookup = accountsSelectors.selectEntities;
 
 export interface YnabState {
   accounts: EntityState<YnabAccountWithBudgetId>;

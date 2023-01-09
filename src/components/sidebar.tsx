@@ -4,6 +4,9 @@ import classNames from 'classnames';
 import { useAppSelector } from '../services';
 import { getSbankenCredentials } from '../services/sbanken';
 import { getYnabTokens } from '../services/ynab';
+import { getEnrichedAccounts } from '../services/accounts';
+import { useSelector } from 'react-redux';
+import { AccountCard } from './account-card';
 
 interface SidebarProps {
   className?: string;
@@ -12,6 +15,7 @@ interface SidebarProps {
 export const Sidebar = ({ className }: SidebarProps) => {
   const ynabTokensCount = useAppSelector((s) => getYnabTokens(s).length);
   const sbankenCredentialsCount = useAppSelector((s) => getSbankenCredentials(s).length);
+  const accounts = useSelector(getEnrichedAccounts);
 
   const hasValidConfiguration = ynabTokensCount > 0 && sbankenCredentialsCount > 0;
 
@@ -46,6 +50,9 @@ export const Sidebar = ({ className }: SidebarProps) => {
             </svg>
             Alle kontoer
           </NavLink>
+          {accounts.map((account) => {
+            return <AccountCard inSidebar key={account.compositeId} account={account} />;
+          })}
           {hasValidConfiguration && (
             <NavLink
               to="/kontoer/ny"

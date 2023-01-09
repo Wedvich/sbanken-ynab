@@ -54,23 +54,39 @@ export function validateSbankenToken(token?: SbankenToken): token is SbankenToke
   return true;
 }
 
-function getStoredCredentials() {
-  const storedCredentials = JSON.parse<Array<SbankenCredential>>(
-    localStorage.getItem(SBANKEN_CREDENTIALS_KEY) || '[]'
-  );
+export function getSbankenUnclearedBalance(sbankenAccount?: SbankenAccount): number {
+  if (!sbankenAccount) return 0;
 
-  for (const credential of storedCredentials) {
-    if (!validateSbankenToken(credential.token)) {
-      delete credential.token;
-    }
+  if (sbankenAccount.accountType === 'Creditcard account') {
+    return -sbankenAccount.balance - (sbankenAccount.creditLimit - sbankenAccount.available);
   }
 
-  return storedCredentials;
+  return sbankenAccount.available - sbankenAccount.balance;
+}
+
+function loadStoredCredentials() {
+  try {
+    const storedCredentials = JSON.parse<Array<SbankenCredential>>(
+      localStorage.getItem(SBANKEN_CREDENTIALS_KEY) || '[]'
+    );
+
+    for (const credential of storedCredentials) {
+      if (!validateSbankenToken(credential.token)) {
+        delete credential.token;
+      }
+    }
+
+    return storedCredentials;
+  } catch (e) {
+    console.debug(e);
+    localStorage.removeItem(SBANKEN_CREDENTIALS_KEY);
+    return [];
+  }
 }
 
 const initialCredentials = credentialsAdapter.setAll(
   credentialsAdapter.getInitialState(),
-  getStoredCredentials()
+  loadStoredCredentials()
 );
 
 const initialState: SbankenState = {
@@ -117,13 +133,14 @@ export const getExpiredCredentials = createSelector(getSbankenCredentials, (cred
   credentials.filter((credential) => !validateSbankenToken(credential.token))
 );
 
-export const getSbankenAccounts = createSelector(
-  accountsAdapter.getSelectors((state: RootState) => state.sbanken.accounts).selectAll,
-  (accounts) => {
-    const prepareName = memoize((name: string) => stripEmojis(name).trim());
-    return accounts.sort((a, b) => prepareName(a.name).localeCompare(prepareName(b.name)));
-  }
-);
+const accountSelectors = accountsAdapter.getSelectors((state: RootState) => state.sbanken.accounts);
+
+export const getSbankenAccounts = createSelector(accountSelectors.selectAll, (accounts) => {
+  const prepareName = memoize((name: string) => stripEmojis(name).trim());
+  return accounts.sort((a, b) => prepareName(a.name).localeCompare(prepareName(b.name)));
+});
+
+export const getSbankenAccountsLookup = accountSelectors.selectEntities;
 
 export const sbankenSlice = createSlice({
   name: 'sbanken',
@@ -225,7 +242,7 @@ export const fetchAllAccounts = createAsyncThunk(`${sbankenSlice.name}/fetchAllA
 export const fetchSbankenAccounts = createAsyncThunk<
   Array<SbankenAccountWithClientId>,
   SbankenCredential
->(`${sbankenSlice.name}/fetchAccountsForClient`, async (credential, {}) => {
+>(`${sbankenSlice.name}/fetchAccountsForClient`, async (credential) => {
   if (!validateSbankenToken(credential.token)) {
     return Promise.reject('invalid token');
   }
