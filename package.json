@@ -35,7 +35,7 @@
     "@reduxjs/toolkit": "^1.6.2",
     "core-js": "^3.27.0",
     "lodash-es": "^4.17.21",
-    "luxon": "^2.3.0",
+    "luxon": "^2.5.2",
     "preact": "^10.5.14",
     "react-redux": "^7.2.4",
     "react-router-dom": "^6.6.1",

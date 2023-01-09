@@ -7445,10 +7445,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "luxon@npm:2.3.0"
-  checksum: 3d00e1b812a31082cf0d97e844d7354c93891fbd14795756f396ee5656387e21d2c862edb841516114eb391f8314a6cf3848799acc6d59cf9560c88c909b91f0
+"luxon@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "luxon@npm:2.5.2"
+  checksum: d8b671ffd2ff0b438af862ac11082a81b3aedd9f8b6a4ca636f944224f8dd381125cd4d274ca0a8aedcaf2cfca0fc2ca96fe4cc1b16a28b7af701afb95c0bff8
   languageName: node
   linkType: hard
 
@@ -9647,7 +9647,7 @@ __metadata:
     jest-junit: ^13.0.0
     lint-staged: ^11.0.0
     lodash-es: ^4.17.21
-    luxon: ^2.3.0
+    luxon: ^2.5.2
     mini-css-extract-plugin: ^2.5.2
     postcss: ^8.4.5
     postcss-flexbugs-fixes: ^5.0.2
