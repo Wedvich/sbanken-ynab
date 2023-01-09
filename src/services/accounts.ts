@@ -72,6 +72,15 @@ export const getEnrichedAccounts = createSelector(
   }
 );
 
+export const getEnrichedAccountById = createSelector(
+  getEnrichedAccounts,
+  (_: RootState, id?: string) => id,
+  (accounts, id) => {
+    if (!id) return;
+    return accounts.find((account) => account.compositeId === id);
+  }
+);
+
 export function validateLinkedAccount(account: Partial<LinkedAccount>): account is LinkedAccount {
   return !!account.name && !!account.sbankenAccountId && !!account.ynabAccountId;
 }
