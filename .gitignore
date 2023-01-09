@@ -73,7 +73,7 @@ typings/
 # VS Code settings
 .vscode
 
-# Webpack build output
+# Build output
 public
 wwwroot
 

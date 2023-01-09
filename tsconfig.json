@@ -14,14 +14,16 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "esnext"
+    "target": "esnext",
+    "types": ["vitest/globals"]
   },
   "include": [
     "src/**/*",
-    ".eslintrc.js",
+    ".eslintrc.cjs",
     ".stylelintrc.js",
+    "*.config.cjs",
     "*.config.js",
-    "server.js",
-    "webpack.config.*.js"
+    "*.config.ts",
+    "*.config.sw.ts"
   ]
 }

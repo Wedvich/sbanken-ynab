@@ -131,9 +131,9 @@ export const Settings = () => {
                 >
                   Utviklerportalen {externalLinkIcon}
                 </a>{' '}
-                og opprette en applikasjon med tilgangen "Grants access to perform operations on
-                APIBeta APIs (aka. developer portal)". Dette gir deg en applikasjonsnøkkel og et
-                passord.
+                og opprette en applikasjon med tilgangen &ldquot;Grants access to perform operations
+                on APIBeta APIs (aka. developer portal)&rdquot;. Dette gir deg en applikasjonsnøkkel
+                og et passord.
               </Fragment>
             }
           >

@@ -1,6 +1,6 @@
 import * as utils from './utils';
 
-describe(nameof(utils.stripEmojis), () => {
+describe('stripEmojis', () => {
   it('strips emojis from a string', () => {
     const text = '💰 stonks 📈';
 

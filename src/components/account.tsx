@@ -24,8 +24,8 @@ export default function Account() {
 
   return (
     <FocusTrap className="py-6">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <h1 class="text-2xl font-semibold text-gray-900 flex items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <h1 className="text-2xl font-semibold text-gray-900 flex items-center">
           {existingAccount.name}
           <Button
             className="ml-4 px-2 py-0.5 border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-pink-500"
@@ -35,46 +35,46 @@ export default function Account() {
             Rediger
           </Button>
         </h1>
-        <div class="my-4">
-          <div class="inline-grid grid-flow-col-dense grid-rows-4 gap-2">
+        <div className="my-4">
+          <div className="inline-grid grid-flow-col-dense grid-rows-4 gap-2">
             <div />
             <div>Sbanken</div>
             <div>YNAB</div>
             <div>Differanse</div>
-            <div class="text-right italic">Bokført</div>
-            <div class="text-right font-numbers tabular-nums">
+            <div className="text-right italic">Bokført</div>
+            <div className="text-right font-numbers tabular-nums">
               {formatMoney(existingAccount.sbankenClearedBalance)}
             </div>
-            <div class="text-right font-numbers tabular-nums">
+            <div className="text-right font-numbers tabular-nums">
               {formatMoney(existingAccount.ynabClearedBalance)}
             </div>
-            <div class="text-right font-numbers tabular-nums">
+            <div className="text-right font-numbers tabular-nums">
               {formatMoney(
                 Math.abs(existingAccount.sbankenClearedBalance - existingAccount.ynabClearedBalance)
               )}
             </div>
-            <div class="text-right italic">Ikke bokført</div>
-            <div class="text-right font-numbers tabular-nums">
+            <div className="text-right italic">Ikke bokført</div>
+            <div className="text-right font-numbers tabular-nums">
               {formatMoney(existingAccount.sbankenUnclearedBalance)}
             </div>
-            <div class="text-right font-numbers tabular-nums">
+            <div className="text-right font-numbers tabular-nums">
               {formatMoney(existingAccount.ynabUnclearedBalance)}
             </div>
-            <div class="text-right font-numbers tabular-nums">
+            <div className="text-right font-numbers tabular-nums">
               {formatMoney(
                 Math.abs(
                   existingAccount.sbankenUnclearedBalance - existingAccount.ynabUnclearedBalance
                 )
               )}
             </div>
-            <div class="text-right italic">Balanse</div>
-            <div class="text-right font-numbers tabular-nums">
+            <div className="text-right italic">Balanse</div>
+            <div className="text-right font-numbers tabular-nums">
               {formatMoney(existingAccount.sbankenWorkingBalance)}
             </div>
-            <div class="text-right font-numbers tabular-nums">
+            <div className="text-right font-numbers tabular-nums">
               {formatMoney(existingAccount.ynabWorkingBalance)}
             </div>
-            <div class="text-right font-numbers tabular-nums">
+            <div className="text-right font-numbers tabular-nums">
               {formatMoney(
                 Math.abs(existingAccount.sbankenWorkingBalance - existingAccount.ynabWorkingBalance)
               )}

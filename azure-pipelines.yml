@@ -1,6 +1,3 @@
-variables:
-  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
-
 jobs:
   - job: frontend
     displayName: Build frontend
@@ -14,7 +11,7 @@ jobs:
         inputs:
           version: 18.x
 
-      - script: yarn --immutable
+      - script: yarn --immutable --immutable-cache --check-cache
         displayName: Install dependencies
 
       - script: yarn lint-ci

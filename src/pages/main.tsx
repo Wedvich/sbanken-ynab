@@ -21,18 +21,18 @@ export function MainPage() {
   const hasLoadedAllAccounts = useSelector(getHasLoadedAllAccounts);
 
   return (
-    <div class="h-screen flex overflow-hidden">
-      <div class="fixed inset-0 flex z-40 md:hidden" role="dialog" aria-modal="true">
+    <div className="h-screen flex overflow-hidden">
+      <div className="fixed inset-0 flex z-40 md:hidden" role="dialog" aria-modal="true">
         {/* TODO: mobile sidebar */}
       </div>
-      <div class="hidden md:flex md:flex-shrink-0">
-        <div class="flex flex-col w-64">
-          <div class="flex flex-col h-0 flex-1 border-r border-gray-200 bg-white">
-            <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-              <div class="flex items-center flex-shrink-0 px-4">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Sbanken → YNAB</h3>
+      <div className="hidden md:flex md:flex-shrink-0">
+        <div className="flex flex-col w-64">
+          <div className="flex flex-col h-0 flex-1 border-r border-gray-200 bg-white">
+            <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+              <div className="flex items-center flex-shrink-0 px-4">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">Sbanken → YNAB</h3>
               </div>
-              <nav class="mt-5 flex-1 px-2 bg-white space-y-1">
+              <nav className="mt-5 flex-1 px-2 bg-white space-y-1">
                 {accounts.map((account) => {
                   return (
                     <NavLink
@@ -40,22 +40,22 @@ export function MainPage() {
                       className="flex-shrink-0 flex border-t border-gray-200 p-4"
                       to={`/accounts/${account.compositeId}`}
                     >
-                      <div class="flex-shrink-0 w-full group flex items-center justify-between">
-                        <div class="font-medium text-gray-700 group-hover:text-gray-900">
+                      <div className="flex-shrink-0 w-full group flex items-center justify-between">
+                        <div className="font-medium text-gray-700 group-hover:text-gray-900">
                           {account.name}
                         </div>
                         {hasLoadedAllAccounts ? (
-                          <div class="flex-grow-0 text-xs grid auto-cols-min grid-flow-col grid-rows-2 items-center gap-x-2">
-                            <div class="flex-shrink">S:</div>
-                            <div class="flex-shrink">Y:</div>
-                            <div class="text-right font-numbers tabular-nums">
+                          <div className="flex-grow-0 text-xs grid auto-cols-min grid-flow-col grid-rows-2 items-center gap-x-2">
+                            <div className="flex-shrink">S:</div>
+                            <div className="flex-shrink">Y:</div>
+                            <div className="text-right font-numbers tabular-nums">
                               {
                                 account.sbankenLinkOk
                                   ? formatMoney(account.sbankenWorkingBalance)
                                   : '?' /* TODO: Show error */
                               }
                             </div>
-                            <div class="text-right font-numbers tabular-nums">
+                            <div className="text-right font-numbers tabular-nums">
                               {
                                 account.ynabLinkOk
                                   ? formatMoney(account.ynabWorkingBalance)
@@ -64,7 +64,7 @@ export function MainPage() {
                             </div>
                           </div>
                         ) : (
-                          <div class="flex flex-grow-0 items-center h-8">Loading...</div>
+                          <div className="flex flex-grow-0 items-center h-8">Loading...</div>
                         )}
                       </div>
                     </NavLink>
@@ -76,15 +76,15 @@ export function MainPage() {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="text-gray-400 group-hover:text-gray-500 mr-3 flex-shrink-0 h-6 w-6"
+                    className="text-gray-400 group-hover:text-gray-500 mr-3 flex-shrink-0 h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
@@ -95,12 +95,12 @@ export function MainPage() {
           </div>
         </div>
       </div>
-      <div class="flex flex-col w-0 flex-1 overflow-hidden">
-        <div class="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
-          <button class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
-            <span class="sr-only">Open sidebar</span>
+      <div className="flex flex-col w-0 flex-1 overflow-hidden">
+        <div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
+          <button className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+            <span className="sr-only">Open sidebar</span>
             <svg
-              class="h-6 w-6"
+              className="h-6 w-6"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -108,15 +108,15 @@ export function MainPage() {
               aria-hidden="true"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 d="M4 6h16M4 12h16M4 18h16"
               />
             </svg>
           </button>
         </div>
-        <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
+        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
           <Routes>
             <Route path="accounts/:accountId/edit" element={<AccountEditor />} />
             <Route path="accounts/new" element={<AccountEditor />} />

@@ -1,10 +1,10 @@
-/** @jest-environment jsdom */
-const setItemSpy = jest.spyOn(Storage.prototype, 'setItem');
+/** @vitest-environment jsdom */
+const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
 
 import { ACCOUNTS_STORAGE_KEY, SBANKEN_CREDENTIALS_KEY, YNAB_BUDGET_KEY } from './storage';
 
 beforeEach(() => {
-  jest.resetModules();
+  vi.resetModules();
   localStorage.clear();
 });
 

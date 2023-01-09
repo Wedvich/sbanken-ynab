@@ -4,7 +4,7 @@ import { useState, useEffect } from 'preact/hooks';
 import { CACHE_KEY_PREFIX, ServiceWorkerActionTypes } from './constants';
 
 export default function ServiceWorkerManager() {
-  const [updatedWorker, setUpdatedWorker] = useState<ServiceWorker>(undefined);
+  const [updatedWorker, setUpdatedWorker] = useState<ServiceWorker | undefined>();
 
   useEffect(() => {
     const trackInstalling = (worker: ServiceWorker) => {
@@ -49,7 +49,7 @@ export default function ServiceWorkerManager() {
         }
 
         registration.addEventListener('updatefound', () => {
-          trackInstalling(registration.installing);
+          registration.installing && trackInstalling(registration.installing);
         });
       });
 

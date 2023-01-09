@@ -120,21 +120,21 @@ export default function AccountEditor() {
 
   return (
     <FocusTrap className="py-6">
-      <form class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8" onSubmit={handleSave}>
-        <h1 class="text-2xl font-semibold text-gray-900">
+      <form className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8" onSubmit={handleSave}>
+        <h1 className="text-2xl font-semibold text-gray-900">
           {existingAccount?.name ?? 'Legg til ny konto'}
         </h1>
-        <fieldset class="mt-6">
-          <label htmlFor="account-name" class="font-medium text-gray-900">
+        <fieldset className="mt-6">
+          <label htmlFor="account-name" className="font-medium text-gray-900">
             Navn
           </label>
-          <div class="mt-4 space-y-4">
+          <div className="mt-4 space-y-4">
             <input
               type="text"
               name="account-name"
               id="account-name"
               autoComplete="off"
-              class="shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full border-gray-300 rounded-md"
+              className="shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full border-gray-300 rounded-md"
               value={account?.name ?? ''}
               onChange={(e: Event) =>
                 handleUpdate({
@@ -144,20 +144,20 @@ export default function AccountEditor() {
             />
           </div>
         </fieldset>
-        <fieldset class="mt-6">
-          <legend class="font-medium text-gray-900">Velg Sbanken-konto</legend>
-          <div class="mt-4 space-y-4">
+        <fieldset className="mt-6">
+          <legend className="font-medium text-gray-900">Velg Sbanken-konto</legend>
+          <div className="mt-4 space-y-4">
             {sbankenAccounts.map((sbankenAccount) => {
               const disabled =
                 existingAccount?.sbankenAccountId !== sbankenAccount.accountId &&
                 disabledSbankenAccounts.has(sbankenAccount.accountId);
               return (
-                <div key={sbankenAccount.accountId} class="flex items-center">
+                <div key={sbankenAccount.accountId} className="flex items-center">
                   <input
                     id={`sbanken-account-${sbankenAccount.accountId}`}
                     name="sbanken-account"
                     type="radio"
-                    class="focus:ring-pink-500 h-4 w-4 text-pink-600 border-gray-300 disabled:opacity-50"
+                    className="focus:ring-pink-500 h-4 w-4 text-pink-600 border-gray-300 disabled:opacity-50"
                     disabled={disabled}
                     checked={account.sbankenAccountId === sbankenAccount.accountId}
                     value={sbankenAccount.accountId}
@@ -165,7 +165,7 @@ export default function AccountEditor() {
                   />
                   <label
                     htmlFor={`sbanken-account-${sbankenAccount.accountId}`}
-                    class={classNames('ml-3 block font-medium text-gray-700 ', {
+                    className={classNames('ml-3 block font-medium text-gray-700 ', {
                       'text-gray-300': disabled,
                     })}
                   >
@@ -176,25 +176,25 @@ export default function AccountEditor() {
             })}
           </div>
         </fieldset>
-        <fieldset class="mt-6">
+        <fieldset className="mt-6">
           <div>
-            <legend class="font-medium text-gray-900">Velg YNAB-konto</legend>
-            <p class="text-sm text-gray-500">
+            <legend className="font-medium text-gray-900">Velg YNAB-konto</legend>
+            <p className="text-sm text-gray-500">
               Kun åpne budsjettkontoer (ikke tracking eller lukkede)
             </p>
           </div>
-          <div class="mt-4 space-y-4">
+          <div className="mt-4 space-y-4">
             {ynabAccounts.map((ynabAccount) => {
               const disabled =
                 existingAccount?.ynabAccountId !== ynabAccount.id &&
                 disabledYnabAccounts.has(ynabAccount.id);
               return (
-                <div key={ynabAccount.id} class="flex items-center">
+                <div key={ynabAccount.id} className="flex items-center">
                   <input
                     id={`ynab-account-${ynabAccount.id}`}
                     name="ynab-account"
                     type="radio"
-                    class="focus:ring-pink-500 h-4 w-4 text-pink-600 border-gray-300 disabled:opacity-50"
+                    className="focus:ring-pink-500 h-4 w-4 text-pink-600 border-gray-300 disabled:opacity-50"
                     disabled={disabled}
                     checked={account.ynabAccountId === ynabAccount.id}
                     value={ynabAccount.id}
@@ -202,7 +202,7 @@ export default function AccountEditor() {
                   />
                   <label
                     htmlFor={`ynab-account-${ynabAccount.id}`}
-                    class={classNames('ml-3 block font-medium text-gray-700 ', {
+                    className={classNames('ml-3 block font-medium text-gray-700 ', {
                       'text-gray-300': disabled,
                     })}
                   >
@@ -213,7 +213,7 @@ export default function AccountEditor() {
             })}
           </div>
         </fieldset>
-        <div class="mt-6 space-x-4">
+        <div className="mt-6 space-x-4">
           <Button
             type="submit"
             className="border-transparent  text-white bg-pink-600 hover:bg-pink-700 focus:ring-pink-500 disabled:opacity-50"

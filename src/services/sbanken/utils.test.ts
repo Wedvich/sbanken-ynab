@@ -4,7 +4,7 @@ import * as utils from './utils';
 
 LuxonSettings.defaultZone = 'utc';
 
-describe(nameof(utils.inferDate), () => {
+describe('inferDate', () => {
   it('returns undefined if the text is empty', () => {
     const transaction = {
       accountingDate: '2022-01-17T00:00:00',
