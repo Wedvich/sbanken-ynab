@@ -42,13 +42,6 @@ const createBaseConfig = () => ({
         ],
       },
       {
-        test: /\.svg$/i,
-        loader: require.resolve('svg-inline-loader'),
-        options: {
-          removeTags: true,
-        },
-      },
-      {
         test: /\.woff$/i,
         type: 'asset/resource',
       },
