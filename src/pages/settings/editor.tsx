@@ -194,7 +194,7 @@ export const YnabTokenEditor = ({
                   size={!token ? 'lg' : undefined}
                   importance={!tokens.length ? 'primary' : !token ? 'secondary' : undefined}
                 >
-                  {token ? 'Endre' : !tokens.length ? 'Legg til token' : 'Legg til ny token'}
+                  {token ? 'Endre' : !tokens.length ? 'Legg til token' : 'Legg til nytt token'}
                 </Button>
                 {!!token && (
                   <Button key="remove" className="w-full" onClick={handleDelete}>
