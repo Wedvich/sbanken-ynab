@@ -8,11 +8,12 @@ import {
   EntityState,
   createSelector,
 } from '@reduxjs/toolkit';
+import memoize from 'lodash-es/memoize';
 import { ynabApiBaseUrl } from '../config';
 import type { RootState } from '.';
 import { YNAB_TOKENS_KEY, YNAB_BUDGET_KEY } from './storage';
 import { startAppListening } from './listener';
-import { fetchInitialData, RequestStatus } from '../utils';
+import { fetchInitialData, RequestStatus, stripEmojis } from '../utils';
 import { DateTime } from 'luxon';
 
 interface YnabAccount {
@@ -115,22 +116,24 @@ export const getYnabTokens = (state: RootState) => state.ynab.tokens;
 export const getYnabBudgetsRequestStatus = (state: RootState) => state.ynab.requestStatusByToken;
 export const getIncludedBudgets = (state: RootState) => state.ynab.includedBudgets;
 
-export const getYnabBudgets = createSelector(
-  budgetsAdapter.getSelectors((state: RootState) => state.ynab.budgets).selectAll,
-  (budgets) => {
-    return budgets.sort(
-      (a, b) => +DateTime.fromISO(b.last_modified_on) - +DateTime.fromISO(a.last_modified_on)
-    );
-  }
-);
+const budgetSelectors = budgetsAdapter.getSelectors((state: RootState) => state.ynab.budgets);
+
+export const getYnabBudgets = createSelector(budgetSelectors.selectAll, (budgets) => {
+  return budgets.sort(
+    (a, b) => +DateTime.fromISO(b.last_modified_on) - +DateTime.fromISO(a.last_modified_on)
+  );
+});
+
+export const getYnabBudgetsMap = budgetSelectors.selectEntities;
 
 export const getYnabAccounts = createSelector(
   accountsAdapter.getSelectors((state: RootState) => state.ynab.accounts).selectAll,
   getIncludedBudgets,
   (accounts, includedBudgets) => {
+    const prepareName = memoize((name: string) => stripEmojis(name).trim());
     return accounts
       .filter((account) => !account.deleted && includedBudgets.includes(account.budget_id))
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => prepareName(a.name).localeCompare(prepareName(b.name)));
   }
 );
 

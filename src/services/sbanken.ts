@@ -7,11 +7,12 @@ import {
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
+import memoize from 'lodash-es/memoize';
 import type { RootState } from '.';
 import { sbankenApiBaseUrl, sbankenIdentityServerUrl } from '../config';
 import { SBANKEN_CREDENTIALS_KEY } from './storage';
 import { startAppListening } from './listener';
-import { fetchInitialData, RequestStatus } from '../utils';
+import { fetchInitialData, RequestStatus, stripEmojis } from '../utils';
 
 interface SbankenToken {
   value: string;
@@ -107,9 +108,6 @@ export interface SbankenAccountWithClientId extends SbankenAccount {
   clientId: string;
 }
 
-export const getSbankenAccounts = accountsAdapter.getSelectors(
-  (state: RootState) => state.sbanken.accounts
-).selectAll;
 export const getSbankenCredentials = credentialsAdapter.getSelectors(
   (state: RootState) => state.sbanken.credentials
 ).selectAll;
@@ -117,6 +115,14 @@ export const getSbankenTokenRequestStatus = (state: RootState) =>
   state.sbanken.requestStatusByCredentialId;
 export const getExpiredCredentials = createSelector(getSbankenCredentials, (credentials) =>
   credentials.filter((credential) => !validateSbankenToken(credential.token))
+);
+
+export const getSbankenAccounts = createSelector(
+  accountsAdapter.getSelectors((state: RootState) => state.sbanken.accounts).selectAll,
+  (accounts) => {
+    const prepareName = memoize((name: string) => stripEmojis(name).trim());
+    return accounts.sort((a, b) => prepareName(a.name).localeCompare(prepareName(b.name)));
+  }
 );
 
 export const sbankenSlice = createSlice({
