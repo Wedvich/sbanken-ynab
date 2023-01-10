@@ -26,11 +26,11 @@ jobs:
       - script: yarn test-ci
         displayName: Run tests
 
-      - task: PublishTestResults@2
-        displayName: Publish test results
-        continueOnError: true
-        inputs:
-          testResultsFiles: junit.xml
+      # - task: PublishTestResults@2
+      #   displayName: Publish test results
+      #   continueOnError: true
+      #   inputs:
+      #     testResultsFiles: junit.xml
 
       - task: PublishCodeCoverageResults@1
         displayName: Publish test coverage

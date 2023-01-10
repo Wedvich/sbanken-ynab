@@ -5,7 +5,7 @@ import { execSync } from 'child_process';
 
 const revision = execSync('git rev-parse HEAD').toString().trim().slice(0, 7);
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   appType: 'spa',
   build: {
     assetsDir: '.',
@@ -22,6 +22,9 @@ export default defineConfig(() => ({
   plugins: [
     preact({
       devtoolsInProd: true,
+      babel: {
+        plugins: mode === 'development' ? ['@babel/plugin-transform-react-jsx-source'] : [],
+      },
     }),
     viteStaticCopy({
       targets: [
@@ -41,6 +44,7 @@ export default defineConfig(() => ({
     }),
   ],
   server: {
+    open: true,
     port: 8000,
     strictPort: true,
   },
@@ -49,5 +53,10 @@ export default defineConfig(() => ({
       interopDefault: true,
     },
     globals: true,
+    coverage: {
+      all: true,
+      reporter: ['text', 'lcov'],
+      src: ['src'],
+    },
   },
 }));

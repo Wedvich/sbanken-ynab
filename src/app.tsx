@@ -11,7 +11,7 @@ import { getYnabTokens } from './services/ynab';
 import { useAppSelector } from './services';
 import { useState } from 'preact/hooks';
 import { AccountEditor } from './pages/account-editor';
-import { TransactionsPage } from './pages/transactions';
+import { TransactionsPage } from './pages/account-transactions';
 
 export const App = () => {
   const dispatch = useDispatch();

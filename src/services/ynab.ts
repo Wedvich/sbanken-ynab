@@ -15,96 +15,12 @@ import { YNAB_TOKENS_KEY, YNAB_BUDGET_KEY } from './storage';
 import { startAppListening } from './listener';
 import { fetchInitialData, RequestStatus, stripEmojis } from '../utils';
 import { DateTime } from 'luxon';
-
-interface YnabAccount {
-  id: string;
-  name: string;
-  type: string;
-  on_budget: boolean;
-  closed: boolean;
-  note: string;
-  balance: number;
-  cleared_balance: number;
-  uncleared_balance: number;
-  transfer_payee_id: string;
-  direct_import_linked: boolean;
-  direct_import_in_error: boolean;
-  deleted: boolean;
-}
-
-interface YnabAccountWithBudgetId extends YnabAccount {
-  budget_id: string;
-}
-
-export interface YnabTransaction {
-  id: string;
-  date: string;
-  amount: number;
-  memo: string;
-  cleared: string;
-  approved: boolean;
-  flag_color: string;
-  account_id: string;
-  payee_id: string;
-  category_id: string;
-  transfer_account_id: string;
-  transfer_transaction_id: string;
-  matched_transaction_id: string;
-  import_id: string;
-  deleted: boolean;
-  account_name: string;
-  payee_name: string;
-  category_name: string;
-  subtransactions: Array<{
-    id: string;
-    transaction_id: string;
-    amount: number;
-    memo: string;
-    payee_id: string;
-    payee_name: string;
-    category_id: string;
-    category_name: string;
-    transfer_account_id: string;
-    transfer_transaction_id: string;
-    deleted: boolean;
-  }>;
-  _checksum?: number;
-}
-
-interface YnabBudget {
-  id: string;
-  name: string;
-  last_modified_on: string;
-  first_month: string;
-  last_month: string;
-  date_format: {
-    format: string;
-  };
-  currency_format: {
-    iso_code: string;
-    example_format: string;
-    decimal_digits: number;
-    decimal_separator: string;
-    symbol_first: boolean;
-    group_separator: string;
-    currency_symbol: string;
-    display_symbol: boolean;
-  };
-}
-
-interface YnabBudgetWithAccounts extends YnabBudget {
-  accounts: Array<YnabAccount>;
-}
-
-interface YnabBudgetsResponse {
-  budgets: Array<YnabBudgetWithAccounts>;
-  default_budget: string | null;
-}
-
-interface YnabRateLimit {
-  limit: number;
-  maxLimit: number;
-}
+import type {
+  YnabBudget,
+  YnabAccountWithBudgetId,
+  YnabRateLimit,
+  YnabBudgetsResponse,
+} from './ynab.types';
 
 const budgetsAdapter = createEntityAdapter<YnabBudget>({
   selectId: (budget) => budget.id,
@@ -142,6 +58,18 @@ export const getYnabAccounts = createSelector(
 );
 
 export const getYnabAccountsLookup = accountsSelectors.selectEntities;
+
+export const getYnabAccountLoadingStateById = createSelector(
+  (_: RootState, id: string) => id,
+  getYnabAccountsLookup,
+  getYnabBudgetsRequestStatus,
+  (id, accountsLookup, budgetStatuses) => {
+    const account = accountsLookup[id];
+    if (!account) return;
+
+    return budgetStatuses[account.budget_id];
+  }
+);
 
 export interface YnabState {
   accounts: EntityState<YnabAccountWithBudgetId>;
@@ -293,7 +221,7 @@ export const fetchBudgetsAndAccounts = createAsyncThunk<YnabBudgetsResponse, str
   }
 );
 
-/** Stores changes to tokens in localStorage */
+/** Stores changes to tokens in localStorage. */
 startAppListening({
   matcher: isAnyOf(ynabSlice.actions.saveToken.match, ynabSlice.actions.deleteToken.match),
   effect: async (action, { dispatch, getState }) => {
@@ -309,7 +237,7 @@ startAppListening({
   },
 });
 
-/** Stores changes to included budgets in localStorage */
+/** Stores changes to included budgets in localStorage. */
 startAppListening({
   actionCreator: ynabSlice.actions.toggleBudget,
   effect: (_, { getState }) => {
@@ -318,7 +246,7 @@ startAppListening({
   },
 });
 
-/** Loads all existing budgets and accounts on app initialization */
+/** Loads all existing budgets and accounts on app initialization. */
 startAppListening({
   actionCreator: fetchInitialData,
   effect: async (_, { dispatch, getState }) => {

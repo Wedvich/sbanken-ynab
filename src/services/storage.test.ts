@@ -1,7 +1,12 @@
 /** @vitest-environment jsdom */
 const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
 
-import { ACCOUNTS_STORAGE_KEY, SBANKEN_CREDENTIALS_KEY, YNAB_BUDGET_KEY } from './storage';
+import {
+  ACCOUNTS_STORAGE_KEY,
+  SBANKEN_CREDENTIALS_KEY,
+  STORAGE_VERSION_KEY,
+  YNAB_BUDGET_KEY,
+} from './storage';
 
 beforeEach(() => {
   vi.resetModules();
@@ -31,6 +36,17 @@ describe('migrateSingleYnabBudget', () => {
     await import('./storage');
 
     expect(setItemSpy).toHaveBeenCalledWith(YNAB_BUDGET_KEY, JSON.stringify(['a']));
+  });
+
+  it('should not migrate if storage version is equal or greater', async () => {
+    localStorage.setItem(YNAB_BUDGET_KEY, 'a');
+    localStorage.setItem('accounts', JSON.stringify([{ ynabAccountId: 'b' }]));
+    localStorage.setItem(STORAGE_VERSION_KEY, '1');
+    setItemSpy.mockClear();
+
+    await import('./storage');
+
+    expect(setItemSpy).not.toHaveBeenCalledWith(YNAB_BUDGET_KEY, expect.anything());
   });
 
   it('should migrate linked accounts', async () => {
@@ -89,6 +105,17 @@ describe('migrateSingleSbankenAccount', () => {
 
   it('should not migrate if there are no accounts', async () => {
     localStorage.setItem(SBANKEN_CREDENTIALS_KEY, JSON.stringify([{}]));
+    setItemSpy.mockClear();
+
+    await import('./storage');
+
+    expect(setItemSpy).not.toHaveBeenCalledWith(ACCOUNTS_STORAGE_KEY, expect.anything());
+  });
+
+  it('should not migrate if storage version is equal or greater', async () => {
+    localStorage.setItem(ACCOUNTS_STORAGE_KEY, JSON.stringify([{ sbankenAccountId: 'a' }]));
+    localStorage.setItem(SBANKEN_CREDENTIALS_KEY, JSON.stringify([{ clientId: 'b' }]));
+    localStorage.setItem(STORAGE_VERSION_KEY, '1');
     setItemSpy.mockClear();
 
     await import('./storage');

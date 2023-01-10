@@ -58,7 +58,10 @@ export function getSbankenUnclearedBalance(sbankenAccount?: SbankenAccount): num
   if (!sbankenAccount) return 0;
 
   if (sbankenAccount.accountType === 'Creditcard account') {
-    return -sbankenAccount.balance - (sbankenAccount.creditLimit - sbankenAccount.available);
+    return +(
+      -sbankenAccount.balance -
+      (sbankenAccount.creditLimit - sbankenAccount.available)
+    ).toFixed(2);
   }
 
   return sbankenAccount.available - sbankenAccount.balance;
@@ -262,7 +265,7 @@ export const fetchSbankenAccounts = createAsyncThunk<
   return responseData.items.map((account) => ({ ...account, clientId: credential.clientId }));
 });
 
-/** Stores changes to credentials in localStorage */
+/** Stores changes to credentials in localStorage. */
 startAppListening({
   matcher: isAnyOf(saveCredential.match, deleteCredential.match, fetchSbankenToken.fulfilled.match),
   effect: async (action, { dispatch, getState }) => {
@@ -279,7 +282,7 @@ startAppListening({
   },
 });
 
-/** Reloads all expired tokens on app initialization */
+/** Reloads all expired tokens on app initialization, and then accounts for all valid tokens. */
 startAppListening({
   actionCreator: fetchInitialData,
   effect: async (_, { dispatch, getState }) => {
