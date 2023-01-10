@@ -3,7 +3,7 @@ import { accountsSlice } from './accounts';
 import { sbankenSlice } from './sbanken';
 import { ynabSlice } from './ynab';
 import sbankenApi from './sbanken/api';
-import ynabApi from './ynab/api';
+import { ynabApi } from './ynab.api';
 import { listenerMiddleware } from './listener';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 

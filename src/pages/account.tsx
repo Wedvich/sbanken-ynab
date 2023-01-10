@@ -5,6 +5,8 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Button from '../components/button';
 import { useAppSelector } from '../services';
 import { getEnrichedAccountById } from '../services/accounts';
+import { ynabApi } from '../services/ynab.api';
+import type { YnabGetTransactionsRequest } from '../services/ynab.types';
 import { formatMoney } from '../utils';
 
 export const AccountPage = () => {
@@ -12,6 +14,13 @@ export const AccountPage = () => {
   const navigate = useNavigate();
 
   const account = useAppSelector((state) => getEnrichedAccountById(state, accountId));
+
+  const request: YnabGetTransactionsRequest = {
+    budgetId: account?.ynabBudgetId ?? '',
+    fromDate: '2023-01-01',
+  };
+
+  // const { data } = ynabApi.useGetTransactionsQuery(request, { skip: !account });
 
   const sums = useMemo(() => {
     if (!account) return;
@@ -127,6 +136,7 @@ export const AccountPage = () => {
               );
             })}
           </dl>
+          <div className="mt-4">transactions</div>
         </div>
       </div>
     </div>

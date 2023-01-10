@@ -19,8 +19,9 @@ import type {
   YnabBudget,
   YnabAccountWithBudgetId,
   YnabRateLimit,
-  YnabBudgetsResponse,
+  YnabGetBudgetsResponse,
 } from './ynab.types';
+import { ynabApi } from './ynab.api';
 
 const budgetsAdapter = createEntityAdapter<YnabBudget>({
   selectId: (budget) => budget.id,
@@ -77,6 +78,7 @@ export interface YnabState {
   includedBudgets: Array<string>;
   rateLimitByToken: Record<string, YnabRateLimit | undefined>;
   requestStatusByToken: Record<string, RequestStatus | undefined>;
+  serverKnowledgeByToken: Record<string, number | undefined>;
   tokens: Array<string>;
   tokensByBudgetId: Record<string, Array<string>>;
 }
@@ -97,6 +99,7 @@ const initialState: YnabState = {
   includedBudgets: getStoredBudgets(),
   rateLimitByToken: {},
   requestStatusByToken: {},
+  serverKnowledgeByToken: {},
   tokens: getStoredTokens(),
   tokensByBudgetId: {},
 };
@@ -181,12 +184,14 @@ export const ynabSlice = createSlice({
       budgetsAdapter.setMany(state.budgets, budgets);
       accountsAdapter.setMany(state.accounts, allAccounts);
     });
+
+    builder.addMatcher(ynabApi.endpoints.getTransactions.matchFulfilled, (state, action) => {});
   },
 });
 
 export const { deleteToken, saveToken, toggleBudget } = ynabSlice.actions;
 
-export const fetchBudgetsAndAccounts = createAsyncThunk<YnabBudgetsResponse, string>(
+export const fetchBudgetsAndAccounts = createAsyncThunk<YnabGetBudgetsResponse, string>(
   `${ynabSlice.name}/fetchBudgetsAndAccounts`,
   async (token, { dispatch }) => {
     const response = await fetch(`${ynabApiBaseUrl}/budgets?include_accounts=true`, {

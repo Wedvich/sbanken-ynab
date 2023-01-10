@@ -78,7 +78,7 @@ export interface YnabBudgetWithAccounts extends YnabBudget {
   accounts: Array<YnabAccount>;
 }
 
-export interface YnabBudgetsResponse {
+export interface YnabGetBudgetsResponse {
   budgets: Array<YnabBudgetWithAccounts>;
   default_budget: string | null;
 }
@@ -86,4 +86,15 @@ export interface YnabBudgetsResponse {
 export interface YnabRateLimit {
   limit: number;
   maxLimit: number;
+}
+
+export interface YnabGetTransactionsRequest {
+  budgetId: string;
+  fromDate: string;
+  serverKnowledge?: number;
+}
+
+export interface YnabGetTransactionsResponse {
+  server_knowledge: number;
+  transactions: Array<YnabTransaction>;
 }
