@@ -1,8 +1,6 @@
-import forms from '@tailwindcss/forms';
-
-export default {
+module.exports = {
   content: ['index.html', './src/**/*.{ts,tsx}'],
-  plugins: [forms()],
+  plugins: [require('@tailwindcss/forms')],
   theme: {
     fontFamily: {
       body: ['Kulim Park'],

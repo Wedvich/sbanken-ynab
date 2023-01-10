@@ -57,13 +57,15 @@ export const getEnrichedAccounts = createSelector(
         ...linkedAccount,
         compositeId: createCompositeAccountId(linkedAccount),
         sbankenLinkOk: !!sbankenAccount,
-        sbankenClearedBalance: sbankenAccount?.balance ?? 0,
+        sbankenClearedBalance: +(sbankenAccount?.balance ?? 0).toFixed(2),
         sbankenUnclearedBalance,
-        sbankenWorkingBalance: (sbankenAccount?.balance ?? 0) + sbankenUnclearedBalance,
+        sbankenWorkingBalance: +((sbankenAccount?.balance ?? 0) + sbankenUnclearedBalance).toFixed(
+          2
+        ),
         ynabLinkOk: !!ynabAccount,
-        ynabClearedBalance: (ynabAccount?.cleared_balance ?? 0) / 1000,
-        ynabUnclearedBalance: (ynabAccount?.uncleared_balance ?? 0) / 1000,
-        ynabWorkingBalance: (ynabAccount?.balance ?? 0) / 1000,
+        ynabClearedBalance: +((ynabAccount?.cleared_balance ?? 0) / 1000).toFixed(2),
+        ynabUnclearedBalance: +((ynabAccount?.uncleared_balance ?? 0) / 1000).toFixed(2),
+        ynabWorkingBalance: +((ynabAccount?.balance ?? 0) / 1000).toFixed(2),
       };
 
       linkedAccounts.push(enrichedAccount);
@@ -146,6 +148,9 @@ export const accountsSlice = createSlice({
     deleteAccount(state, action: PayloadAction<string>) {
       accountsAdapter.removeOne(state, action.payload);
     },
+    reorderAccounts(state, action: PayloadAction<Array<string>>) {
+      state.ids = action.payload;
+    },
   },
   extraReducers: () => {
     // builder.addCase(fetchAllSbankenAccounts.fulfilled, (state) => {
@@ -165,9 +170,9 @@ export const accountsSlice = createSlice({
 
 // export const { putAccount, removeAccount, setRange } = accountsSlice.actions;
 
-export const { deleteAccount, saveAccount } = accountsSlice.actions;
+export const { deleteAccount, reorderAccounts, saveAccount } = accountsSlice.actions;
 
-const matcher = isAnyOf(deleteAccount, saveAccount);
+const matcher = isAnyOf(deleteAccount, saveAccount, reorderAccounts);
 startAppListening({
   matcher,
   effect: (_, { getState }) => {

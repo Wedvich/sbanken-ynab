@@ -1,10 +1,12 @@
 import { h, Fragment } from 'preact';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import { Link, NavLink } from 'react-router-dom';
 import classNames from 'classnames';
-import { useAppSelector } from '../services';
+import { produce } from 'immer';
+import { useAppDispatch, useAppSelector } from '../services';
 import { getSbankenCredentials } from '../services/sbanken';
 import { getYnabTokens } from '../services/ynab';
-import { getEnrichedAccounts } from '../services/accounts';
+import { getEnrichedAccounts, reorderAccounts } from '../services/accounts';
 import { useSelector } from 'react-redux';
 import { AccountCard } from './account-card';
 
@@ -16,8 +18,28 @@ export const Sidebar = ({ className }: SidebarProps) => {
   const ynabTokensCount = useAppSelector((s) => getYnabTokens(s).length);
   const sbankenCredentialsCount = useAppSelector((s) => getSbankenCredentials(s).length);
   const accounts = useSelector(getEnrichedAccounts);
+  const dispatch = useAppDispatch();
 
   const hasValidConfiguration = ynabTokensCount > 0 && sbankenCredentialsCount > 0;
+
+  const [orderedAccounts, setOrderedAccounts] = useState(accounts);
+  useEffect(() => {
+    setOrderedAccounts(accounts);
+  }, [accounts]);
+
+  const onMoveCard = useCallback((dragIndex: number, hoverIndex: number) => {
+    setOrderedAccounts((prevOrderedAccounts) => {
+      return produce(prevOrderedAccounts, (draft) => {
+        const t = draft[hoverIndex];
+        draft[hoverIndex] = draft[dragIndex];
+        draft[dragIndex] = t;
+      });
+    });
+  }, []);
+
+  const onDropCard = useCallback(() => {
+    dispatch(reorderAccounts(orderedAccounts.map((a) => a.compositeId)));
+  }, [dispatch, orderedAccounts]);
 
   return (
     <Fragment>
@@ -50,8 +72,16 @@ export const Sidebar = ({ className }: SidebarProps) => {
             </svg>
             Alle kontoer
           </NavLink>
-          {accounts.map((account) => {
-            return <AccountCard inSidebar key={account.compositeId} account={account} />;
+          {orderedAccounts.map((account, index) => {
+            return (
+              <AccountCard
+                key={account.compositeId}
+                account={account}
+                index={index}
+                onMove={onMoveCard}
+                onDrop={onDropCard}
+              />
+            );
           })}
           {hasValidConfiguration && (
             <NavLink

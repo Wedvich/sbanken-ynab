@@ -11,7 +11,7 @@ import { getYnabTokens } from './services/ynab';
 import { useAppSelector } from './services';
 import { useState } from 'preact/hooks';
 import { AccountEditor } from './pages/account-editor';
-import { TransactionsPage } from './pages/account-transactions';
+import { AccountPage } from './pages/account';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -27,7 +27,7 @@ export const App = () => {
         <Route path="kontoer/*" element={<Outlet />}>
           <Route index element={<AccountsPage />} />
           <Route path="ny" element={<AccountEditor />} />
-          <Route path=":accountId" element={<TransactionsPage />} />
+          <Route path=":accountId" element={<AccountPage />} />
           <Route path=":accountId/endre" element={<AccountEditor />} />
         </Route>
         <Route path="innstillinger" element={<Settings />} />

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { execSync } from 'child_process';
 
 const revision = execSync('git rev-parse HEAD').toString().trim().slice(0, 7);
@@ -42,6 +43,7 @@ export default defineConfig(({ mode }) => ({
         },
       ],
     }),
+    visualizer(),
   ],
   server: {
     open: true,

@@ -1,8 +1,10 @@
 import 'preact/debug';
 import { Fragment, h, render } from 'preact';
+import { Provider } from 'react-redux';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { App } from './app';
-import { Provider } from 'react-redux';
 import { store } from './services';
 import ServiceWorkerManager from './service-worker/manager';
 
@@ -26,7 +28,9 @@ const router = createBrowserRouter([
 if (appElement) {
   render(
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <DndProvider backend={HTML5Backend}>
+        <RouterProvider router={router} />
+      </DndProvider>
     </Provider>,
     appElement
   );

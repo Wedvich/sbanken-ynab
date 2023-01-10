@@ -128,7 +128,9 @@ export const AccountEditor = () => {
     <div className="py-10">
       <div className="max-w-5xl">
         <div className="px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-semibold text-gray-900">Legg til ny konto</h1>
+          <h1 className="text-3xl font-semibold text-gray-900">
+            {existingAccount ? 'Endre konto' : 'Legg til ny konto'}
+          </h1>
           <FocusTrap as="form" onSubmit={handleSave}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -168,7 +170,10 @@ export const AccountEditor = () => {
                               value={account.id}
                               checked={ynabAccountId === account.id}
                               onChange={handleSetYnabAccountId}
-                              disabled={disabledYnabAccounts.has(account.id)}
+                              disabled={
+                                disabledYnabAccounts.has(account.id) &&
+                                existingAccount?.ynabAccountId !== account.id
+                              }
                             />
                           </span>
                           <span className="block ml-3 text-sm">
@@ -205,7 +210,10 @@ export const AccountEditor = () => {
                               value={account.accountId}
                               checked={sbankenAccountId === account.accountId}
                               onChange={handleSetSbankenAccountId}
-                              disabled={disabledSbankenAccounts.has(account.accountId)}
+                              disabled={
+                                disabledSbankenAccounts.has(account.accountId) &&
+                                existingAccount?.sbankenAccountId !== account.accountId
+                              }
                             />
                           </span>
                           <span className="block ml-3 text-sm">

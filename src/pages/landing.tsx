@@ -29,7 +29,7 @@ export function LandingPage(props: { onNavigate: () => void }) {
           </p>
           <p className="mt-8 text-lg text-gray-600 leading-8">
             Denne appen gir deg et visuelt grensesnitt for å overføre transaksjoner fra Sbanken til
-            YNAB og holde kontoene ajour.
+            YNAB og holde kontoene à jour.
           </p>
           <p className="mt-8 text-lg text-gray-600 leading-8">
             Data lagres kun lokalt i nettleseren din, og ingenting sendes til serveren, som for

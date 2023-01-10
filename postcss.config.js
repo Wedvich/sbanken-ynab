@@ -1,6 +1,6 @@
 import postcssImport from 'postcss-import';
 import tailwind from 'tailwindcss';
-import tailwindConfig from './tailwind.config.js';
+import tailwindConfig from './tailwind.config.cjs';
 import postcssFlexbugsFixes from 'postcss-flexbugs-fixes';
 import postcssPresetEnv from 'postcss-preset-env';
 
