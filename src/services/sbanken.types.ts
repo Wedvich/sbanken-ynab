@@ -62,6 +62,7 @@ export type SbankenTransaction = SbankenTransactionBase &
 
 export type SbankenTransactionWithAccountId = SbankenTransaction & {
   accountId: string;
+  inferredDate?: string;
 };
 
 export interface SbankenGetTransactionsRequest {

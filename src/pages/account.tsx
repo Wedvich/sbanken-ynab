@@ -257,7 +257,7 @@ export const AccountPage = () => {
                   return (
                     <tr key={transaction.transactionId} className="hover:bg-gray-50">
                       <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-6 font-numbers">
-                        {transaction.accountingDate}
+                        {transaction.inferredDate || transaction.accountingDate}
                       </td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">
                         Sbanken

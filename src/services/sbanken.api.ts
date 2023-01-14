@@ -17,6 +17,7 @@ import type {
   SbankenTransaction,
   SbankenTransactionWithAccountId,
 } from './sbanken.types';
+import { inferDate } from './sbanken.utils';
 
 export const sbankenTransactionsAdapter = createEntityAdapter<SbankenTransactionWithAccountId>({
   selectId: (transaction) => transaction.transactionId,
@@ -92,16 +93,25 @@ export const { useGetTransactionsQuery } = sbankenApi.injectEndpoints({
           data: {
             transactions: sbankenTransactionsAdapter.setAll(
               sbankenTransactionsAdapter.getInitialState(),
-              data.items.map<SbankenTransactionWithAccountId>((transaction) => ({
-                ...transaction,
-                accountingDate: transaction.accountingDate
-                  ? DateTime.fromISO(transaction.accountingDate).toISODate()
-                  : transaction.accountingDate,
-                interestDate: transaction.interestDate
-                  ? DateTime.fromISO(transaction.interestDate).toISODate()
-                  : transaction.interestDate,
-                accountId,
-              }))
+              data.items.map<SbankenTransactionWithAccountId>((transaction) => {
+                const transformedTransaction: SbankenTransactionWithAccountId = {
+                  ...transaction,
+                  accountingDate: transaction.accountingDate
+                    ? DateTime.fromISO(transaction.accountingDate).toISODate()
+                    : transaction.accountingDate,
+                  interestDate: transaction.interestDate
+                    ? DateTime.fromISO(transaction.interestDate).toISODate()
+                    : transaction.interestDate,
+                  accountId,
+                };
+
+                const inferredDate = inferDate(transformedTransaction);
+                if (inferredDate !== transformedTransaction.accountingDate) {
+                  transformedTransaction.inferredDate = inferredDate;
+                }
+
+                return transformedTransaction;
+              })
             ),
           },
         };
