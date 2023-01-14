@@ -21,7 +21,6 @@ import type {
   YnabRateLimit,
   YnabGetBudgetsResponse,
 } from './ynab.types';
-import { ynabApi } from './ynab.api';
 
 const budgetsAdapter = createEntityAdapter<YnabBudget>({
   selectId: (budget) => budget.id,
@@ -72,13 +71,30 @@ export const getYnabAccountLoadingStateById = createSelector(
   }
 );
 
+export const getYnabKnowledgeByBudgetId = createSelector(
+  (_: RootState, id?: string) => id,
+  (state: RootState) => state.ynab.serverKnowledgeByBudgetId,
+  (id, serverKnowledgeByBudgetId) => {
+    if (!id) return;
+
+    return serverKnowledgeByBudgetId[id]?.latest;
+  }
+);
+
 export interface YnabState {
   accounts: EntityState<YnabAccountWithBudgetId>;
   budgets: EntityState<YnabBudget>;
   includedBudgets: Array<string>;
   rateLimitByToken: Record<string, YnabRateLimit | undefined>;
   requestStatusByToken: Record<string, RequestStatus | undefined>;
-  serverKnowledgeByToken: Record<string, number | undefined>;
+  serverKnowledgeByBudgetId: Record<
+    string,
+    | {
+        latest: number;
+        byEndpoint: Record<string, number | undefined>;
+      }
+    | undefined
+  >;
   tokens: Array<string>;
   tokensByBudgetId: Record<string, Array<string>>;
 }
@@ -99,7 +115,7 @@ const initialState: YnabState = {
   includedBudgets: getStoredBudgets(),
   rateLimitByToken: {},
   requestStatusByToken: {},
-  serverKnowledgeByToken: {},
+  serverKnowledgeByBudgetId: {},
   tokens: getStoredTokens(),
   tokensByBudgetId: {},
 };
@@ -150,6 +166,34 @@ export const ynabSlice = createSlice({
         state.includedBudgets.splice(index, 1);
       }
     },
+    setServerKnowledge(
+      state,
+      action: PayloadAction<{ budgetId: string; knowledge: number; endpoint?: string }>
+    ) {
+      const serverKnowledgeByBudgetId = (state.serverKnowledgeByBudgetId[
+        action.payload.budgetId
+      ] ??= {
+        latest: action.payload.knowledge,
+        byEndpoint: {},
+      });
+
+      serverKnowledgeByBudgetId.latest = Math.max(
+        serverKnowledgeByBudgetId.latest,
+        action.payload.knowledge
+      );
+
+      if (action.payload.endpoint) {
+        serverKnowledgeByBudgetId.byEndpoint[action.payload.endpoint] = Math.max(
+          serverKnowledgeByBudgetId.byEndpoint[action.payload.endpoint] ?? 0,
+          action.payload.knowledge
+        );
+      }
+    },
+    clearServerKnowledge(state, action: PayloadAction<{ budgetId: string; endpoint: string }>) {
+      delete state.serverKnowledgeByBudgetId[action.payload.budgetId]?.byEndpoint[
+        action.payload.endpoint
+      ];
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -184,8 +228,6 @@ export const ynabSlice = createSlice({
       budgetsAdapter.setMany(state.budgets, budgets);
       accountsAdapter.setMany(state.accounts, allAccounts);
     });
-
-    builder.addMatcher(ynabApi.endpoints.getTransactions.matchFulfilled, (state, action) => {});
   },
 });
 

@@ -9,7 +9,7 @@ import type { RootState } from '.';
 import { startAppListening } from './listener';
 import { getSbankenAccountsLookup, getSbankenUnclearedBalance } from './sbanken';
 import { ACCOUNTS_STORAGE_KEY } from './storage';
-import { getYnabAccountsLookup } from './ynab';
+import { getYnabAccountsLookup, getYnabBudgetsLookup } from './ynab';
 
 export interface LinkedAccount {
   name: string;
@@ -45,11 +45,17 @@ export const getLinkedAccounts = accountSelectors.selectAll;
 export const getLinkedAccountById = accountSelectors.selectById;
 
 export const getEnrichedAccounts = createSelector(
-  [getLinkedAccounts, getSbankenAccountsLookup, getYnabAccountsLookup],
-  (linkedAccounts, sbankenAccountsLookup, ynabAccountsLookup): ReadonlyArray<EnrichedAccount> => {
+  [getLinkedAccounts, getSbankenAccountsLookup, getYnabAccountsLookup, getYnabBudgetsLookup],
+  (
+    linkedAccounts,
+    sbankenAccountsLookup,
+    ynabAccountsLookup,
+    ynabBudgetsLookup
+  ): ReadonlyArray<EnrichedAccount> => {
     return linkedAccounts.reduce<Array<EnrichedAccount>>((linkedAccounts, linkedAccount) => {
       const sbankenAccount = sbankenAccountsLookup[linkedAccount.sbankenAccountId];
       const ynabAccount = ynabAccountsLookup[linkedAccount.ynabAccountId];
+      const ynabBudget = ynabBudgetsLookup[linkedAccount.ynabBudgetId];
 
       const sbankenUnclearedBalance = getSbankenUnclearedBalance(sbankenAccount);
 
@@ -62,7 +68,7 @@ export const getEnrichedAccounts = createSelector(
         sbankenWorkingBalance: +((sbankenAccount?.balance ?? 0) + sbankenUnclearedBalance).toFixed(
           2
         ),
-        ynabLinkOk: !!ynabAccount,
+        ynabLinkOk: !!ynabAccount && !!ynabBudget,
         ynabClearedBalance: +((ynabAccount?.cleared_balance ?? 0) / 1000).toFixed(2),
         ynabUnclearedBalance: +((ynabAccount?.uncleared_balance ?? 0) / 1000).toFixed(2),
         ynabWorkingBalance: +((ynabAccount?.balance ?? 0) / 1000).toFixed(2),

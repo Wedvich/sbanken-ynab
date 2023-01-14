@@ -1,3 +1,21 @@
+// ['unload', 'beforeunload'].forEach(function (eventName) {
+//   window.addEventListener(eventName, function () {
+//     // eslint-disable-next-line no-debugger
+//     debugger;
+//   });
+// });
+
+if (process.env.NODE_ENV === 'development') {
+  const { worker } = await import('./mocks/browser');
+  await worker.start({
+    serviceWorker: {
+      options: {
+        scope: '/',
+      },
+    },
+  });
+}
+
 import 'preact/debug';
 import { Fragment, h, render } from 'preact';
 import { Provider } from 'react-redux';
@@ -11,19 +29,19 @@ import ServiceWorkerManager from './service-worker/manager';
 import { Settings } from 'luxon';
 Settings.defaultLocale = 'nb';
 
-const appElement = document.getElementById('sby');
-
 const router = createBrowserRouter([
   {
     path: '*',
     element: (
       <Fragment>
-        <ServiceWorkerManager />
+        {process.env.NODE_ENV === 'production' && <ServiceWorkerManager />}
         <App />
       </Fragment>
     ),
   },
 ]);
+
+const appElement = document.getElementById('sby');
 
 if (appElement) {
   render(

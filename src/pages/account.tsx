@@ -3,9 +3,11 @@ import { h, Fragment } from 'preact';
 import { useMemo } from 'preact/hooks';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Button from '../components/button';
+import { externalLinkIcon } from '../components/icons';
 import { useAppSelector } from '../services';
 import { getEnrichedAccountById } from '../services/accounts';
-import { ynabApi } from '../services/ynab.api';
+import { getYnabKnowledgeByBudgetId } from '../services/ynab';
+import { useGetTransactionsQuery } from '../services/ynab.api';
 import type { YnabGetTransactionsRequest } from '../services/ynab.types';
 import { formatMoney } from '../utils';
 
@@ -14,13 +16,17 @@ export const AccountPage = () => {
   const navigate = useNavigate();
 
   const account = useAppSelector((state) => getEnrichedAccountById(state, accountId));
+  const serverKnowledge = useAppSelector((state) =>
+    getYnabKnowledgeByBudgetId(state, account?.ynabBudgetId)
+  );
 
   const request: YnabGetTransactionsRequest = {
     budgetId: account?.ynabBudgetId ?? '',
     fromDate: '2023-01-01',
+    serverKnowledge,
   };
 
-  // const { data } = ynabApi.useGetTransactionsQuery(request, { skip: !account });
+  const { data } = useGetTransactionsQuery(request, { skip: !account?.ynabLinkOk });
 
   const sums = useMemo(() => {
     if (!account) return;
@@ -76,6 +82,15 @@ export const AccountPage = () => {
               Endre
             </Button>
             <Button size="xs">Fjern</Button>
+            <a
+              href={`https://app.youneedabudget.com/${account.ynabBudgetId}/accounts/${account.ynabAccountId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-pink-600 hover:text-pink-700 hover:underline underline-offset-2 inline-flex items-center gap-1 text-sm"
+            >
+              Åpne i YNAB
+              {externalLinkIcon}
+            </a>
           </div>
           <dl className="mt-5 grid grid-cols-1 divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow lg:grid-cols-3 lg:divide-y-0 lg:divide-x">
             {sums.map((item) => {

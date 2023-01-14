@@ -98,3 +98,9 @@ export interface YnabGetTransactionsResponse {
   server_knowledge: number;
   transactions: Array<YnabTransaction>;
 }
+
+export interface YnabErrorResponse {
+  id: number;
+  name?: string;
+  detail?: string;
+}
