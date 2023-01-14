@@ -13,6 +13,11 @@ import { sbankenApiBaseUrl, sbankenIdentityServerUrl } from '../config';
 import { SBANKEN_CREDENTIALS_KEY } from './storage';
 import { startAppListening } from './listener';
 import { fetchInitialData, RequestStatus, stripEmojis } from '../utils';
+import type {
+  SbankenAccountWithClientId,
+  SbankenAccount,
+  SbankenSuccessResponse,
+} from './sbanken.types';
 
 interface SbankenToken {
   value: string;
@@ -26,11 +31,11 @@ export interface SbankenCredential {
   token?: SbankenToken;
 }
 
-const credentialsAdapter = createEntityAdapter<SbankenCredential>({
+export const sbankenCredentialsAdapter = createEntityAdapter<SbankenCredential>({
   selectId: (credential) => credential.clientId,
 });
 
-const accountsAdapter = createEntityAdapter<SbankenAccountWithClientId>({
+export const sbankenAccountsAdapter = createEntityAdapter<SbankenAccountWithClientId>({
   selectId: (account) => account.accountId,
 });
 
@@ -87,16 +92,16 @@ function loadStoredCredentials() {
   }
 }
 
-const initialCredentials = credentialsAdapter.setAll(
-  credentialsAdapter.getInitialState(),
+const initialCredentials = sbankenCredentialsAdapter.setAll(
+  sbankenCredentialsAdapter.getInitialState(),
   loadStoredCredentials()
 );
 
 const initialState: SbankenState = {
-  accounts: accountsAdapter.getInitialState(),
+  accounts: sbankenAccountsAdapter.getInitialState(),
   credentialIdByAccountId: {},
   credentials: initialCredentials,
-  requestStatusByCredentialId: credentialsAdapter
+  requestStatusByCredentialId: sbankenCredentialsAdapter
     .getSelectors()
     .selectAll(initialCredentials)
     .reduce<Record<string, RequestStatus | undefined>>((status, credential) => {
@@ -107,27 +112,7 @@ const initialState: SbankenState = {
     }, {}),
 };
 
-export interface SbankenListObject<T> {
-  availableItems: number;
-  items: Array<T>;
-}
-
-export interface SbankenAccount {
-  accountId: string;
-  accountNumber: string;
-  ownerCustomerId: string;
-  name: string;
-  accountType: 'Standard account' | 'Creditcard account';
-  available: number;
-  balance: number;
-  creditLimit: number;
-}
-
-export interface SbankenAccountWithClientId extends SbankenAccount {
-  clientId: string;
-}
-
-export const getSbankenCredentials = credentialsAdapter.getSelectors(
+export const getSbankenCredentials = sbankenCredentialsAdapter.getSelectors(
   (state: RootState) => state.sbanken.credentials
 ).selectAll;
 export const getSbankenTokenRequestStatus = (state: RootState) =>
@@ -136,7 +121,9 @@ export const getExpiredCredentials = createSelector(getSbankenCredentials, (cred
   credentials.filter((credential) => !validateSbankenToken(credential.token))
 );
 
-const accountSelectors = accountsAdapter.getSelectors((state: RootState) => state.sbanken.accounts);
+const accountSelectors = sbankenAccountsAdapter.getSelectors(
+  (state: RootState) => state.sbanken.accounts
+);
 
 export const getSbankenAccounts = createSelector(accountSelectors.selectAll, (accounts) => {
   const prepareName = memoize((name: string) => stripEmojis(name).trim());
@@ -164,13 +151,13 @@ export const sbankenSlice = createSlice({
         Pick<SbankenCredential, 'clientId' | 'clientSecret'> & { originalClientId?: string }
       >
     ) => {
-      credentialsAdapter.setOne(state.credentials, {
+      sbankenCredentialsAdapter.setOne(state.credentials, {
         clientId: action.payload.clientId,
         clientSecret: action.payload.clientSecret,
       });
     },
     deleteCredential: (state, action: PayloadAction<string>) => {
-      credentialsAdapter.removeOne(state.credentials, action.payload);
+      sbankenCredentialsAdapter.removeOne(state.credentials, action.payload);
       delete state.requestStatusByCredentialId[action.payload];
     },
   },
@@ -188,11 +175,11 @@ export const sbankenSlice = createSlice({
 
     builder.addMatcher(fetchSbankenToken.fulfilled.match, (state, action) => {
       const credential = { ...action.meta.arg, token: action.payload };
-      credentialsAdapter.upsertOne(state.credentials, credential);
+      sbankenCredentialsAdapter.upsertOne(state.credentials, credential);
     });
 
     builder.addMatcher(fetchSbankenAccounts.fulfilled.match, (state, action) => {
-      accountsAdapter.setMany(state.accounts, action.payload);
+      sbankenAccountsAdapter.setMany(state.accounts, action.payload);
     });
   },
 });
@@ -261,7 +248,7 @@ export const fetchSbankenAccounts = createAsyncThunk<
     return Promise.reject(response.statusText); // TODO: Handle errors
   }
 
-  const responseData: SbankenListObject<SbankenAccount> = await response.json();
+  const responseData: SbankenSuccessResponse<SbankenAccount> = await response.json();
   return responseData.items.map((account) => ({ ...account, clientId: credential.clientId }));
 });
 

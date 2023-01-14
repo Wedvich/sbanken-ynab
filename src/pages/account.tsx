@@ -10,9 +10,12 @@ import { useAppDispatch, useAppSelector } from '../services';
 import { getEnrichedAccountById } from '../services/accounts';
 import { fetchAccounts, getYnabKnowledgeByBudgetId } from '../services/ynab';
 import { useGetTransactionsQuery as useGetYnabTransactionsQuery } from '../services/ynab.api';
-import { getTransactionsGroupedByAccountId, selectTransactions } from '../services/ynab.selectors';
+import { useGetTransactionsQuery as useGetSbankenTransactionsQuery } from '../services/sbanken.api';
+import { getTransactionsGroupedByAccountId } from '../services/ynab.selectors';
 import type { YnabGetTransactionsRequest } from '../services/ynab.types';
 import { formatMoney } from '../utils';
+import type { SbankenGetTransactionsRequest } from '../services/sbanken.types';
+import { getAllSbankenTransactions } from '../services/sbanken.selectors';
 
 const fromDate = DateTime.utc().minus({ days: 30 }).toISODate();
 
@@ -31,16 +34,40 @@ export const AccountPage = () => {
     void dispatch(fetchAccounts(account.ynabAccountId));
   };
 
-  const request: YnabGetTransactionsRequest = {
-    budgetId: account?.ynabBudgetId ?? '',
-    fromDate,
-    serverKnowledge,
-  };
+  const ynabTransactionsRequest: YnabGetTransactionsRequest = useMemo(
+    () => ({
+      budgetId: account?.ynabBudgetId ?? '',
+      fromDate,
+      serverKnowledge,
+    }),
+    [account?.ynabBudgetId, serverKnowledge]
+  );
 
-  const { data } = useGetYnabTransactionsQuery(request, { skip: !account?.ynabLinkOk });
+  const { data: ynabTransactionsData } = useGetYnabTransactionsQuery(ynabTransactionsRequest, {
+    skip: !account?.ynabLinkOk,
+  });
 
-  const transactions = useSelector(() => getTransactionsGroupedByAccountId(data?.transactions));
-  const accountTransactions = transactions[account?.ynabAccountId ?? ''];
+  const ynabTransactions = useSelector(() =>
+    getTransactionsGroupedByAccountId(ynabTransactionsData?.transactions)
+  );
+  const transactionsForYnabAccount = ynabTransactions[account?.ynabAccountId ?? ''];
+
+  const sbankenTransactionsRequest: SbankenGetTransactionsRequest = useMemo(
+    () => ({
+      accountId: account?.sbankenAccountId ?? '',
+      fromDate,
+    }),
+    [account?.sbankenAccountId]
+  );
+
+  const { data: sbankenTransactionsData } = useGetSbankenTransactionsQuery(
+    sbankenTransactionsRequest,
+    { skip: !account?.sbankenLinkOk }
+  );
+
+  const transactionsForSbankenAccount = getAllSbankenTransactions(
+    sbankenTransactionsData?.transactions
+  );
 
   const sums = useMemo(() => {
     if (!account) return;
@@ -167,7 +194,8 @@ export const AccountPage = () => {
               );
             })}
           </dl>
-          <div className="overflow-hidden shadow mt-8 md:rounded-lg">
+          <h2 className="mt-8 text-2xl">Transaksjoner</h2>
+          <div className="overflow-hidden shadow mt-4 md:rounded-lg">
             <table className="min-w-full divide-y divide-gray-300">
               <thead className="bg-gray-50">
                 <tr>
@@ -201,7 +229,7 @@ export const AccountPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {accountTransactions?.map((transaction) => {
+                {transactionsForYnabAccount?.map((transaction) => {
                   return (
                     <tr key={transaction.id} className="hover:bg-gray-50">
                       <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-6 font-numbers">
@@ -215,6 +243,30 @@ export const AccountPage = () => {
                       </td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500 text-right font-numbers">
                         {formatMoney(transaction.amount / 1000)}
+                      </td>
+                      <td className="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                        <a href="javascript:void(0)" className="text-pink-600 hover:text-pink-700">
+                          Endre
+                        </a>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {transactionsForSbankenAccount?.map((transaction) => {
+                  return (
+                    <tr key={transaction.transactionId} className="hover:bg-gray-50">
+                      <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-6 font-numbers">
+                        {transaction.accountingDate}
+                      </td>
+                      <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">
+                        Sbanken
+                      </td>
+                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">
+                        {transaction.text}
+                      </td>
+                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500 text-right font-numbers">
+                        {formatMoney(transaction.amount)}
                       </td>
                       <td className="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}

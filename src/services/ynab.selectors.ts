@@ -1,10 +1,10 @@
 import { createSelector, EntityState } from '@reduxjs/toolkit';
-import { transactionsAdapter } from './ynab.api';
+import { ynabTransactionsAdapter } from './ynab.api';
 import type { YnabTransaction } from './ynab.types';
 
 export const selectTransactions = (state?: EntityState<YnabTransaction>) =>
   state
-    ? transactionsAdapter
+    ? ynabTransactionsAdapter
         .getSelectors()
         .selectAll(state)
         .filter((transaction) => !transaction.deleted)

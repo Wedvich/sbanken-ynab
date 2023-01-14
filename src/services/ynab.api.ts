@@ -18,7 +18,7 @@ import type { RootState } from '.';
 import { clearServerKnowledge, setServerKnowledge } from './ynab';
 import { createEntityAdapter } from '@reduxjs/toolkit';
 
-export const transactionsAdapter = createEntityAdapter<YnabTransaction>({
+export const ynabTransactionsAdapter = createEntityAdapter<YnabTransaction>({
   sortComparer: (a, b) => b.date.localeCompare(a.date) || a.amount - b.amount,
 });
 
@@ -34,7 +34,7 @@ export const ynabApi = createApi({
       const result = text.length ? JSON.parse(text) : null;
 
       if (response.ok) {
-        return (result as YnabSuccessResponse).data;
+        return (result as YnabSuccessResponse | null)?.data;
       } else {
         return (result as YnabErrorResponse).error;
       }
@@ -106,8 +106,8 @@ export const { useGetTransactionsQuery } = ynabApi.injectEndpoints({
           meta,
           data: {
             serverKnowledge: server_knowledge,
-            transactions: transactionsAdapter.setAll(
-              transactionsAdapter.getInitialState(),
+            transactions: ynabTransactionsAdapter.setAll(
+              ynabTransactionsAdapter.getInitialState(),
               transactions
             ),
           },
@@ -148,9 +148,9 @@ export const { useGetTransactionsQuery } = ynabApi.injectEndpoints({
           currentCacheData.serverKnowledge,
           responseData.serverKnowledge
         );
-        currentCacheData.transactions = transactionsAdapter.upsertMany(
+        currentCacheData.transactions = ynabTransactionsAdapter.setMany(
           currentCacheData.transactions,
-          transactionsAdapter.getSelectors().selectAll(responseData.transactions)
+          ynabTransactionsAdapter.getSelectors().selectAll(responseData.transactions)
         );
       },
     }),
