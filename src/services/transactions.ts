@@ -1,7 +1,7 @@
 import { groupBy } from 'lodash-es';
 import { DateTime } from 'luxon';
 import type { SbankenTransaction } from './sbanken/types';
-import type { YnabTransaction } from './ynab';
+import type { YnabTransaction } from './ynab.types';
 
 export enum TransactionSource {
   Sbanken = 1,

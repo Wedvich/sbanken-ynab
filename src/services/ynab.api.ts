@@ -8,12 +8,19 @@ import {
 import { ynabApiBaseUrl } from '../config';
 import type {
   YnabErrorResponse,
+  YnabGetTransactionsEntities,
   YnabGetTransactionsRequest,
   YnabGetTransactionsResponse,
   YnabSuccessResponse,
+  YnabTransaction,
 } from './ynab.types';
 import type { RootState } from '.';
 import { clearServerKnowledge, setServerKnowledge } from './ynab';
+import { createEntityAdapter } from '@reduxjs/toolkit';
+
+export const transactionsAdapter = createEntityAdapter<YnabTransaction>({
+  sortComparer: (a, b) => b.date.localeCompare(a.date) || a.amount - b.amount,
+});
 
 export const ynabApi = createApi({
   reducerPath: 'ynabApi',
@@ -60,8 +67,8 @@ export const ynabApi = createApi({
 
 export const { useGetTransactionsQuery } = ynabApi.injectEndpoints({
   endpoints: (build) => ({
-    getTransactions: build.query<YnabGetTransactionsResponse, YnabGetTransactionsRequest>({
-      queryFn: ({ budgetId, fromDate }, { endpoint, getState }, extraOptions, baseQuery) => {
+    getTransactions: build.query<YnabGetTransactionsEntities, YnabGetTransactionsRequest>({
+      queryFn: async ({ budgetId, fromDate }, { endpoint, getState }, extraOptions, baseQuery) => {
         const state = getState() as RootState;
         const lastEndpointKnowledge =
           state.ynab.serverKnowledgeByBudgetId[budgetId]?.byEndpoint[endpoint] ?? 0;
@@ -79,14 +86,32 @@ export const { useGetTransactionsQuery } = ynabApi.injectEndpoints({
           Authorization: `Bearer ${token}`,
         });
 
-        return baseQuery({
+        const result = (await baseQuery({
           headers,
           url,
-        }) as QueryReturnValue<
-          YnabGetTransactionsResponse,
+        })) as QueryReturnValue<
+          YnabSuccessResponse<YnabGetTransactionsResponse>,
           FetchBaseQueryError,
           FetchBaseQueryMeta
         >;
+
+        if (result.error) {
+          return result;
+        }
+
+        const { data, meta } = result;
+        const { transactions, server_knowledge } = data.data;
+
+        return {
+          meta,
+          data: {
+            serverKnowledge: server_knowledge,
+            transactions: transactionsAdapter.setAll(
+              transactionsAdapter.getInitialState(),
+              transactions
+            ),
+          },
+        };
       },
       serializeQueryArgs: ({ queryArgs, endpointName }) => `${endpointName}/${queryArgs.budgetId}`,
       forceRefetch: ({ currentArg, state, endpointState }) => {
@@ -107,7 +132,7 @@ export const { useGetTransactionsQuery } = ynabApi.injectEndpoints({
           dispatch(
             setServerKnowledge({
               budgetId: args.budgetId,
-              knowledge: data.data.server_knowledge,
+              knowledge: data.serverKnowledge,
               endpoint,
             })
           );
@@ -117,6 +142,16 @@ export const { useGetTransactionsQuery } = ynabApi.injectEndpoints({
         const endpoint = getCacheEntry().endpointName!;
         await cacheEntryRemoved;
         dispatch(clearServerKnowledge({ budgetId, endpoint }));
+      },
+      merge(currentCacheData, responseData) {
+        currentCacheData.serverKnowledge = Math.max(
+          currentCacheData.serverKnowledge,
+          responseData.serverKnowledge
+        );
+        currentCacheData.transactions = transactionsAdapter.upsertMany(
+          currentCacheData.transactions,
+          transactionsAdapter.getSelectors().selectAll(responseData.transactions)
+        );
       },
     }),
   }),

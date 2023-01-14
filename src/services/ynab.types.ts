@@ -1,3 +1,5 @@
+import type { EntityState } from '@reduxjs/toolkit';
+
 export interface YnabAccount {
   id: string;
   name: string;
@@ -50,7 +52,6 @@ export interface YnabTransaction {
     transfer_transaction_id: string;
     deleted: boolean;
   }>;
-  _checksum?: number;
 }
 
 export interface YnabBudget {
@@ -98,10 +99,15 @@ export interface YnabSuccessResponse<T = unknown> {
   data: T;
 }
 
-export type YnabGetTransactionsResponse = YnabSuccessResponse<{
+export interface YnabGetTransactionsResponse {
   transactions: Array<YnabTransaction>;
   server_knowledge: number;
-}>;
+}
+
+export interface YnabGetTransactionsEntities {
+  transactions: EntityState<YnabTransaction>;
+  serverKnowledge: number;
+}
 
 export type YnabAccountsResponse = YnabSuccessResponse<{
   accounts: Array<YnabAccount>;

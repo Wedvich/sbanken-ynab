@@ -1,15 +1,20 @@
 import classNames from 'classnames';
+import { DateTime } from 'luxon';
 import { h, Fragment } from 'preact';
 import { useMemo } from 'preact/hooks';
+import { useSelector } from 'react-redux';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Button from '../components/button';
 import { externalLinkIcon } from '../components/icons';
 import { useAppDispatch, useAppSelector } from '../services';
 import { getEnrichedAccountById } from '../services/accounts';
 import { fetchAccounts, getYnabKnowledgeByBudgetId } from '../services/ynab';
-import { useGetTransactionsQuery } from '../services/ynab.api';
+import { useGetTransactionsQuery as useGetYnabTransactionsQuery } from '../services/ynab.api';
+import { getTransactionsGroupedByAccountId, selectTransactions } from '../services/ynab.selectors';
 import type { YnabGetTransactionsRequest } from '../services/ynab.types';
 import { formatMoney } from '../utils';
+
+const fromDate = DateTime.utc().minus({ days: 30 }).toISODate();
 
 export const AccountPage = () => {
   const { accountId } = useParams<{ accountId: string }>();
@@ -28,11 +33,14 @@ export const AccountPage = () => {
 
   const request: YnabGetTransactionsRequest = {
     budgetId: account?.ynabBudgetId ?? '',
-    fromDate: '2023-01-01',
+    fromDate,
     serverKnowledge,
   };
 
-  const { data } = useGetTransactionsQuery(request, { skip: !account?.ynabLinkOk });
+  const { data } = useGetYnabTransactionsQuery(request, { skip: !account?.ynabLinkOk });
+
+  const transactions = useSelector(() => getTransactionsGroupedByAccountId(data?.transactions));
+  const accountTransactions = transactions[account?.ynabAccountId ?? ''];
 
   const sums = useMemo(() => {
     if (!account) return;
@@ -193,10 +201,10 @@ export const AccountPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {data?.data.transactions.map((transaction) => {
+                {accountTransactions?.map((transaction) => {
                   return (
                     <tr key={transaction.id} className="hover:bg-gray-50">
-                      <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-6">
+                      <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-6 font-numbers">
                         {transaction.date}
                       </td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">
