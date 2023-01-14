@@ -20,6 +20,7 @@ import type {
   YnabAccountWithBudgetId,
   YnabRateLimit,
   YnabGetBudgetsResponse,
+  YnabAccountsResponse,
 } from './ynab.types';
 
 const budgetsAdapter = createEntityAdapter<YnabBudget>({
@@ -177,6 +178,7 @@ export const ynabSlice = createSlice({
         byEndpoint: {},
       });
 
+      // TODO: Don't set this twice
       serverKnowledgeByBudgetId.latest = Math.max(
         serverKnowledgeByBudgetId.latest,
         action.payload.knowledge
@@ -228,10 +230,38 @@ export const ynabSlice = createSlice({
       budgetsAdapter.setMany(state.budgets, budgets);
       accountsAdapter.setMany(state.accounts, allAccounts);
     });
+
+    builder.addMatcher(fetchAccounts.fulfilled.match, (state, action) => {
+      const accountId = action.meta.arg;
+      const account = state.accounts.entities[accountId];
+      const budgetId = account?.budget_id;
+      if (!budgetId) return;
+
+      const serverKnowledgeByBudgetId = (state.serverKnowledgeByBudgetId[budgetId] ??= {
+        latest: action.payload.data.server_knowledge,
+        byEndpoint: {},
+      });
+
+      // TODO: Don't set this twice
+      serverKnowledgeByBudgetId.latest = Math.max(
+        serverKnowledgeByBudgetId.latest,
+        action.payload.data.server_knowledge
+      );
+
+      const accountsWithBudgetId = action.payload.data.accounts.map<YnabAccountWithBudgetId>(
+        (account) => ({
+          ...account,
+          budget_id: budgetId,
+        })
+      );
+
+      accountsAdapter.setMany(state.accounts, accountsWithBudgetId);
+    });
   },
 });
 
-export const { deleteToken, saveToken, toggleBudget } = ynabSlice.actions;
+export const { clearServerKnowledge, deleteToken, saveToken, setServerKnowledge, toggleBudget } =
+  ynabSlice.actions;
 
 export const fetchBudgetsAndAccounts = createAsyncThunk<YnabGetBudgetsResponse, string>(
   `${ynabSlice.name}/fetchBudgetsAndAccounts`,
@@ -265,6 +295,47 @@ export const fetchBudgetsAndAccounts = createAsyncThunk<YnabGetBudgetsResponse, 
         return false;
       }
     },
+  }
+);
+
+export const fetchAccounts = createAsyncThunk<YnabAccountsResponse, string>(
+  `${ynabSlice.name}/fetchAccounts`,
+  async (accountId, { dispatch, getState }) => {
+    const state = getState() as RootState;
+    const accountsLookup = getYnabAccountsLookup(state);
+    const account = accountsLookup[accountId];
+    if (!account) return;
+
+    const token = state.ynab.tokensByBudgetId[account.budget_id][0];
+    const serverKnowledge = getYnabKnowledgeByBudgetId(state, account.budget_id);
+
+    const response = await fetch(
+      `${ynabApiBaseUrl}/budgets/${account.budget_id}/accounts${
+        serverKnowledge ? `?last_knowledge_of_server=${serverKnowledge}` : ''
+      }
+    `,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const rateLimit = response.headers.get('X-Rate-Limit')?.split('/');
+    if (rateLimit) {
+      dispatch(
+        ynabSlice.actions.setRateLimit({
+          token,
+          rateLimit: { limit: +rateLimit[0], maxLimit: +rateLimit[1] },
+        })
+      );
+    }
+
+    if (!response.ok) {
+      return Promise.reject(response.statusText);
+    }
+
+    return response.json();
   }
 );
 

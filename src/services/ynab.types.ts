@@ -94,13 +94,24 @@ export interface YnabGetTransactionsRequest {
   serverKnowledge?: number;
 }
 
-export interface YnabGetTransactionsResponse {
-  server_knowledge: number;
-  transactions: Array<YnabTransaction>;
+export interface YnabSuccessResponse<T = unknown> {
+  data: T;
 }
 
+export type YnabGetTransactionsResponse = YnabSuccessResponse<{
+  transactions: Array<YnabTransaction>;
+  server_knowledge: number;
+}>;
+
+export type YnabAccountsResponse = YnabSuccessResponse<{
+  accounts: Array<YnabAccount>;
+  server_knowledge: number;
+}>;
+
 export interface YnabErrorResponse {
-  id: number;
-  name?: string;
-  detail?: string;
+  error: {
+    id: string;
+    name: string;
+    detail: string;
+  };
 }

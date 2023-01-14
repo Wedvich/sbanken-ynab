@@ -4,9 +4,9 @@ import { useMemo } from 'preact/hooks';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Button from '../components/button';
 import { externalLinkIcon } from '../components/icons';
-import { useAppSelector } from '../services';
+import { useAppDispatch, useAppSelector } from '../services';
 import { getEnrichedAccountById } from '../services/accounts';
-import { getYnabKnowledgeByBudgetId } from '../services/ynab';
+import { fetchAccounts, getYnabKnowledgeByBudgetId } from '../services/ynab';
 import { useGetTransactionsQuery } from '../services/ynab.api';
 import type { YnabGetTransactionsRequest } from '../services/ynab.types';
 import { formatMoney } from '../utils';
@@ -15,10 +15,16 @@ export const AccountPage = () => {
   const { accountId } = useParams<{ accountId: string }>();
   const navigate = useNavigate();
 
+  const dispatch = useAppDispatch();
   const account = useAppSelector((state) => getEnrichedAccountById(state, accountId));
   const serverKnowledge = useAppSelector((state) =>
     getYnabKnowledgeByBudgetId(state, account?.ynabBudgetId)
   );
+
+  const refreshAccount = () => {
+    if (!account) return;
+    void dispatch(fetchAccounts(account.ynabAccountId));
+  };
 
   const request: YnabGetTransactionsRequest = {
     budgetId: account?.ynabBudgetId ?? '',
@@ -26,7 +32,7 @@ export const AccountPage = () => {
     serverKnowledge,
   };
 
-  const { data } = useGetTransactionsQuery(request, { skip: !account?.ynabLinkOk });
+  useGetTransactionsQuery(request, { skip: !account?.ynabLinkOk });
 
   const sums = useMemo(() => {
     if (!account) return;
@@ -77,7 +83,9 @@ export const AccountPage = () => {
         <div className="px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-semibold text-gray-900">{account.name}</h1>
           <div className="mt-4 space-x-2">
-            <Button size="xs">Oppdater</Button>
+            <Button size="xs" onClick={refreshAccount}>
+              Oppdater
+            </Button>
             <Button size="xs" onClick={() => navigate('endre')}>
               Endre
             </Button>
