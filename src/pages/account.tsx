@@ -32,7 +32,7 @@ export const AccountPage = () => {
     serverKnowledge,
   };
 
-  useGetTransactionsQuery(request, { skip: !account?.ynabLinkOk });
+  const { data } = useGetTransactionsQuery(request, { skip: !account?.ynabLinkOk });
 
   const sums = useMemo(() => {
     if (!account) return;
@@ -159,7 +159,67 @@ export const AccountPage = () => {
               );
             })}
           </dl>
-          <div className="mt-4">transactions</div>
+          <div className="overflow-hidden shadow mt-8 md:rounded-lg">
+            <table className="min-w-full divide-y divide-gray-300">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                  >
+                    Dato
+                  </th>
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Kilde
+                  </th>
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Tekst
+                  </th>
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-2 py-3.5 text-right text-sm font-semibold text-gray-900"
+                  >
+                    Beløp
+                  </th>
+                  <th scope="col" className="relative whitespace-nowrap py-3.5 pl-3 pr-4 sm:pr-6">
+                    <span className="sr-only">Edit</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {data?.data.transactions.map((transaction) => {
+                  return (
+                    <tr key={transaction.id} className="hover:bg-gray-50">
+                      <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-6">
+                        {transaction.date}
+                      </td>
+                      <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">
+                        YNAB
+                      </td>
+                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">
+                        {transaction.memo || transaction.payee_name}
+                      </td>
+                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500 text-right font-numbers">
+                        {formatMoney(transaction.amount / 1000)}
+                      </td>
+                      <td className="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                        <a href="javascript:void(0)" className="text-pink-600 hover:text-pink-700">
+                          Endre
+                        </a>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
