@@ -64,3 +64,6 @@ coverage
 
 # Bundle visualizer
 stats.html
+
+# TypeScript incremental builds
+tsconfig.tsbuildinfo

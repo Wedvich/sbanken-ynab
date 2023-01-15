@@ -1,5 +1,5 @@
-import type { SbankenTransaction } from './sbanken/types';
-import * as utils from './sbanken/utils';
+import type { SbankenTransaction } from './sbanken.types';
+import * as utils from './sbanken.utils';
 
 describe('inferDate', () => {
   it('returns undefined if the text is empty', () => {
