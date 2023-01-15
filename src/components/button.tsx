@@ -1,7 +1,7 @@
-import { h, JSX } from 'preact';
+import { h } from 'preact';
 import classNames from 'classnames';
 
-interface ButtonProps extends Omit<JSX.HTMLAttributes<HTMLButtonElement>, 'className' | 'size'> {
+interface ButtonProps extends Omit<h.JSX.HTMLAttributes<HTMLButtonElement>, 'className' | 'size'> {
   className?: string;
   importance?: 'primary' | 'secondary' | 'tertiary';
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';

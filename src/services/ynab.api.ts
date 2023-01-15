@@ -7,6 +7,9 @@ import {
 } from '@reduxjs/toolkit/query/react';
 import { ynabApiBaseUrl } from '../config';
 import type {
+  YnabCreateTransactionRequest,
+  YnabCreateTransactionResponse,
+  YnabCreateTransactionsEntity,
   YnabErrorResponse,
   YnabGetTransactionsEntities,
   YnabGetTransactionsRequest,
@@ -17,6 +20,7 @@ import type {
 import type { RootState } from '.';
 import { clearServerKnowledge, setServerKnowledge } from './ynab';
 import { createEntityAdapter } from '@reduxjs/toolkit';
+import type { Transaction } from './transactions';
 
 export const ynabTransactionsAdapter = createEntityAdapter<YnabTransaction>({
   sortComparer: (a, b) => b.date.localeCompare(a.date) || a.amount - b.amount,
@@ -43,29 +47,21 @@ export const ynabApi = createApi({
   endpoints: () => ({}),
 });
 
-// getTransactions: build.query<YnabGetTransactionsResponse, YnabGetTransactionsRequest>({
-//   queryFn({ budgetId, fromDate, serverKnowledge }, { getState, signal }, _, baseQuery) {
-//     const token = (getState() as any).ynab.tokensByBudgetId[budgetId][0]; // TODO: types?
-//     const url = `/budgets/${budgetId}/transactions?since_date=${fromDate}${
-//       typeof serverKnowledge === 'number' ? `&last_knowledge_of_server=${serverKnowledge}` : ''
-//     }`;
-//     const headers = new Headers({
-//       Authorization: `Bearer ${token}`,
-//     });
-//     const result = baseQuery({
-//       headers,
-//       signal,
-//       url,
-//     }) as QueryReturnValue<
-//       YnabGetTransactionsResponse,
-//       FetchBaseQueryError,
-//       FetchBaseQueryMeta
-//     >;
-//     return result;
-//   },
-// }),
+// TODO: memoize
+const convertToYnabTransaction = (
+  transaction: Transaction,
+  accountId: string
+): Partial<YnabTransaction> => ({
+  account_id: accountId,
+  amount: transaction.amount * 1000,
+  date: transaction.date.toISO(),
+  import_id: transaction.sbankenTransactionId,
+  memo: transaction.description,
+  cleared: 'cleared',
+  approved: true,
+});
 
-export const { useGetTransactionsQuery } = ynabApi.injectEndpoints({
+const getTransactionsApi = ynabApi.injectEndpoints({
   endpoints: (build) => ({
     getTransactions: build.query<YnabGetTransactionsEntities, YnabGetTransactionsRequest>({
       queryFn: async ({ budgetId, fromDate }, { endpoint, getState }, extraOptions, baseQuery) => {
@@ -79,7 +75,7 @@ export const { useGetTransactionsQuery } = ynabApi.injectEndpoints({
 
         const token = state.ynab.tokensByBudgetId[budgetId]?.[0]; // TODO: types?
         if (!token) {
-          throw new Error('No token found for budgetId ' + budgetId);
+          throw new Error(`No token found for budgetId ${budgetId}`);
         }
 
         const headers = new Headers({
@@ -152,6 +148,112 @@ export const { useGetTransactionsQuery } = ynabApi.injectEndpoints({
           currentCacheData.transactions,
           ynabTransactionsAdapter.getSelectors().selectAll(responseData.transactions)
         );
+      },
+    }),
+  }),
+});
+
+export const { useGetTransactionsQuery } = getTransactionsApi;
+
+export const { useCreateTransactionMutation } = ynabApi.injectEndpoints({
+  endpoints: (build) => ({
+    createTransaction: build.mutation<YnabCreateTransactionsEntity, YnabCreateTransactionRequest>({
+      queryFn: async ({ accountId, transaction }, { getState }, extraOptions, baseQuery) => {
+        const state = getState() as RootState;
+        const budgetId = state.ynab.accounts.entities[accountId]?.budget_id;
+        if (!budgetId) {
+          throw new Error(`No budgetId found for accountId ${accountId}`);
+        }
+
+        const url = `/budgets/${budgetId}/transactions`;
+
+        const token = state.ynab.tokensByBudgetId[budgetId]?.[0]; // TODO: types?
+        if (!token) {
+          throw new Error(`No token found for budgetId ${budgetId}`);
+        }
+
+        const ynabTransaction = convertToYnabTransaction(transaction, accountId);
+
+        const headers = new Headers({
+          Authorization: `Bearer ${token}`,
+        });
+
+        const result = (await baseQuery({
+          url,
+          headers,
+          method: 'POST',
+          body: {
+            transaction: ynabTransaction,
+          },
+        })) as QueryReturnValue<
+          YnabSuccessResponse<YnabCreateTransactionResponse>,
+          FetchBaseQueryError,
+          FetchBaseQueryMeta
+        >;
+
+        if (result.error) {
+          return result;
+        }
+
+        const { data, meta } = result;
+        const { transaction: transactionResult, server_knowledge } = data.data;
+
+        return {
+          meta,
+          data: {
+            serverKnowledge: server_knowledge,
+            transaction: transactionResult,
+          },
+        };
+      },
+      onQueryStarted: async (
+        { accountId, transaction, fromDate },
+        { dispatch, getState, queryFulfilled }
+      ) => {
+        const state = getState() as RootState;
+        const budgetId = state.ynab.accounts.entities[accountId]?.budget_id;
+        if (!budgetId) return;
+
+        const ynabTransaction = convertToYnabTransaction(transaction, accountId);
+        ynabTransaction.id = ynabTransaction.import_id;
+
+        const patchResult = dispatch(
+          getTransactionsApi.util.updateQueryData(
+            'getTransactions',
+            { budgetId, fromDate },
+            (draft) => {
+              ynabTransactionsAdapter.setOne(
+                draft.transactions,
+                ynabTransaction as YnabTransaction
+              );
+            }
+          )
+        );
+
+        try {
+          const { data } = await queryFulfilled;
+
+          dispatch(
+            getTransactionsApi.util.updateQueryData(
+              'getTransactions',
+              { budgetId, fromDate },
+              (draft) => {
+                ynabTransactionsAdapter.removeOne(draft.transactions, ynabTransaction.id!);
+                ynabTransactionsAdapter.setOne(draft.transactions, data.transaction);
+              }
+            )
+          );
+
+          dispatch(
+            setServerKnowledge({
+              budgetId,
+              knowledge: data.serverKnowledge,
+              endpoint: getTransactionsApi.endpoints.getTransactions.name,
+            })
+          );
+        } catch {
+          patchResult.undo();
+        }
       },
     }),
   }),

@@ -266,6 +266,13 @@ startAppListening({
 
     const credentials = getSbankenCredentials(getState());
     localStorage.setItem(SBANKEN_CREDENTIALS_KEY, JSON.stringify(credentials));
+
+    if (fetchSbankenToken.fulfilled.match(action)) {
+      const credential = credentials.find((c) => c.clientId === action.meta.arg.clientId);
+      if (credential) {
+        await dispatch(fetchSbankenAccounts(credential));
+      }
+    }
   },
 });
 

@@ -9,6 +9,7 @@ import { getYnabTokens } from '../services/ynab';
 import { getEnrichedAccounts, reorderAccounts } from '../services/accounts';
 import { useSelector } from 'react-redux';
 import { AccountCard } from './account-card';
+import Icons from './icons';
 
 interface SidebarProps {
   className?: string;
@@ -93,20 +94,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
                 })
               }
             >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="mr-3 flex-shrink-0 h-6 w-6"
-              >
-                <path
-                  d="M12 5V19M5 12H19"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <Icons.Plus className="mr-3 flex-shrink-0 h-6 w-6" />
               Legg til konto
             </NavLink>
           )}

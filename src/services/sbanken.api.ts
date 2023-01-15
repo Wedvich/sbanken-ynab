@@ -61,11 +61,11 @@ export const { useGetTransactionsQuery } = sbankenApi.injectEndpoints({
           .getSelectors()
           .selectById(state.sbanken.credentials, account.clientId);
         if (!credential) {
-          throw new Error('No credential found with ID ' + account.clientId);
+          throw new Error(`No credential found with ID ${account.clientId}`);
         }
 
         if (!validateSbankenToken(credential.token)) {
-          throw new Error('Invalid token for credential with ID ' + credential.clientId);
+          throw new Error(`Invalid token for credential with ID ${credential.clientId}`);
         }
 
         const url = `${sbankenApiBaseUrl}/Transactions/archive/${accountId}?startDate=${fromDate}`;

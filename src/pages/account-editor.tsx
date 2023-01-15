@@ -82,7 +82,12 @@ export const AccountEditor = () => {
       sbankenClientId: sbankenAccount.clientId,
     };
 
-    dispatch(saveAccount(linkedAccount));
+    dispatch(
+      saveAccount({
+        ...linkedAccount,
+        originalAccountId: accountId,
+      })
+    );
 
     const createdAccountId = createCompositeAccountId(linkedAccount);
     navigate(`/kontoer/${createdAccountId}`);
@@ -131,7 +136,7 @@ export const AccountEditor = () => {
           <h1 className="text-3xl font-semibold text-gray-900">
             {existingAccount ? 'Endre konto' : 'Legg til ny konto'}
           </h1>
-          <FocusTrap as="form" onSubmit={handleSave}>
+          <FocusTrap as="form" onSubmit={handleSave} className="mt-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Navn
@@ -147,86 +152,92 @@ export const AccountEditor = () => {
                 />
               </div>
             </div>
-            <div className="sm:flex sm:gap-8">
-              <div>
-                <h3 className="font-semibold">YNAB-konto</h3>
-                <ul>
-                  {ynabAccounts.map((account) => {
-                    const idKey = `ynab-account-${account.id}`;
-                    return (
-                      <li key={idKey}>
-                        <label
-                          htmlFor={idKey}
-                          className="relative flex items-start py-2.5 font-medium cursor-pointer"
-                          disabled={disabledYnabAccounts.has(account.id)}
-                        >
-                          <span className="flex h-5 items-center">
-                            <input
-                              id={idKey}
-                              aria-describedby={`${idKey}-description`}
-                              name="ynab-account"
-                              type="radio"
-                              className="h-4 w-4 border-gray-300 text-pink-600 focus:ring-pink-500 disabled:bg-gray-300"
-                              value={account.id}
-                              checked={ynabAccountId === account.id}
-                              onChange={handleSetYnabAccountId}
-                              disabled={
-                                disabledYnabAccounts.has(account.id) &&
-                                existingAccount?.ynabAccountId !== account.id
-                              }
-                            />
-                          </span>
-                          <span className="block ml-3 text-sm">
-                            <span className="block font-medium text-gray-700">{account.name}</span>
-                            <span id={`${idKey}-description`} className="block text-gray-500">
-                              {ynabBudgetsLookup[account.budget_id]?.name}
+            <div className="my-4 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+              <div className="min-w-full flex py-2 align-middle md:px-6 lg:px-8">
+                <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded w-full sm:grid grid-flow-col grid-rows-[auto_1fr]">
+                  <h3 className="font-semibold bg-gray-50 py-3 px-4">YNAB-konto</h3>
+                  <ul className="border-t border-gray-300 bg-white px-4 py-2">
+                    {ynabAccounts.map((account) => {
+                      const idKey = `ynab-account-${account.id}`;
+                      return (
+                        <li key={idKey}>
+                          <label
+                            htmlFor={idKey}
+                            className="relative flex items-start py-2.5 font-medium cursor-pointer"
+                            disabled={disabledYnabAccounts.has(account.id)}
+                          >
+                            <span className="flex h-5 items-center">
+                              <input
+                                id={idKey}
+                                aria-describedby={`${idKey}-description`}
+                                name="ynab-account"
+                                type="radio"
+                                className="h-4 w-4 border-gray-300 text-pink-600 focus:ring-pink-500 disabled:bg-gray-300"
+                                value={account.id}
+                                checked={ynabAccountId === account.id}
+                                onChange={handleSetYnabAccountId}
+                                disabled={
+                                  disabledYnabAccounts.has(account.id) &&
+                                  existingAccount?.ynabAccountId !== account.id
+                                }
+                              />
                             </span>
-                          </span>
-                        </label>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-              <div>
-                <h3 className="font-semibold">Sbanken-konto</h3>
-                <ul>
-                  {sbankenAccounts.map((account) => {
-                    const idKey = `sbanken-account-${account.accountId}`;
+                            <span className="block ml-3 text-sm">
+                              <span className="block font-medium text-gray-700">
+                                {account.name}
+                              </span>
+                              <span id={`${idKey}-description`} className="block text-gray-500">
+                                {ynabBudgetsLookup[account.budget_id]?.name}
+                              </span>
+                            </span>
+                          </label>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <h3 className="font-semibold bg-gray-50 py-3 px-4 border-t sm:border-none border-gray-300">
+                    Sbanken-konto
+                  </h3>
+                  <ul className="border-t border-gray-300 bg-white px-4 py-2 sm:border-l">
+                    {sbankenAccounts.map((account) => {
+                      const idKey = `sbanken-account-${account.accountId}`;
 
-                    return (
-                      <li key={idKey}>
-                        <label
-                          htmlFor={idKey}
-                          className="relative flex items-start px-4 py-2.5 font-medium cursor-pointer"
-                        >
-                          <span className="flex h-5 items-center">
-                            <input
-                              id={idKey}
-                              aria-describedby={`${idKey}-description`}
-                              name="sbanken-account"
-                              type="radio"
-                              className="h-4 w-4 border-gray-300 text-pink-600 focus:ring-pink-500 disabled:bg-gray-300"
-                              value={account.accountId}
-                              checked={sbankenAccountId === account.accountId}
-                              onChange={handleSetSbankenAccountId}
-                              disabled={
-                                disabledSbankenAccounts.has(account.accountId) &&
-                                existingAccount?.sbankenAccountId !== account.accountId
-                              }
-                            />
-                          </span>
-                          <span className="block ml-3 text-sm">
-                            <span className="block font-medium text-gray-700">{account.name}</span>
-                            <span id={idKey} className="block text-gray-500">
-                              {account.ownerCustomerId}
+                      return (
+                        <li key={idKey}>
+                          <label
+                            htmlFor={idKey}
+                            className="relative flex items-start py-2.5 font-medium cursor-pointer"
+                          >
+                            <span className="flex h-5 items-center">
+                              <input
+                                id={idKey}
+                                aria-describedby={`${idKey}-description`}
+                                name="sbanken-account"
+                                type="radio"
+                                className="h-4 w-4 border-gray-300 text-pink-600 focus:ring-pink-500 disabled:bg-gray-300"
+                                value={account.accountId}
+                                checked={sbankenAccountId === account.accountId}
+                                onChange={handleSetSbankenAccountId}
+                                disabled={
+                                  disabledSbankenAccounts.has(account.accountId) &&
+                                  existingAccount?.sbankenAccountId !== account.accountId
+                                }
+                              />
                             </span>
-                          </span>
-                        </label>
-                      </li>
-                    );
-                  })}
-                </ul>
+                            <span className="block ml-3 text-sm">
+                              <span className="block font-medium text-gray-700">
+                                {account.name}
+                              </span>
+                              <span id={idKey} className="block text-gray-500">
+                                {account.ownerCustomerId}
+                              </span>
+                            </span>
+                          </label>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               </div>
             </div>
             <div className="sm:flex gap-2">

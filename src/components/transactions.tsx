@@ -1,170 +1,144 @@
-import { skipToken } from '@reduxjs/toolkit/query/react';
-import { DateTime } from 'luxon';
-import { h } from 'preact';
-import { useDispatch, useSelector } from 'react-redux';
-import { RadioGroup } from '@headlessui/react';
-import { getEnrichedAccounts, getTransactionsRange } from '../selectors/accounts';
-import type { AppDispatch, RootState } from '../services';
+import { h, Fragment } from 'preact';
+import { useMemo } from 'preact/hooks';
+import { useSelector } from 'react-redux';
+import Button from '../components/button';
+import { useAppSelector } from '../services';
+import type { EnrichedAccount } from '../services/accounts';
+import { getYnabKnowledgeByBudgetId } from '../services/ynab';
 import {
-  useCreateTransactionMutation as useCreateYnabTransactionMutation,
   useGetTransactionsQuery as useGetYnabTransactionsQuery,
-} from '../services/ynab/api';
-import { useGetTransactionsQuery as useGetSbankenTransactionsQuery } from '../services/sbanken/api';
-import { useSbankenTokenForAccountId } from '../services/sbanken/hooks';
+  useCreateTransactionMutation,
+} from '../services/ynab.api';
+import { useGetTransactionsQuery as useGetSbankenTransactionsQuery } from '../services/sbanken.api';
+import { getTransactionsGroupedByAccountId } from '../services/ynab.selectors';
+import type { YnabGetTransactionsRequest } from '../services/ynab.types';
 import { formatMoney } from '../utils';
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
+import type { SbankenGetTransactionsRequest } from '../services/sbanken.types';
+import { getAllSbankenTransactions } from '../services/sbanken.selectors';
+import { Spinner } from '../components/spinner';
 import { linkTransactions, TransactionSource } from '../services/transactions';
-import classNames from 'classnames';
-import { setRange } from '../services/accounts';
-import Button from './button';
 
 interface TransactionsProps {
-  accountId: string;
+  account: EnrichedAccount;
+  fromDate: string;
 }
 
-const options = [7, 30];
-
-export default function Transactions({ accountId }: TransactionsProps) {
-  const budgetId = useSelector((state: RootState) => state.ynab.budget);
-  const account = useSelector(getEnrichedAccounts).find((a) => a.compositeId === accountId);
-  const range = useSelector(getTransactionsRange);
-  const [ynabDaysOutsideRange, setYnabDaysOutsideRange] = useState(0);
-
-  const dispatch = useDispatch<AppDispatch>();
-  const handleSetRange = useCallback(
-    (value: number) => {
-      setYnabDaysOutsideRange(0);
-      dispatch(setRange(value));
-    },
-    [dispatch]
+export const Transactions = ({ account, fromDate }: TransactionsProps) => {
+  const serverKnowledge = useAppSelector((state) =>
+    getYnabKnowledgeByBudgetId(state, account.ynabBudgetId)
   );
 
-  const fromDate = DateTime.now().minus({ days: range }).startOf('day');
-  const fromDateForYnab = fromDate.minus({ days: ynabDaysOutsideRange });
-
-  const ynabResult = useGetYnabTransactionsQuery(
-    account
-      ? {
-          fromDate: fromDateForYnab.toISODate(),
-          budgetId,
-          accountId: account.ynabAccountId,
-        }
-      : skipToken
+  const ynabTransactionsRequest: YnabGetTransactionsRequest = useMemo(
+    () => ({
+      budgetId: account.ynabBudgetId ?? '',
+      fromDate,
+      serverKnowledge,
+    }),
+    [account.ynabBudgetId, fromDate, serverKnowledge]
   );
 
-  const token = useSbankenTokenForAccountId(account?.sbankenAccountId);
-  const sbankenResult = useGetSbankenTransactionsQuery(
-    account && token
-      ? { fromDate: fromDate.toISODate(), accountId: account.sbankenAccountId, token }
-      : skipToken
+  const { data: ynabTransactionsData, isLoading: ynabIsLoading } = useGetYnabTransactionsQuery(
+    ynabTransactionsRequest,
+    {
+      skip: !account.ynabLinkOk,
+    }
   );
 
-  const [createYnabTransaction, { isLoading: isCreatingTransaction }] =
-    useCreateYnabTransactionMutation();
+  const ynabTransactions = useSelector(() =>
+    getTransactionsGroupedByAccountId(ynabTransactionsData?.transactions)
+  );
+  const transactionsForYnabAccount = ynabTransactions[account.ynabAccountId ?? ''];
 
-  const linkedTransactions = useMemo(() => {
-    return linkTransactions(sbankenResult.data?.items ?? [], ynabResult.data?.transactions ?? []);
-  }, [sbankenResult.data?.items, ynabResult.data?.transactions]);
+  const sbankenTransactionsRequest: SbankenGetTransactionsRequest = useMemo(
+    () => ({
+      accountId: account.sbankenAccountId ?? '',
+      fromDate,
+    }),
+    [account.sbankenAccountId, fromDate]
+  );
 
-  useEffect(() => {
-    if (!sbankenResult.data?.items?.length) return;
+  const { data: sbankenTransactionsData, isLoading: sbankenIsLoading } =
+    useGetSbankenTransactionsQuery(sbankenTransactionsRequest, { skip: !account.sbankenLinkOk });
 
-    const daysOutside = sbankenResult.data.items.reduce((c, t) => {
-      if (!t._inferredDate) return c;
+  const transactionsForSbankenAccount = getAllSbankenTransactions(
+    sbankenTransactionsData?.transactions
+  );
 
-      const days = fromDate.diff(DateTime.fromISO(t._inferredDate)).as('days');
-      if (days > 0) {
-        return Math.max(c, Math.ceil(days));
-      }
+  const transactions = useMemo(() => {
+    return linkTransactions(transactionsForSbankenAccount, transactionsForYnabAccount);
+  }, [transactionsForSbankenAccount, transactionsForYnabAccount]);
 
-      return c;
-    }, 0);
-
-    setYnabDaysOutsideRange(daysOutside);
-  }, [fromDate, sbankenResult.data?.items]);
+  const [createTransaction, { isLoading: isCreatingTransaction }] = useCreateTransactionMutation();
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold text-gray-900 flex items-center mb-2">
-        Transaksjoner
-        <RadioGroup
-          className="ml-auto inline-flex shadow-sm rounded-md divide-x-reverse"
-          value={range}
-          onChange={handleSetRange}
-        >
-          {options.map((option) => (
-            <RadioGroup.Option
-              key={option}
-              value={option}
-              className={({ active, checked }) =>
-                classNames(
-                  'cursor-pointer focus:outline-none inline-flex items-center px-2 py-1 text-sm font-medium border border-gray-300 first:rounded-l-md last:rounded-r-md select-none',
-                  active ? 'ring-2 ring-offset-2 ring-pink-500 z-10' : '',
-                  checked
-                    ? 'bg-pink-50 border-pink-500 text-pink-600'
-                    : ' bg-white text-gray-500 hover:bg-gray-50'
-                )
-              }
-            >
-              <RadioGroup.Label as="p">{option}d</RadioGroup.Label>
-            </RadioGroup.Option>
-          ))}
-        </RadioGroup>
+    <Fragment>
+      <h2 className="mt-8 text-2xl">
+        Transaksjoner{' '}
+        {(ynabIsLoading || sbankenIsLoading || isCreatingTransaction) && (
+          <span>
+            <Spinner />
+            <span className="sr-only">Laster inn</span>
+          </span>
+        )}
       </h2>
-      <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-        <table className="min-w-full divide-y divide-gray-200">
+      <p className="mt-2 text-sm text-gray-500">Viser kun bokførte transaksjoner fra Sbanken.</p>
+      <div className="overflow-hidden shadow mt-4 md:rounded-lg">
+        <table className="min-w-full divide-y divide-gray-300">
           <thead className="bg-gray-50">
             <tr>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="whitespace-nowrap py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
               >
                 Dato
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
               >
                 Kilde
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900 w-full"
               >
-                Tekst
+                Beskrivelse
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="whitespace-nowrap px-2 py-3.5 text-right text-sm font-semibold text-gray-900"
               >
                 Beløp
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {linkedTransactions.map((transaction) => {
+          <tbody className="divide-y divide-gray-200 bg-white">
+            {transactions.map((transaction) => {
               return (
-                <tr key={transaction.checksum}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-numbers tabular-nums">
+                <tr
+                  key={`${transaction.sbankenTransactionId}:${transaction.ynabTranscationId}`}
+                  className="hover:bg-gray-50"
+                >
+                  <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-6 font-numbers">
                     {transaction.date.toISODate()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 group">
+                  <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">
                     {!!(transaction.source & TransactionSource.Sbanken) && 'Sbanken'}
                     {!!(transaction.source & TransactionSource.Sbanken) &&
                       !(transaction.source & TransactionSource.Ynab) && (
                         <Button
-                          className="ml-1 px-2 py-0.5 invisible group-hover:visible"
+                          size="xs"
+                          className="ml-1"
                           disabled={isCreatingTransaction}
                           onClick={() => {
-                            void createYnabTransaction({
-                              budgetId,
+                            void createTransaction({
                               accountId: account.ynabAccountId,
-                              fromDate: fromDateForYnab.toISODate(), // TODO: How to update this across all items?
-                              ...transaction,
+                              fromDate,
+                              transaction,
                             });
                           }}
                         >
-                          ⚯ YNAB
+                          ⚯
                         </Button>
                       )}
                     {!!(transaction.source & TransactionSource.Sbanken) &&
@@ -173,11 +147,11 @@ export default function Transactions({ accountId }: TransactionsProps) {
                       )}
                     {!!(transaction.source & TransactionSource.Ynab) && 'YNAB'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">
                     {transaction.description}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-numbers tabular-nums">
-                    {formatMoney(+transaction.amount)}
+                  <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500 text-right font-numbers">
+                    {formatMoney(transaction.amount)}
                   </td>
                 </tr>
               );
@@ -185,6 +159,6 @@ export default function Transactions({ accountId }: TransactionsProps) {
           </tbody>
         </table>
       </div>
-    </div>
+    </Fragment>
   );
-}
+};

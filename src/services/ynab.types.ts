@@ -1,4 +1,5 @@
 import type { EntityState } from '@reduxjs/toolkit';
+import type { Transaction } from './transactions';
 
 export interface YnabAccount {
   id: string;
@@ -24,7 +25,7 @@ export interface YnabTransaction {
   id: string;
   date: string;
   amount: number;
-  memo: string;
+  memo?: string;
   cleared: string;
   approved: boolean;
   flag_color: string;
@@ -34,7 +35,7 @@ export interface YnabTransaction {
   transfer_account_id: string;
   transfer_transaction_id: string;
   matched_transaction_id: string;
-  import_id: string;
+  import_id?: string;
   deleted: boolean;
   account_name: string;
   payee_name: string;
@@ -120,4 +121,22 @@ export interface YnabErrorResponse {
     name: string;
     detail: string;
   };
+}
+
+export interface YnabCreateTransactionRequest {
+  accountId: string;
+  fromDate: string;
+  transaction: Transaction;
+}
+
+export interface YnabCreateTransactionResponse {
+  transaction_ids: Array<string>;
+  transaction: YnabTransaction;
+  duplicate_import_ids: Array<string>;
+  server_knowledge: number;
+}
+
+export interface YnabCreateTransactionsEntity {
+  transaction: YnabTransaction;
+  serverKnowledge: number;
 }

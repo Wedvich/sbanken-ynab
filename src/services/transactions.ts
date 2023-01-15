@@ -1,6 +1,6 @@
 import { groupBy } from 'lodash-es';
 import { DateTime } from 'luxon';
-import type { SbankenTransaction } from './sbanken/types';
+import type { SbankenTransactionWithAccountId } from './sbanken.types';
 import type { YnabTransaction } from './ynab.types';
 
 export enum TransactionSource {
@@ -10,7 +10,6 @@ export enum TransactionSource {
 
 export interface Transaction {
   amount: number;
-  checksum?: number;
   date: DateTime;
   description?: string;
   source: TransactionSource;
@@ -19,15 +18,16 @@ export interface Transaction {
   ynabTranscationId?: string;
 }
 
-const convertSbankenTransaction = (sbankenTransaction: SbankenTransaction): Transaction => {
+const convertSbankenTransaction = (
+  sbankenTransaction: SbankenTransactionWithAccountId
+): Transaction => {
   const interestDate = DateTime.fromISO(sbankenTransaction.interestDate);
   const inferredDate = DateTime.fromISO(
-    sbankenTransaction._inferredDate ?? sbankenTransaction.accountingDate
+    sbankenTransaction.inferredDate ?? sbankenTransaction.accountingDate
   );
 
   const transaction: Transaction = {
     amount: sbankenTransaction.amount,
-    checksum: sbankenTransaction._checksum,
     date: +interestDate < +inferredDate ? interestDate : inferredDate,
     description: sbankenTransaction.text,
     source: TransactionSource.Sbanken,
@@ -39,10 +39,9 @@ const convertSbankenTransaction = (sbankenTransaction: SbankenTransaction): Tran
 
 const convertYnabTransaction = (ynabTransaction: YnabTransaction): Transaction => {
   const transaction: Transaction = {
-    amount: ynabTransaction.amount,
-    checksum: ynabTransaction._checksum,
+    amount: ynabTransaction.amount / 1000,
     date: DateTime.fromISO(ynabTransaction.date),
-    description: ynabTransaction.memo,
+    description: ynabTransaction.memo || ynabTransaction.payee_name,
     source: TransactionSource.Ynab,
     ynabImportId: ynabTransaction.import_id,
     ynabTranscationId: ynabTransaction.id,
@@ -51,18 +50,14 @@ const convertYnabTransaction = (ynabTransaction: YnabTransaction): Transaction =
   return transaction;
 };
 
-function createImportIdFromChecksum(checksum: number): string {
-  return `sbanken-${checksum}`;
-}
-
 export function isYnabTransaction(
-  transaction: SbankenTransaction | YnabTransaction | Transaction
+  transaction: SbankenTransactionWithAccountId | YnabTransaction | Transaction
 ): transaction is YnabTransaction {
   return (transaction as YnabTransaction).account_id !== undefined;
 }
 
 export const isLinkedTransaction = (
-  transaction: SbankenTransaction | YnabTransaction | Transaction
+  transaction: SbankenTransactionWithAccountId | YnabTransaction | Transaction
 ): transaction is Transaction => {
   return (
     !!(transaction as Transaction).sbankenTransactionId &&
@@ -71,17 +66,15 @@ export const isLinkedTransaction = (
 };
 
 export const linkTransactions = (
-  sbankenTransactions: Array<SbankenTransaction>,
-  ynabTransactions: Array<YnabTransaction>
+  sbankenTransactions: Array<SbankenTransactionWithAccountId> = [],
+  ynabTransactions: Array<YnabTransaction> = []
 ): Array<Transaction> => {
-  const sbankenTransactionsMap = groupBy(
-    sbankenTransactions.map(convertSbankenTransaction).sort((a, b) => b.amount - a.amount),
-    (t) => t.date.toISODate()
+  const sbankenTransactionsMap = groupBy(sbankenTransactions.map(convertSbankenTransaction), (t) =>
+    t.date.toISODate()
   );
 
-  const ynabTransactionsMap = groupBy(
-    ynabTransactions.map(convertYnabTransaction).sort((a, b) => b.amount - a.amount),
-    (t) => t.date.toISODate()
+  const ynabTransactionsMap = groupBy(ynabTransactions.map(convertYnabTransaction), (t) =>
+    t.date.toISODate()
   );
 
   const linkedTransactions: Array<Transaction> = [];
@@ -121,9 +114,7 @@ export const linkTransactions = (
           matchingTransactions.find(
             (ynabTransaction) =>
               !!ynabTransaction.ynabImportId &&
-              (ynabTransaction.ynabImportId === sbankenTransaction.sbankenTransactionId ||
-                ynabTransaction.ynabImportId ===
-                  createImportIdFromChecksum(sbankenTransaction.checksum))
+              ynabTransaction.ynabImportId === sbankenTransaction.sbankenTransactionId
           ) ?? matchingTransactions[0];
 
         linkAndPushTransaction(sbankenTransaction, maybeLinkedTransaction, ynabTransactionsForDate);
