@@ -225,10 +225,6 @@ export const fetchSbankenToken = createAsyncThunk<SbankenToken, SbankenCredentia
   }
 );
 
-export const fetchAllAccounts = createAsyncThunk(`${sbankenSlice.name}/fetchAllAccounts`, () => {
-  /**/
-});
-
 export const fetchSbankenAccounts = createAsyncThunk<
   Array<SbankenAccountWithClientId>,
   SbankenCredential

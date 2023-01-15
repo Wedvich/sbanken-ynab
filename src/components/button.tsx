@@ -12,6 +12,7 @@ export default function Button({
   className,
   importance = 'tertiary',
   size = 'md',
+  type = 'button',
   ...rest
 }: ButtonProps) {
   return (
@@ -32,6 +33,7 @@ export default function Button({
           'rounded-md px-6 py-3 text-base': size === 'xl',
         }
       )}
+      type={type}
       {...rest}
     >
       {children}

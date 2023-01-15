@@ -1,6 +1,7 @@
 import { ComponentChildren, Fragment, h } from 'preact';
 import { useState, useId, useCallback, useEffect } from 'preact/hooks';
 import { FocusTrap } from '@headlessui/react';
+import { Form } from 'react-router-dom';
 import classNames from 'classnames';
 import Button from '../../components/button';
 import type { SbankenCredential } from '../../services/sbanken';
@@ -108,7 +109,7 @@ export const YnabTokenEditor = ({
       })}
     >
       <EditorFocusTrap parentId={id} isEditing={isEditing} stopEditing={stopEditing}>
-        <form
+        <Form
           className={classNames('relative block focus:outline-none sm:flex sm:justify-between', {
             'flex-row-reverse': isEmptyState,
           })}
@@ -213,7 +214,7 @@ export const YnabTokenEditor = ({
               </Fragment>
             )}
           </span>
-        </form>
+        </Form>
       </EditorFocusTrap>
     </li>
   );
@@ -256,7 +257,7 @@ export const SbankenCredentialEditor = ({
   const canSave =
     !!idValue &&
     !!secretValue &&
-    !credentials.some((c) => c.clientId === idValue) &&
+    !credentials.some((c) => c.clientId === idValue && c.clientSecret === secretValue) &&
     fetchStatus !== 'pending';
 
   const handleSave = useCallback(() => {

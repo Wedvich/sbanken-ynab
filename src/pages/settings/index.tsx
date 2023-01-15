@@ -120,9 +120,11 @@ export const Settings = () => {
                 >
                   Utviklerportalen <Icons.ExternalLink />
                 </a>{' '}
-                og opprette en applikasjon med tilgangen &ldquot;Grants access to perform operations
-                on APIBeta APIs (aka. developer portal)&rdquot;. Dette gir deg en applikasjonsnøkkel
-                og et passord.
+                og opprette en applikasjon med tilgangen{' '}
+                <span className="font-semibold">
+                  Grants access to perform operations on APIBeta APIs (aka. developer portal)
+                </span>
+                . Dette gir deg en applikasjonsnøkkel og et passord.
               </Fragment>
             }
           >
