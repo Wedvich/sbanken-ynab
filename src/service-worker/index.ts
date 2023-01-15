@@ -1,7 +1,7 @@
 import { ServiceWorkerActionTypes } from './constants';
+import type { Manifest } from 'vite';
 
-const revision = process.env.REVISION;
-const staticCacheName = `sbanken-ynab-${revision}`;
+const staticCacheName = `sbanken-ynab-${VITE_REVISION}`;
 const cacheRegExp = /.(css|js|woff2?)$/i;
 const unversionedAssets = ['/', '/index.html', '/robots.txt', '/app.json'];
 
@@ -12,12 +12,12 @@ self.addEventListener('install', (event) => {
     caches.open(staticCacheName).then(async (cache) => {
       const assets = ['/'];
       try {
-        const manifest: any = await (await fetch('manifest.json', { cache: 'reload' })).json();
+        const manifest: Manifest = await (await fetch('manifest.json', { cache: 'reload' })).json();
         Array.prototype.push.apply(
           assets,
-          Object.values<string>(manifest as { [s: string]: string } | ArrayLike<string>).filter(
-            (v) => cacheRegExp.test(v)
-          )
+          Object.values(manifest)
+            .filter((v) => cacheRegExp.test(v.file))
+            .map((v) => `/${v.file}`)
         );
       } finally {
         await cache.addAll(
@@ -52,7 +52,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.headers.get('Accept')?.includes('text/html')) {
-    event.respondWith(caches.match('/'));
+    event.respondWith(caches.match('/') as Promise<Response>);
   } else {
     event.respondWith(
       caches.match(event.request).then((response) => response ?? fetch(event.request))

@@ -1,9 +1,11 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { autoBatchEnhancer, configureStore, createAsyncThunk } from '@reduxjs/toolkit';
 import { accountsSlice } from './accounts';
 import { sbankenSlice } from './sbanken';
 import { ynabSlice } from './ynab';
-import sbankenApi from './sbanken/api';
-import ynabApi from './ynab/api';
+import { sbankenApi } from './sbanken.api';
+import { ynabApi } from './ynab.api';
+import { listenerMiddleware } from './listener';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 export const store = configureStore({
   reducer: {
@@ -14,8 +16,19 @@ export const store = configureStore({
     [ynabSlice.name]: ynabSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(sbankenApi.middleware, ynabApi.middleware),
+    getDefaultMiddleware()
+      .prepend(listenerMiddleware.middleware)
+      .concat(sbankenApi.middleware, ynabApi.middleware),
+  enhancers: (existingEnhancers) => existingEnhancers.concat(autoBatchEnhancer()),
 });
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
+
+export const createAppAsyncThunk = createAsyncThunk.withTypes<{
+  state: RootState;
+  dispatch: AppDispatch;
+}>();
+
+export const useAppDispatch = useDispatch<AppDispatch>;
+export const useAppSelector = useSelector as TypedUseSelectorHook<RootState>;

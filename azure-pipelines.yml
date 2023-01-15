@@ -1,6 +1,3 @@
-variables:
-  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
-
 jobs:
   - job: frontend
     displayName: Build frontend
@@ -14,7 +11,7 @@ jobs:
         inputs:
           version: 18.x
 
-      - script: yarn --immutable
+      - script: yarn --immutable --immutable-cache --check-cache
         displayName: Install dependencies
 
       - script: yarn lint-ci
@@ -29,11 +26,11 @@ jobs:
       - script: yarn test-ci
         displayName: Run tests
 
-      - task: PublishTestResults@2
-        displayName: Publish test results
-        continueOnError: true
-        inputs:
-          testResultsFiles: junit.xml
+      # - task: PublishTestResults@2
+      #   displayName: Publish test results
+      #   continueOnError: true
+      #   inputs:
+      #     testResultsFiles: junit.xml
 
       - task: PublishCodeCoverageResults@1
         displayName: Publish test coverage
@@ -65,10 +62,10 @@ jobs:
 
     steps:
       - task: UseDotNet@2
-        displayName: Install .NET 5 SDK
+        displayName: Install .NET 6 SDK
         inputs:
           packageType: 'sdk'
-          version: '5.0.x'
+          version: '6.0.x'
 
       - task: DotNetCoreCLI@2
         displayName: Package artifacts

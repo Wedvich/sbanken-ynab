@@ -3,7 +3,7 @@
   "id": "sbanken-ynab",
   "name": "Sbanken → YNAB",
   "short_name": "Sbanken → YNAB",
-  "description": "Overfør transaksjoner fra Sbanken til YNAB og hold kontoene ajour.",
+  "description": "Overfør transaksjoner fra Sbanken til YNAB og hold kontoene à jour.",
   "lang": "nb",
   "display": "minimal-ui",
   "theme_color": "#db2777",

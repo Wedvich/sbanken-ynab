@@ -13,14 +13,17 @@
     "resolveJsonModule": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
-    "target": "esnext"
+    "strict": true,
+    "target": "esnext",
+    "types": ["vitest/globals"]
   },
   "include": [
     "src/**/*",
-    ".eslintrc.js",
+    ".eslintrc.cjs",
     ".stylelintrc.js",
+    "*.config.cjs",
     "*.config.js",
-    "server.js",
-    "webpack.config.*.js"
+    "*.config.ts",
+    "*.config.sw.ts"
   ]
 }

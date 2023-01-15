@@ -1,4 +1,5 @@
 import { useRef } from 'preact/hooks';
+import { createAction } from '@reduxjs/toolkit';
 
 export const formatMoney = new Intl.NumberFormat('no', { style: 'currency', currency: 'NOK' })
   .format;
@@ -30,4 +31,18 @@ export function usePrevious<T>(value: T) {
   const { current } = ref;
   ref.current = value;
   return current;
+}
+
+export const fetchInitialData = createAction('fetchInitialData');
+
+export type RequestStatus = 'pending' | 'fulfilled' | 'rejected';
+
+const emojiRanges = [
+  '\ud83c[\udf00-\udfff]', // U+1F300 to U+1F3FF
+  '\ud83d[\udc00-\ude4f]', // U+1F400 to U+1F64F
+  '\ud83d[\ude80-\udeff]', // U+1F680 to U+1F6FF
+].join('|');
+
+export function stripEmojis(text: string) {
+  return text.replace(new RegExp(emojiRanges, 'g'), '');
 }

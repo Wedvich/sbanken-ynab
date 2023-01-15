@@ -1,16 +1,19 @@
-module.exports = {
+import postcssImport from 'postcss-import';
+import tailwind from 'tailwindcss';
+import tailwindConfig from './tailwind.config.cjs';
+import postcssFlexbugsFixes from 'postcss-flexbugs-fixes';
+import postcssPresetEnv from 'postcss-preset-env';
+
+export default {
   plugins: [
-    require.resolve('postcss-import'),
-    require.resolve('tailwindcss'),
-    require.resolve('postcss-flexbugs-fixes'),
-    [
-      require.resolve('postcss-preset-env'),
-      {
-        stage: 3,
-        features: {
-          'nesting-rules': true,
-        },
+    postcssImport(),
+    tailwind(tailwindConfig),
+    postcssFlexbugsFixes(),
+    postcssPresetEnv({
+      stage: 3,
+      features: {
+        'nesting-rules': true,
       },
-    ],
+    }),
   ],
 };
