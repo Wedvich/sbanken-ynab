@@ -1,6 +1,6 @@
 import { groupBy } from 'lodash-es';
 import { DateTime } from 'luxon';
-import type { SbankenTransactionWithAccountId } from './sbanken.types';
+import type { SbankenReservedTransaction, SbankenTransactionWithAccountId } from './sbanken.types';
 import type { YnabTransaction } from './ynab.types';
 
 export enum TransactionSource {
@@ -12,15 +12,27 @@ export interface Transaction {
   amount: number;
   date: DateTime;
   description?: string;
+  isReserved?: boolean;
   source: TransactionSource;
   sbankenTransactionId?: string;
   ynabImportId?: string;
   ynabTranscationId?: string;
 }
 
+const conversionCache = new WeakMap<
+  | SbankenTransactionWithAccountId
+  | SbankenTransactionWithAccountId<SbankenReservedTransaction>
+  | YnabTransaction,
+  Transaction
+>();
+
 const convertSbankenTransaction = (
   sbankenTransaction: SbankenTransactionWithAccountId
 ): Transaction => {
+  if (conversionCache.has(sbankenTransaction)) {
+    return conversionCache.get(sbankenTransaction)!;
+  }
+
   const interestDate = DateTime.fromISO(sbankenTransaction.interestDate);
   const inferredDate = DateTime.fromISO(
     sbankenTransaction.inferredDate ?? sbankenTransaction.accountingDate
@@ -34,10 +46,39 @@ const convertSbankenTransaction = (
     sbankenTransactionId: sbankenTransaction.transactionId,
   };
 
+  conversionCache.set(sbankenTransaction, transaction);
+  return transaction;
+};
+
+export const convertSbankenReservedTransaction = (
+  sbankenTransaction: SbankenTransactionWithAccountId<SbankenReservedTransaction>
+): Transaction => {
+  if (conversionCache.has(sbankenTransaction)) {
+    return conversionCache.get(sbankenTransaction)!;
+  }
+
+  const interestDate = DateTime.fromISO(sbankenTransaction.interestDate);
+  const inferredDate = DateTime.fromISO(
+    sbankenTransaction.inferredDate ?? sbankenTransaction.accountingDate
+  );
+
+  const transaction: Transaction = {
+    amount: sbankenTransaction.amount,
+    date: +interestDate < +inferredDate ? interestDate : inferredDate,
+    description: sbankenTransaction.text,
+    source: TransactionSource.Sbanken,
+    isReserved: true,
+  };
+
+  conversionCache.set(sbankenTransaction, transaction);
   return transaction;
 };
 
 const convertYnabTransaction = (ynabTransaction: YnabTransaction): Transaction => {
+  if (conversionCache.has(ynabTransaction)) {
+    return conversionCache.get(ynabTransaction)!;
+  }
+
   const transaction: Transaction = {
     amount: ynabTransaction.amount / 1000,
     date: DateTime.fromISO(ynabTransaction.date),
@@ -47,6 +88,7 @@ const convertYnabTransaction = (ynabTransaction: YnabTransaction): Transaction =
     ynabTranscationId: ynabTransaction.id,
   };
 
+  conversionCache.set(ynabTransaction, transaction);
   return transaction;
 };
 

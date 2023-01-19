@@ -2,8 +2,8 @@ import type { LinkedAccount } from './accounts';
 import type { SbankenCredential } from './sbanken';
 
 export const ACCOUNTS_STORAGE_KEY = 'accounts';
-export const RANGE_STORAGE_KEY = 'range';
 export const SBANKEN_CREDENTIALS_KEY = 'sbanken:credentials';
+export const SBANKEN_SHOW_RESERVED_KEY = 'sbanken:show_reserved';
 export const STORAGE_VERSION_KEY = 'version';
 export const YNAB_BUDGET_KEY = 'ynab:budget';
 export const YNAB_TOKENS_KEY = 'ynab:tokens';

@@ -6,7 +6,8 @@ import {
   FetchBaseQueryMeta,
 } from '@reduxjs/toolkit/query/react';
 import { ynabApiBaseUrl } from '../config';
-import type {
+import {
+  YnabClearedState,
   YnabCreateTransactionRequest,
   YnabCreateTransactionResponse,
   YnabCreateTransactionsEntity,
@@ -47,7 +48,6 @@ export const ynabApi = createApi({
   endpoints: () => ({}),
 });
 
-// TODO: memoize
 const convertToYnabTransaction = (
   transaction: Transaction,
   accountId: string
@@ -57,7 +57,7 @@ const convertToYnabTransaction = (
   date: transaction.date.toISO(),
   import_id: transaction.sbankenTransactionId,
   memo: transaction.description,
-  cleared: 'cleared',
+  cleared: transaction.isReserved ? YnabClearedState.Uncleared : YnabClearedState.Cleared,
   approved: true,
 });
 
