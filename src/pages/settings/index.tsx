@@ -177,7 +177,7 @@ export const Settings = () => {
                 </p>
                 <p>Ingenting blir slettet fra YNAB eller Sbanken.</p>
               </Dialog.Description>
-              <div className="mt-4 space-x-2">
+              <div className="mt-4 space-x-4">
                 <Button onClick={resetEverything}>Fjern</Button>
                 <Button onClick={() => setShowResetDialog(false)}>Avbryt</Button>
               </div>
