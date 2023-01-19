@@ -157,87 +157,91 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
           transaksjoner fra Sbanken vises.
         </span>
       </div>
-      <div className="overflow-hidden shadow mt-4 md:rounded-lg">
-        <table className="min-w-full divide-y divide-gray-300">
-          <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="whitespace-nowrap py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-              >
-                Dato
-              </th>
-              <th
-                scope="col"
-                className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-              >
-                Kilde
-              </th>
-              <th
-                scope="col"
-                className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 w-full"
-              >
-                Beskrivelse
-              </th>
-              <th
-                scope="col"
-                className="whitespace-nowrap py-3.5 pl-3 pr-4 sm:pr-6 text-right text-sm font-semibold text-gray-900"
-              >
-                Beløp
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-            {transactions.map((transaction) => {
-              return (
-                <tr
-                  key={`${transaction.sbankenTransactionId}:${transaction.ynabTranscationId}`}
-                  className={classNames('hover:bg-gray-50', {
-                    'text-gray-900': !transaction.isReserved,
-                    'text-gray-500': transaction.isReserved,
-                  })}
-                >
-                  <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm sm:pl-6 font-numbers">
-                    {transaction.date.toISODate()}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-2 text-sm font-medium">
-                    {!!(transaction.source & TransactionSource.Sbanken) && 'Sbanken'}
-                    {!!(transaction.source & TransactionSource.Sbanken) &&
-                      !(transaction.source & TransactionSource.Ynab) &&
-                      !transaction.isReserved && (
-                        <Button
-                          size="xs"
-                          className="ml-1"
-                          disabled={isCreatingTransaction}
-                          onClick={() => {
-                            void createTransaction({
-                              accountId: account.ynabAccountId,
-                              fromDate,
-                              transaction,
-                            });
-                          }}
-                        >
-                          ⚯
-                        </Button>
-                      )}
-                    {!!(transaction.source & TransactionSource.Sbanken) &&
-                      !!(transaction.source & TransactionSource.Ynab) && (
-                        <span className="text-gray-500"> ⚯ </span>
-                      )}
-                    {!!(transaction.source & TransactionSource.Ynab) && 'YNAB'}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-2 text-sm">
-                    {transaction.isReserved && '(Ikke bokført) '}
-                    {transaction.description}
-                  </td>
-                  <td className="whitespace-nowrap py-2 pl-3 pr-4 sm:pr-6 text-sm text-right font-numbers">
-                    {formatMoney(transaction.amount)}
-                  </td>
+      <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+          <div className="overflow-hidden shadow mt-4 md:rounded-lg">
+            <table className="min-w-full divide-y divide-gray-300">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                  >
+                    Dato
+                  </th>
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Kilde
+                  </th>
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 w-full"
+                  >
+                    Beskrivelse
+                  </th>
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap py-3.5 pl-3 pr-4 sm:pr-6 text-right text-sm font-semibold text-gray-900"
+                  >
+                    Beløp
+                  </th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {transactions.map((transaction) => {
+                  return (
+                    <tr
+                      key={`${transaction.sbankenTransactionId}:${transaction.ynabTranscationId}`}
+                      className={classNames('hover:bg-gray-50', {
+                        'text-gray-900': !transaction.isReserved,
+                        'text-gray-500': transaction.isReserved,
+                      })}
+                    >
+                      <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm sm:pl-6 font-numbers">
+                        {transaction.date.toISODate()}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2 text-sm font-medium">
+                        {!!(transaction.source & TransactionSource.Sbanken) && 'Sbanken'}
+                        {!!(transaction.source & TransactionSource.Sbanken) &&
+                          !(transaction.source & TransactionSource.Ynab) &&
+                          !transaction.isReserved && (
+                            <Button
+                              size="xs"
+                              className="ml-1"
+                              disabled={isCreatingTransaction}
+                              onClick={() => {
+                                void createTransaction({
+                                  accountId: account.ynabAccountId,
+                                  fromDate,
+                                  transaction,
+                                });
+                              }}
+                            >
+                              ⚯
+                            </Button>
+                          )}
+                        {!!(transaction.source & TransactionSource.Sbanken) &&
+                          !!(transaction.source & TransactionSource.Ynab) && (
+                            <span className="text-gray-500"> ⚯ </span>
+                          )}
+                        {!!(transaction.source & TransactionSource.Ynab) && 'YNAB'}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2 text-sm">
+                        {transaction.isReserved && '(Ikke bokført) '}
+                        {transaction.description}
+                      </td>
+                      <td className="whitespace-nowrap py-2 pl-3 pr-4 sm:pr-6 text-sm text-right font-numbers">
+                        {formatMoney(transaction.amount)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </Fragment>
   );
