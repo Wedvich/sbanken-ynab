@@ -119,7 +119,7 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
             onClick={() => dispatch(setShowReservedTransactions(false))}
           >
             <Icons.CreditCardChecked
-              className={classNames({
+              className={classNames('h-6 w-6 lg:h-4 lg:w-4', {
                 'text-pink-500': !showReservedTransactions,
               })}
             />
@@ -139,7 +139,7 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
             onClick={() => dispatch(setShowReservedTransactions(true))}
           >
             <Icons.CreditCard
-              className={classNames({
+              className={classNames('h-6 w-6 lg:h-4 lg:w-4', {
                 'text-pink-500': showReservedTransactions,
               })}
             />
