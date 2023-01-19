@@ -152,7 +152,10 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
             </span>
           </button>
         </div>
-        <span className="ml-1">transaksjoner fra Sbanken vises.</span>
+        <span className="ml-2 lg:ml-1">
+          <span className="lg:sr-only">{showReservedTransactions ? 'Alle ' : 'Kun bokførte '}</span>
+          transaksjoner fra Sbanken vises.
+        </span>
       </div>
       <div className="overflow-hidden shadow mt-4 md:rounded-lg">
         <table className="min-w-full divide-y divide-gray-300">

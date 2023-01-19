@@ -58,7 +58,7 @@ export const getEnrichedAccounts = createSelector(
       const ynabAccount = ynabAccountsLookup[linkedAccount.ynabAccountId];
       const ynabBudget = ynabBudgetsLookup[linkedAccount.ynabBudgetId];
 
-      const sbankenUnclearedBalance = getSbankenUnclearedBalance(sbankenAccount);
+      const sbankenUnclearedBalance = +getSbankenUnclearedBalance(sbankenAccount).toFixed(2);
 
       const enrichedAccount: EnrichedAccount = {
         ...linkedAccount,

@@ -64,10 +64,7 @@ export function getSbankenUnclearedBalance(sbankenAccount?: SbankenAccount): num
   if (!sbankenAccount) return 0;
 
   if (sbankenAccount.accountType === 'Creditcard account') {
-    return +(
-      -sbankenAccount.balance -
-      (sbankenAccount.creditLimit - sbankenAccount.available)
-    ).toFixed(2);
+    return +(-sbankenAccount.balance - (sbankenAccount.creditLimit - sbankenAccount.available));
   }
 
   return sbankenAccount.available - sbankenAccount.balance;
