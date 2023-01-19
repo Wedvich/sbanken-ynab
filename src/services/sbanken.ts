@@ -10,7 +10,7 @@ import {
 import memoize from 'lodash-es/memoize';
 import type { RootState } from '.';
 import { sbankenApiBaseUrl, sbankenIdentityServerUrl } from '../config';
-import { SBANKEN_CREDENTIALS_KEY } from './storage';
+import { SBANKEN_CREDENTIALS_KEY, SBANKEN_SHOW_RESERVED_KEY } from './storage';
 import { startAppListening } from './listener';
 import { fetchInitialData, RequestStatus, stripEmojis } from '../utils';
 import type {
@@ -44,6 +44,7 @@ export interface SbankenState {
   credentialIdByAccountId: Record<string, string>;
   credentials: EntityState<SbankenCredential>;
   requestStatusByCredentialId: Record<string, RequestStatus | undefined>;
+  showReservedTransactions: boolean;
 }
 
 export function validateSbankenToken(token?: SbankenToken): token is SbankenToken {
@@ -97,6 +98,16 @@ const initialCredentials = sbankenCredentialsAdapter.setAll(
   loadStoredCredentials()
 );
 
+function loadShowReservedTransactions() {
+  try {
+    return localStorage.getItem(SBANKEN_SHOW_RESERVED_KEY) === 'true';
+  } catch (e) {
+    console.debug(e);
+    localStorage.removeItem(SBANKEN_SHOW_RESERVED_KEY);
+    return false;
+  }
+}
+
 const initialState: SbankenState = {
   accounts: sbankenAccountsAdapter.getInitialState(),
   credentialIdByAccountId: {},
@@ -110,6 +121,7 @@ const initialState: SbankenState = {
       }
       return status;
     }, {}),
+  showReservedTransactions: loadShowReservedTransactions(),
 };
 
 export const getSbankenCredentials = sbankenCredentialsAdapter.getSelectors(
@@ -160,6 +172,9 @@ export const sbankenSlice = createSlice({
       sbankenCredentialsAdapter.removeOne(state.credentials, action.payload);
       delete state.requestStatusByCredentialId[action.payload];
     },
+    setShowReservedTransactions: (state, action: PayloadAction<boolean>) => {
+      state.showReservedTransactions = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -184,8 +199,12 @@ export const sbankenSlice = createSlice({
   },
 });
 
-export const { deleteCredential, putCredentialIdsByAccountIds, saveCredential } =
-  sbankenSlice.actions;
+export const {
+  deleteCredential,
+  putCredentialIdsByAccountIds,
+  saveCredential,
+  setShowReservedTransactions,
+} = sbankenSlice.actions;
 
 // FIXME: Remove imports
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -284,5 +303,14 @@ startAppListening({
     await Promise.allSettled(
       credentials.map((credential) => dispatch(fetchSbankenAccounts(credential)))
     );
+  },
+});
+
+/** Stores changes to "showReservedTransactions" in localStorage. */
+startAppListening({
+  actionCreator: setShowReservedTransactions,
+  effect: (_, { getState }) => {
+    const { showReservedTransactions } = getState().sbanken;
+    localStorage.setItem(SBANKEN_SHOW_RESERVED_KEY, JSON.stringify(showReservedTransactions));
   },
 });

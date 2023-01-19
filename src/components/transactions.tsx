@@ -2,7 +2,7 @@ import { h, Fragment } from 'preact';
 import { useMemo } from 'preact/hooks';
 import { useSelector } from 'react-redux';
 import Button from '../components/button';
-import { useAppSelector } from '../services';
+import { useAppDispatch, useAppSelector } from '../services';
 import type { EnrichedAccount } from '../services/accounts';
 import { getYnabKnowledgeByBudgetId } from '../services/ynab';
 import {
@@ -17,6 +17,9 @@ import type { SbankenGetTransactionsRequest } from '../services/sbanken.types';
 import { getAllSbankenTransactions } from '../services/sbanken.selectors';
 import { Spinner } from '../components/spinner';
 import { linkTransactions, TransactionSource } from '../services/transactions';
+import classNames from 'classnames';
+import Icons from '../components/icons';
+import { setShowReservedTransactions } from '../services/sbanken';
 
 interface TransactionsProps {
   account: EnrichedAccount;
@@ -24,6 +27,8 @@ interface TransactionsProps {
 }
 
 export const Transactions = ({ account, fromDate }: TransactionsProps) => {
+  const dispatch = useAppDispatch();
+
   const serverKnowledge = useAppSelector((state) =>
     getYnabKnowledgeByBudgetId(state, account.ynabBudgetId)
   );
@@ -37,7 +42,7 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
     [account.ynabBudgetId, fromDate, serverKnowledge]
   );
 
-  const { data: ynabTransactionsData, isLoading: ynabIsLoading } = useGetYnabTransactionsQuery(
+  const { data: ynabTransactionsData, isFetching: ynabIsLoading } = useGetYnabTransactionsQuery(
     ynabTransactionsRequest,
     {
       skip: !account.ynabLinkOk,
@@ -57,16 +62,39 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
     [account.sbankenAccountId, fromDate]
   );
 
-  const { data: sbankenTransactionsData, isLoading: sbankenIsLoading } =
+  const { data: sbankenTransactionsData, isFetching: sbankenIsLoading } =
     useGetSbankenTransactionsQuery(sbankenTransactionsRequest, { skip: !account.sbankenLinkOk });
+
+  const showReservedTransactions = useAppSelector(
+    (state) => state.sbanken.showReservedTransactions
+  );
 
   const transactionsForSbankenAccount = getAllSbankenTransactions(
     sbankenTransactionsData?.transactions
   );
 
+  const filteredTransactionsForSbankenAccount = useMemo(() => {
+    if (showReservedTransactions) {
+      return transactionsForSbankenAccount;
+    }
+
+    const filteredTransactions = transactionsForSbankenAccount.filter(
+      (transaction) => !transaction.isReserved
+    );
+    if (filteredTransactions.length === transactionsForSbankenAccount.length) {
+      return transactionsForSbankenAccount;
+    }
+
+    return filteredTransactions;
+  }, [showReservedTransactions, transactionsForSbankenAccount]);
+
   const transactions = useMemo(() => {
-    return linkTransactions(transactionsForSbankenAccount, transactionsForYnabAccount);
-  }, [transactionsForSbankenAccount, transactionsForYnabAccount]);
+    const linkedTransactions = linkTransactions(
+      filteredTransactionsForSbankenAccount,
+      transactionsForYnabAccount
+    );
+    return linkedTransactions;
+  }, [filteredTransactionsForSbankenAccount, transactionsForYnabAccount]);
 
   const [createTransaction, { isLoading: isCreatingTransaction }] = useCreateTransactionMutation();
 
@@ -81,7 +109,51 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
           </span>
         )}
       </h2>
-      <p className="mt-2 text-sm text-gray-500">Viser kun bokførte transaksjoner fra Sbanken.</p>
+      <div className="mt-2 flex items-center text-sm text-gray-500">
+        <div className="flex space-x-1 rounded-lg bg-gray-200 p-0.5">
+          <button
+            className={classNames('flex items-center rounded-md p-1.5 font-semibold lg:pr-3', {
+              'bg-white shadow': !showReservedTransactions,
+            })}
+            type="button"
+            onClick={() => dispatch(setShowReservedTransactions(false))}
+          >
+            <Icons.CreditCardChecked
+              className={classNames({
+                'text-pink-500': !showReservedTransactions,
+              })}
+            />
+            <span
+              className={classNames('sr-only lg:not-sr-only lg:ml-2', {
+                'text-gray-900': !showReservedTransactions,
+              })}
+            >
+              Kun bokførte
+            </span>
+          </button>
+          <button
+            className={classNames('flex items-center rounded-md p-1.5 font-semibold lg:pr-3', {
+              'bg-white shadow': showReservedTransactions,
+            })}
+            type="button"
+            onClick={() => dispatch(setShowReservedTransactions(true))}
+          >
+            <Icons.CreditCard
+              className={classNames({
+                'text-pink-500': showReservedTransactions,
+              })}
+            />
+            <span
+              className={classNames('sr-only lg:not-sr-only lg:ml-2', {
+                'text-gray-900': showReservedTransactions,
+              })}
+            >
+              Alle
+            </span>
+          </button>
+        </div>
+        <span className="ml-1">transaksjoner fra Sbanken vises.</span>
+      </div>
       <div className="overflow-hidden shadow mt-4 md:rounded-lg">
         <table className="min-w-full divide-y divide-gray-300">
           <thead className="bg-gray-50">
@@ -94,19 +166,19 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
               </th>
               <th
                 scope="col"
-                className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
+                className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
               >
                 Kilde
               </th>
               <th
                 scope="col"
-                className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900 w-full"
+                className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 w-full"
               >
                 Beskrivelse
               </th>
               <th
                 scope="col"
-                className="whitespace-nowrap px-2 py-3.5 text-right text-sm font-semibold text-gray-900"
+                className="whitespace-nowrap py-3.5 pl-3 pr-4 sm:pr-6 text-right text-sm font-semibold text-gray-900"
               >
                 Beløp
               </th>
@@ -117,15 +189,19 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
               return (
                 <tr
                   key={`${transaction.sbankenTransactionId}:${transaction.ynabTranscationId}`}
-                  className="hover:bg-gray-50"
+                  className={classNames('hover:bg-gray-50', {
+                    'text-gray-900': !transaction.isReserved,
+                    'text-gray-500': transaction.isReserved,
+                  })}
                 >
-                  <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-6 font-numbers">
+                  <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm sm:pl-6 font-numbers">
                     {transaction.date.toISODate()}
                   </td>
-                  <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">
+                  <td className="whitespace-nowrap px-3 py-2 text-sm font-medium">
                     {!!(transaction.source & TransactionSource.Sbanken) && 'Sbanken'}
                     {!!(transaction.source & TransactionSource.Sbanken) &&
-                      !(transaction.source & TransactionSource.Ynab) && (
+                      !(transaction.source & TransactionSource.Ynab) &&
+                      !transaction.isReserved && (
                         <Button
                           size="xs"
                           className="ml-1"
@@ -147,10 +223,11 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
                       )}
                     {!!(transaction.source & TransactionSource.Ynab) && 'YNAB'}
                   </td>
-                  <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">
+                  <td className="whitespace-nowrap px-3 py-2 text-sm">
+                    {transaction.isReserved && '(Ikke bokført) '}
                     {transaction.description}
                   </td>
-                  <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500 text-right font-numbers">
+                  <td className="whitespace-nowrap py-2 pl-3 pr-4 sm:pr-6 text-sm text-right font-numbers">
                     {formatMoney(transaction.amount)}
                   </td>
                 </tr>

@@ -1,5 +1,7 @@
+import { pick } from 'lodash-es';
 import { DateTime } from 'luxon';
-import type { SbankenTransaction } from './sbanken.types';
+import { crc32 } from '../utils';
+import type { SbankenTransactionBase } from './sbanken.types';
 
 /** Matches the date part of `*1234 12.01 Nok 1000.00 Abcd`. */
 const creditPurchasePattern = /^\*\d{4}\s+(\d{2}\.\d{2})/;
@@ -10,7 +12,7 @@ const debitPurchasePattern = /^(\d{2}\.\d{2})\s+.+/;
 /** Matches the date part of `Fra: Abcd Betalt: 01.01.22` */
 const directTransferPattern = /Betalt: (\d{2}\.\d{2}.\d{2})$/i;
 
-export function inferDate(transaction?: SbankenTransaction): string | undefined {
+export function inferDate(transaction?: SbankenTransactionBase): string | undefined {
   if (!transaction?.text) return;
 
   const inferredDate =
@@ -45,3 +47,17 @@ export function inferDate(transaction?: SbankenTransaction): string | undefined 
       : dateUsingPreviousYear.toISODate();
   }
 }
+
+export const createSyntheticId = (transaction: SbankenTransactionBase): string => {
+  const baseTransaction = pick(transaction, [
+    'accountingDate',
+    'interestDate',
+    'amount',
+    'text',
+    'transactionType',
+    'transactionTypeCode',
+    'transactionTypeText',
+  ]);
+  const syntheticId = `synthetic:${crc32(JSON.stringify(baseTransaction))}`;
+  return syntheticId;
+};

@@ -1,4 +1,5 @@
 import type { EntityState } from '@reduxjs/toolkit';
+import type { FetchBaseQueryError, FetchBaseQueryMeta } from '@reduxjs/toolkit/dist/query';
 
 export interface SbankenSuccessResponse<T> {
   availableItems: number;
@@ -20,13 +21,12 @@ export interface SbankenAccountWithClientId extends SbankenAccount {
   clientId: string;
 }
 
-enum SbankenTransactionSourceType {
+export enum SbankenTransactionSource {
   AccountStatement,
   Archive,
 }
 
-interface SbankenTransactionBase {
-  transactionId: string;
+export interface SbankenTransactionBase {
   accountingDate: string;
   interestDate: string;
   amount: number;
@@ -34,36 +34,24 @@ interface SbankenTransactionBase {
   transactionType: string;
   transactionTypeCode: number;
   transactionTypeText: string;
-  source: SbankenTransactionSourceType;
 }
 
-export type SbankenTransaction = SbankenTransactionBase &
-  (
-    | {
-        cardDetails: {
-          cardNumber: string;
-          currencyAmount: number;
-          currencyRate: number;
-          merchantCategoryCode: string;
-          merchantCategoryDescription: string;
-          merchantCity: string;
-          merchantName: string;
-          originalCurrencyCode: string;
-          purchaseDate: string;
-          transactionId: string;
-        };
-        cardDetailsSpecified: true;
-      }
-    | {
-        cardDetails: undefined;
-        cardDetailsSpecified: false;
-      }
-  );
+export interface SbankenTransaction extends SbankenTransactionBase {
+  transactionId: string;
+  source: SbankenTransactionSource;
+}
 
-export type SbankenTransactionWithAccountId = SbankenTransaction & {
-  accountId: string;
-  inferredDate?: string;
-};
+export interface SbankenReservedTransaction extends SbankenTransactionBase {
+  isReservation: boolean;
+  source: keyof typeof SbankenTransactionSource;
+}
+
+export type SbankenTransactionWithAccountId<T extends SbankenTransactionBase = SbankenTransaction> =
+  T & {
+    accountId: string;
+    inferredDate?: string;
+    isReserved?: boolean;
+  };
 
 export interface SbankenGetTransactionsRequest {
   accountId: string;
@@ -72,4 +60,8 @@ export interface SbankenGetTransactionsRequest {
 
 export interface SbankenGetTransactionsEntities {
   transactions: EntityState<SbankenTransactionWithAccountId>;
+}
+
+export interface SbankenGetTransactionsRequestMeta extends FetchBaseQueryMeta {
+  partialError?: FetchBaseQueryError;
 }

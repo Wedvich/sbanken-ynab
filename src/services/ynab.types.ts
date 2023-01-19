@@ -140,3 +140,9 @@ export interface YnabCreateTransactionsEntity {
   transaction: YnabTransaction;
   serverKnowledge: number;
 }
+
+export enum YnabClearedState {
+  Uncleared = 'uncleared',
+  Cleared = 'cleared',
+  Reconciled = 'reconciled',
+}
