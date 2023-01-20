@@ -11,6 +11,7 @@ import type { Identifier, XYCoord } from 'dnd-core';
 interface AccountCardProps {
   account: EnrichedAccount;
   index: number;
+  onClick: () => void;
   onDrop: () => void;
   onMove: (dragIndex: number, hoverIndex: number) => void;
 }
@@ -23,7 +24,7 @@ interface DragItem {
 
 const itemType = 'AccountCard';
 
-export const AccountCard = ({ account, index, onDrop, onMove }: AccountCardProps) => {
+export const AccountCard = ({ account, index, onClick, onDrop, onMove }: AccountCardProps) => {
   const ref = useRef<HTMLAnchorElement>(null);
 
   const isAjour = useMemo(
@@ -115,6 +116,7 @@ export const AccountCard = ({ account, index, onDrop, onMove }: AccountCardProps
       ref={ref}
       data-handler-id={handlerId}
       style={{ opacity: isDragging ? 0 : 1 }}
+      onClick={onClick}
     >
       <span className="flex items-center justify-between mb-2.5">
         <span className="font-medium">{account.name}</span>

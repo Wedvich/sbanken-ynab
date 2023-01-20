@@ -13,9 +13,10 @@ import Icons from './icons';
 
 interface SidebarProps {
   className?: string;
+  onClose: () => void;
 }
 
-export const Sidebar = ({ className }: SidebarProps) => {
+export const Sidebar = ({ className, onClose }: SidebarProps) => {
   const ynabTokensCount = useAppSelector((s) => getYnabTokens(s).length);
   const sbankenCredentialsCount = useAppSelector((s) => getSbankenCredentials(s).length);
   const accounts = useSelector(getEnrichedAccounts);
@@ -56,6 +57,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
                 'bg-gray-900 text-white': isActive,
               })
             }
+            onClick={onClose}
           >
             <svg
               viewBox="0 0 24 24"
@@ -81,6 +83,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
                 index={index}
                 onMove={onMoveCard}
                 onDrop={onDropCard}
+                onClick={onClose}
               />
             );
           })}
@@ -93,6 +96,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
                   'bg-gray-900 text-white': isActive,
                 })
               }
+              onClick={onClose}
             >
               <Icons.Plus className="mr-3 flex-shrink-0 h-6 w-6" />
               Legg til konto
@@ -103,6 +107,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
       <Link
         to="/innstillinger"
         className="flex bg-gray-700 p-4 w-full flex-shrink-0 text-gray-300 hover:text-gray-200"
+        onClick={onClose}
       >
         <div className="flex items-center">
           <div>

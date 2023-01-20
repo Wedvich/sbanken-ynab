@@ -6,6 +6,7 @@ import { Sidebar } from '../components/sidebar';
 
 export const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const handleCloseSidebar = () => setSidebarOpen(false);
   return (
     <Fragment>
       <Dialog
@@ -43,7 +44,7 @@ export const Layout = () => {
                 </svg>
               </button>
             </div>
-            <Sidebar className="h-0" />
+            <Sidebar className="h-0" onClose={handleCloseSidebar} />
           </Dialog.Panel>
           <div className="w-14 flex-shrink-0" />
         </div>
@@ -51,7 +52,7 @@ export const Layout = () => {
 
       <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         <div className="flex min-h-0 flex-1 flex-col bg-gray-800">
-          <Sidebar className="flex flex-col" />
+          <Sidebar className="flex flex-col" onClose={handleCloseSidebar} />
         </div>
       </div>
       <div className="flex flex-1 flex-col md:pl-64">
