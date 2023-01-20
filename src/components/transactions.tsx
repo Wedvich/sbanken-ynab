@@ -101,11 +101,11 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
   return (
     <Fragment>
       <h2 className="mt-8 text-2xl">
-        Transaksjoner{' '}
+        Transaksjoner
         {(ynabIsLoading || sbankenIsLoading || isCreatingTransaction) && (
-          <span>
+          <span className="ml-1">
             <Spinner />
-            <span className="sr-only">Laster inn</span>
+            <span className="sr-only">Laster inn transaksjoner</span>
           </span>
         )}
       </h2>

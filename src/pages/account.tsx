@@ -10,6 +10,9 @@ import { deleteAccount, getEnrichedAccountById } from '../services/accounts';
 import { fetchAccounts } from '../services/ynab';
 import { formatMoney } from '../utils';
 import { Transactions } from '../components/transactions';
+import { getFetchStatusForSbankenAccount } from '../services/sbanken.selectors';
+import { Spinner } from '../components/spinner';
+// import { fetchSbankenAccounts } from '../services/sbanken';
 const fromDate = DateTime.utc().minus({ days: 30 }).toISODate();
 
 export const AccountPage = () => {
@@ -19,9 +22,16 @@ export const AccountPage = () => {
   const dispatch = useAppDispatch();
   const account = useAppSelector((state) => getEnrichedAccountById(state, accountId));
 
+  const isFetchingSbankenAccount =
+    useAppSelector((state) => getFetchStatusForSbankenAccount(state, account?.sbankenAccountId)) ===
+    'pending';
+
+  const isFetching = isFetchingSbankenAccount;
+
   const refreshAccount = () => {
     if (!account) return;
     void dispatch(fetchAccounts(account.ynabAccountId));
+    //void dispatch(fetchSbankenAccounts());
   };
 
   const handleDelete = () => {
@@ -76,17 +86,25 @@ export const AccountPage = () => {
     <div className="py-10">
       <div className="max-w-5xl">
         <div className="px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-semibold text-gray-900">{account.name}</h1>
+          <h1 className="text-3xl font-semibold text-gray-900">
+            {account.name}
+            {isFetching && (
+              <span className="ml-1">
+                <Spinner size="lg" />
+                <span className="sr-only">Laster inn kontoinformasjon</span>
+              </span>
+            )}
+          </h1>
           <div className="mt-4 flex gap-2">
-            <Button size="xs" onClick={refreshAccount}>
+            <Button size="xs" onClick={refreshAccount} disabled={isFetching}>
               <Icons.Refresh className="mr-1" />
               Oppdater
             </Button>
-            <Button size="xs" onClick={() => navigate('endre')}>
+            <Button size="xs" onClick={() => navigate('endre')} disabled={isFetching}>
               <Icons.Edit className="mr-1" />
               Endre
             </Button>
-            <Button size="xs" onClick={handleDelete}>
+            <Button size="xs" onClick={handleDelete} disabled={isFetching}>
               <Icons.Delete className="mr-1" />
               Fjern
             </Button>
