@@ -42,10 +42,13 @@ export const getYnabBudgets = createSelector(budgetSelectors.selectAll, (budgets
 });
 export const getYnabBudgetsLookup = budgetSelectors.selectEntities;
 
-const accountsSelectors = accountsAdapter.getSelectors((state: RootState) => state.ynab.accounts);
+const ynabAccountsSelectors = accountsAdapter.getSelectors();
+export const ynabGlobalAccountsSelectors = accountsAdapter.getSelectors(
+  (state: RootState) => state.ynab.accounts
+);
 
 export const getYnabAccounts = createSelector(
-  accountsSelectors.selectAll,
+  ynabGlobalAccountsSelectors.selectAll,
   getIncludedBudgets,
   (accounts, includedBudgets) => {
     const prepareName = memoize((name: string) => stripEmojis(name).trim());
@@ -58,7 +61,7 @@ export const getYnabAccounts = createSelector(
   }
 );
 
-export const getYnabAccountsLookup = accountsSelectors.selectEntities;
+export const getYnabAccountsLookup = ynabGlobalAccountsSelectors.selectEntities;
 
 export const getYnabAccountLoadingStateById = createSelector(
   (_: RootState, id: string) => id,
@@ -100,12 +103,12 @@ export interface YnabState {
   tokensByBudgetId: Record<string, Array<string>>;
 }
 
-function getStoredTokens() {
+function loadStoredTokens() {
   const storedTokens = JSON.parse<Array<string>>(localStorage.getItem(YNAB_TOKENS_KEY) || '[]');
   return storedTokens;
 }
 
-function getStoredBudgets() {
+function loadStoredBudgets() {
   const storedBudgets = JSON.parse<Array<string>>(localStorage.getItem(YNAB_BUDGET_KEY) || '[]');
   return storedBudgets;
 }
@@ -113,11 +116,11 @@ function getStoredBudgets() {
 const initialState: YnabState = {
   accounts: accountsAdapter.getInitialState(),
   budgets: budgetsAdapter.getInitialState(),
-  includedBudgets: getStoredBudgets(),
+  includedBudgets: loadStoredBudgets(),
   rateLimitByToken: {},
   requestStatusByToken: {},
   serverKnowledgeByBudgetId: {},
-  tokens: getStoredTokens(),
+  tokens: loadStoredTokens(),
   tokensByBudgetId: {},
 };
 
@@ -230,6 +233,21 @@ export const ynabSlice = createSlice({
       budgetsAdapter.setMany(state.budgets, budgets);
       accountsAdapter.setMany(state.accounts, allAccounts);
     });
+
+    builder.addMatcher(
+      isAnyOf(
+        fetchAccounts.pending.match,
+        fetchAccounts.fulfilled.match,
+        fetchAccounts.rejected.match
+      ),
+      (state, action) => {
+        const account = ynabAccountsSelectors.selectById(state.accounts, action.meta.arg);
+        if (!account) return;
+
+        const token = state.tokensByBudgetId[account.budget_id][0];
+        state.requestStatusByToken[token] = action.meta.requestStatus;
+      }
+    );
 
     builder.addMatcher(fetchAccounts.fulfilled.match, (state, action) => {
       const accountId = action.meta.arg;

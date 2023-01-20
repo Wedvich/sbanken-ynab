@@ -12,7 +12,8 @@ import { formatMoney } from '../utils';
 import { Transactions } from '../components/transactions';
 import { getFetchStatusForSbankenAccount } from '../services/sbanken.selectors';
 import { Spinner } from '../components/spinner';
-// import { fetchSbankenAccounts } from '../services/sbanken';
+import { getFetchStatusForYnabAccount } from '../services/ynab.selectors';
+
 const fromDate = DateTime.utc().minus({ days: 30 }).toISODate();
 
 export const AccountPage = () => {
@@ -26,7 +27,11 @@ export const AccountPage = () => {
     useAppSelector((state) => getFetchStatusForSbankenAccount(state, account?.sbankenAccountId)) ===
     'pending';
 
-  const isFetching = isFetchingSbankenAccount;
+  const isFetchingYnabAccount =
+    useAppSelector((state) => getFetchStatusForYnabAccount(state, account?.ynabAccountId)) ===
+    'pending';
+
+  const isFetching = isFetchingSbankenAccount || isFetchingYnabAccount;
 
   const refreshAccount = () => {
     if (!account) return;
@@ -86,11 +91,11 @@ export const AccountPage = () => {
     <div className="py-10">
       <div className="max-w-5xl">
         <div className="px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-semibold text-gray-900">
+          <h1 className="text-3xl font-semibold text-gray-900 flex">
             {account.name}
             {isFetching && (
-              <span className="ml-1">
-                <Spinner size="lg" />
+              <span className="ml-4">
+                <Spinner size="sm" />
                 <span className="sr-only">Laster inn kontoinformasjon</span>
               </span>
             )}
