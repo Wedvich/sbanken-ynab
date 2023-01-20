@@ -101,11 +101,11 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
   return (
     <Fragment>
       <h2 className="mt-8 text-2xl">
-        Transaksjoner{' '}
+        Transaksjoner
         {(ynabIsLoading || sbankenIsLoading || isCreatingTransaction) && (
-          <span>
+          <span className="ml-1">
             <Spinner />
-            <span className="sr-only">Laster inn</span>
+            <span className="sr-only">Laster inn transaksjoner</span>
           </span>
         )}
       </h2>
@@ -119,7 +119,7 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
             onClick={() => dispatch(setShowReservedTransactions(false))}
           >
             <Icons.CreditCardChecked
-              className={classNames({
+              className={classNames('h-6 w-6 lg:h-4 lg:w-4', {
                 'text-pink-500': !showReservedTransactions,
               })}
             />
@@ -139,7 +139,7 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
             onClick={() => dispatch(setShowReservedTransactions(true))}
           >
             <Icons.CreditCard
-              className={classNames({
+              className={classNames('h-6 w-6 lg:h-4 lg:w-4', {
                 'text-pink-500': showReservedTransactions,
               })}
             />
