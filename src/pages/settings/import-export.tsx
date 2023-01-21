@@ -73,7 +73,7 @@ export const ImportExport = () => {
                   Kopier de komprimerte innstillingene under, så kan du trykke {'"Importer"'} i en
                   annen nettlester og lime inn teksten der.
                 </p>
-                <Textarea className="mt-2" value={exportedSettings.current} />
+                <Textarea className="mt-4" value={exportedSettings.current} />
               </Dialog.Description>
               <div className="mt-4 space-x-4">
                 <Button onClick={() => setShowExportDialog(false)}>Lukk</Button>
@@ -95,7 +95,7 @@ export const ImportExport = () => {
               <Dialog.Description className="mt-4">
                 <p>Lim inn de komprimerte innstillingene under og trykk {'"Importer"'}.</p>
                 <Textarea
-                  className="mt-2"
+                  className="mt-4"
                   value={importString}
                   onChange={(e) => setImportString((e.target as HTMLTextAreaElement).value)}
                 />
