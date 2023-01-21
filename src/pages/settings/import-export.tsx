@@ -26,13 +26,16 @@ export const ImportExport = () => {
       {}
     );
 
-    exportedSettings.current = lzString.compress(JSON.stringify(settingsObject));
+    exportedSettings.current = lzString.compressToBase64(JSON.stringify(settingsObject));
     setShowExportDialog(true);
   };
 
   const importSettings = () => {
-    const decompressedSettings: string | null = lzString.decompress(importString);
-    if (!decompressedSettings) return;
+    const decompressedSettings: string | null = lzString.decompressFromBase64(importString);
+    if (!decompressedSettings) {
+      console.error('Unable to decompress settings - invalid string');
+      return;
+    }
 
     const parsedSettings = JSON.parse<Record<string, unknown>>(decompressedSettings);
     for (const [key, value] of Object.entries(parsedSettings)) {
