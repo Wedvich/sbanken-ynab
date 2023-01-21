@@ -112,40 +112,50 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
       <div className="mt-2 flex items-center text-sm text-gray-500">
         <div className="flex space-x-1 rounded-lg bg-gray-200 p-0.5">
           <button
-            className={classNames('flex items-center rounded-md p-1.5 font-semibold lg:pr-3', {
-              'bg-white shadow': !showReservedTransactions,
-            })}
+            className={classNames(
+              'flex items-center rounded-md p-1.5 font-semibold lg:pr-3 group',
+              {
+                'bg-white shadow': !showReservedTransactions,
+              }
+            )}
             type="button"
             onClick={() => dispatch(setShowReservedTransactions(false))}
           >
             <Icons.CreditCardChecked
               className={classNames('h-6 w-6 lg:h-4 lg:w-4', {
                 'text-pink-500': !showReservedTransactions,
+                'group-hover:text-pink-500': showReservedTransactions,
               })}
             />
             <span
               className={classNames('sr-only lg:not-sr-only lg:ml-2', {
                 'text-gray-900': !showReservedTransactions,
+                'group-hover:text-pink-500': showReservedTransactions,
               })}
             >
               Kun bokførte
             </span>
           </button>
           <button
-            className={classNames('flex items-center rounded-md p-1.5 font-semibold lg:pr-3', {
-              'bg-white shadow': showReservedTransactions,
-            })}
+            className={classNames(
+              'flex items-center rounded-md p-1.5 font-semibold lg:pr-3 group',
+              {
+                'bg-white shadow': showReservedTransactions,
+              }
+            )}
             type="button"
             onClick={() => dispatch(setShowReservedTransactions(true))}
           >
             <Icons.CreditCard
               className={classNames('h-6 w-6 lg:h-4 lg:w-4', {
                 'text-pink-500': showReservedTransactions,
+                'group-hover:text-pink-500': !showReservedTransactions,
               })}
             />
             <span
               className={classNames('sr-only lg:not-sr-only lg:ml-2', {
                 'text-gray-900': showReservedTransactions,
+                'group-hover:text-pink-500': !showReservedTransactions,
               })}
             >
               Alle

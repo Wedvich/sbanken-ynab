@@ -19,6 +19,7 @@ import {
 import Button from '../../components/button';
 import { Dialog } from '@headlessui/react';
 import Icons from '../../components/icons';
+import { ImportExport } from './import-export';
 
 const resetEverything = () => {
   localStorage.clear();
@@ -148,7 +149,8 @@ export const Settings = () => {
             </ul>
           </Section>
           <Section title="Andre innstillinger">
-            <h3 className="text-lg font-semibold">Fjern alle data</h3>
+            <ImportExport />
+            <h3 className="mt-4 text-lg font-semibold">Fjern alle data</h3>
             <p className="mt-2 text-sm text-gray-700">
               Dersom du har problemer med Sbanken → YNAB eller ikke ønsker å bruke det mer, kan du
               fjerne alle data som ligger lagret i nettleseren din.
