@@ -19,7 +19,7 @@ import {
   YnabTransaction,
 } from './ynab.types';
 import type { RootState } from '.';
-import { clearServerKnowledge, setServerKnowledge } from './ynab';
+import { adjustAccountBalance, clearServerKnowledge, setServerKnowledge } from './ynab';
 import { createEntityAdapter } from '@reduxjs/toolkit';
 import type { Transaction } from './transactions';
 
@@ -217,7 +217,7 @@ export const { useCreateTransactionMutation } = ynabApi.injectEndpoints({
         const ynabTransaction = convertToYnabTransaction(transaction, accountId);
         ynabTransaction.id = ynabTransaction.import_id;
 
-        const patchResult = dispatch(
+        const patchTransaction = dispatch(
           getTransactionsApi.util.updateQueryData(
             'getTransactions',
             { budgetId, fromDate },
@@ -228,6 +228,13 @@ export const { useCreateTransactionMutation } = ynabApi.injectEndpoints({
               );
             }
           )
+        );
+        const patchAccount = dispatch(
+          adjustAccountBalance({
+            accountId,
+            amount: transaction.amount,
+            cleared: !transaction.isReserved,
+          })
         );
 
         try {
@@ -252,7 +259,8 @@ export const { useCreateTransactionMutation } = ynabApi.injectEndpoints({
             })
           );
         } catch {
-          patchResult.undo();
+          patchTransaction.undo();
+          patchAccount.undo();
         }
       },
     }),

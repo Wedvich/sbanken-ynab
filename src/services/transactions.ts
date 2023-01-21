@@ -44,6 +44,7 @@ const convertSbankenTransaction = (
     description: sbankenTransaction.text,
     source: TransactionSource.Sbanken,
     sbankenTransactionId: sbankenTransaction.transactionId,
+    isReserved: !!sbankenTransaction.isReserved,
   };
 
   conversionCache.set(sbankenTransaction, transaction);
@@ -67,7 +68,7 @@ export const convertSbankenReservedTransaction = (
     date: +interestDate < +inferredDate ? interestDate : inferredDate,
     description: sbankenTransaction.text,
     source: TransactionSource.Sbanken,
-    isReserved: true,
+    isReserved: !!sbankenTransaction.isReserved,
   };
 
   conversionCache.set(sbankenTransaction, transaction);

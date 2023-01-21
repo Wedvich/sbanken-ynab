@@ -10,7 +10,7 @@ import {
 } from '@reduxjs/toolkit';
 import memoize from 'lodash-es/memoize';
 import { ynabApiBaseUrl } from '../config';
-import type { RootState } from '.';
+import type { AppThunk, RootState, Undoable } from '.';
 import { YNAB_TOKENS_KEY, YNAB_BUDGET_KEY } from './storage';
 import { startAppListening } from './listener';
 import { fetchInitialData, RequestStatus, stripEmojis } from '../utils';
@@ -26,7 +26,7 @@ import type {
 const budgetsAdapter = createEntityAdapter<YnabBudget>({
   selectId: (budget) => budget.id,
 });
-const accountsAdapter = createEntityAdapter<YnabAccountWithBudgetId>({
+export const ynabAccountsAdapter = createEntityAdapter<YnabAccountWithBudgetId>({
   selectId: (account) => account.id,
 });
 export const getYnabTokens = (state: RootState) => state.ynab.tokens;
@@ -42,8 +42,8 @@ export const getYnabBudgets = createSelector(budgetSelectors.selectAll, (budgets
 });
 export const getYnabBudgetsLookup = budgetSelectors.selectEntities;
 
-const ynabAccountsSelectors = accountsAdapter.getSelectors();
-export const ynabGlobalAccountsSelectors = accountsAdapter.getSelectors(
+const ynabAccountsSelectors = ynabAccountsAdapter.getSelectors();
+export const ynabGlobalAccountsSelectors = ynabAccountsAdapter.getSelectors(
   (state: RootState) => state.ynab.accounts
 );
 
@@ -114,7 +114,7 @@ function loadStoredBudgets() {
 }
 
 const initialState: YnabState = {
-  accounts: accountsAdapter.getInitialState(),
+  accounts: ynabAccountsAdapter.getInitialState(),
   budgets: budgetsAdapter.getInitialState(),
   includedBudgets: loadStoredBudgets(),
   rateLimitByToken: {},
@@ -199,6 +199,27 @@ export const ynabSlice = createSlice({
         action.payload.endpoint
       ];
     },
+    adjustAccountBalance(
+      state,
+      action: PayloadAction<{ accountId: string; amount: number; cleared: boolean }>
+    ) {
+      const account = ynabAccountsSelectors.selectById(state.accounts, action.payload.accountId);
+      if (!account) return;
+
+      const changes: Partial<YnabAccountWithBudgetId> = {
+        balance: account.balance + action.payload.amount,
+      };
+      if (action.payload.cleared) {
+        changes.cleared_balance = account.cleared_balance + action.payload.amount;
+      } else {
+        changes.uncleared_balance = account.uncleared_balance + action.payload.amount;
+      }
+
+      state.accounts = ynabAccountsAdapter.updateOne(state.accounts, {
+        id: account.id,
+        changes,
+      });
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -231,7 +252,7 @@ export const ynabSlice = createSlice({
       });
 
       budgetsAdapter.setMany(state.budgets, budgets);
-      accountsAdapter.setMany(state.accounts, allAccounts);
+      ynabAccountsAdapter.setMany(state.accounts, allAccounts);
     });
 
     builder.addMatcher(
@@ -273,7 +294,7 @@ export const ynabSlice = createSlice({
         })
       );
 
-      accountsAdapter.setMany(state.accounts, accountsWithBudgetId);
+      ynabAccountsAdapter.setMany(state.accounts, accountsWithBudgetId);
     });
   },
 });
@@ -356,6 +377,21 @@ export const fetchAccounts = createAsyncThunk<YnabAccountsResponse, string>(
     return response.json();
   }
 );
+
+export const adjustAccountBalance =
+  ({
+    accountId,
+    amount,
+    cleared,
+  }: ReturnType<typeof ynabSlice.actions.adjustAccountBalance>['payload']): AppThunk<Undoable> =>
+  (dispatch) => {
+    dispatch(ynabSlice.actions.adjustAccountBalance({ accountId, amount, cleared }));
+    return {
+      undo: () => {
+        dispatch(ynabSlice.actions.adjustAccountBalance({ accountId, amount: -amount, cleared }));
+      },
+    };
+  };
 
 /** Stores changes to tokens in localStorage. */
 startAppListening({

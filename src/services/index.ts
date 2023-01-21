@@ -1,4 +1,10 @@
-import { autoBatchEnhancer, configureStore, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  AnyAction,
+  autoBatchEnhancer,
+  configureStore,
+  createAsyncThunk,
+  ThunkAction,
+} from '@reduxjs/toolkit';
 import { accountsSlice } from './accounts';
 import { sbankenSlice } from './sbanken';
 import { ynabSlice } from './ynab';
@@ -32,3 +38,10 @@ export const createAppAsyncThunk = createAsyncThunk.withTypes<{
 
 export const useAppDispatch = useDispatch<AppDispatch>;
 export const useAppSelector = useSelector as TypedUseSelectorHook<RootState>;
+
+export type AppThunk<R = void> = ThunkAction<R, RootState, unknown, AnyAction>;
+
+export interface Undoable {
+  /** A function that will undo the update. */
+  undo: () => void;
+}
