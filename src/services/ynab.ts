@@ -206,13 +206,15 @@ export const ynabSlice = createSlice({
       const account = ynabAccountsSelectors.selectById(state.accounts, action.payload.accountId);
       if (!account) return;
 
+      const amount = action.payload.amount * 1000;
+
       const changes: Partial<YnabAccountWithBudgetId> = {
-        balance: account.balance + action.payload.amount,
+        balance: account.balance + amount,
       };
       if (action.payload.cleared) {
-        changes.cleared_balance = account.cleared_balance + action.payload.amount;
+        changes.cleared_balance = account.cleared_balance + amount;
       } else {
-        changes.uncleared_balance = account.uncleared_balance + action.payload.amount;
+        changes.uncleared_balance = account.uncleared_balance + amount;
       }
 
       state.accounts = ynabAccountsAdapter.updateOne(state.accounts, {

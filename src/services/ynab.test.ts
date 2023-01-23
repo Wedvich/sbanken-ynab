@@ -109,9 +109,9 @@ describe('adjustServerKnowledge', () => {
       ...ynabSlice.getInitialState(),
       accounts: ynabAccountsAdapter.setOne(ynabAccountsAdapter.getInitialState(), {
         id: 'abc',
-        uncleared_balance: 100,
-        cleared_balance: 200,
-        balance: 300,
+        uncleared_balance: 100000,
+        cleared_balance: 200000,
+        balance: 300000,
       } as YnabAccountWithBudgetId),
     };
   });
@@ -126,9 +126,9 @@ describe('adjustServerKnowledge', () => {
     state = ynabSlice.reducer(state, dispatch.mock.lastCall![0] as AnyAction);
 
     expect(state.accounts.entities['abc']).toMatchObject<Partial<YnabAccountWithBudgetId>>({
-      uncleared_balance: 200,
-      cleared_balance: 200,
-      balance: 400,
+      uncleared_balance: 200000,
+      cleared_balance: 200000,
+      balance: 400000,
     });
 
     undo();
@@ -136,9 +136,9 @@ describe('adjustServerKnowledge', () => {
     state = ynabSlice.reducer(state, dispatch.mock.lastCall![0] as AnyAction);
 
     expect(state.accounts.entities['abc']).toMatchObject<Partial<YnabAccountWithBudgetId>>({
-      uncleared_balance: 100,
-      cleared_balance: 200,
-      balance: 300,
+      uncleared_balance: 100000,
+      cleared_balance: 200000,
+      balance: 300000,
     });
   });
 
@@ -152,9 +152,9 @@ describe('adjustServerKnowledge', () => {
     state = ynabSlice.reducer(state, dispatch.mock.lastCall![0] as AnyAction);
 
     expect(state.accounts.entities['abc']).toMatchObject<Partial<YnabAccountWithBudgetId>>({
-      uncleared_balance: 100,
-      cleared_balance: 300,
-      balance: 400,
+      uncleared_balance: 100000,
+      cleared_balance: 300000,
+      balance: 400000,
     });
 
     undo();
@@ -162,9 +162,9 @@ describe('adjustServerKnowledge', () => {
     state = ynabSlice.reducer(state, dispatch.mock.lastCall![0] as AnyAction);
 
     expect(state.accounts.entities['abc']).toMatchObject<Partial<YnabAccountWithBudgetId>>({
-      uncleared_balance: 100,
-      cleared_balance: 200,
-      balance: 300,
+      uncleared_balance: 100000,
+      cleared_balance: 200000,
+      balance: 300000,
     });
   });
 });
