@@ -215,8 +215,7 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
                       <td className="whitespace-nowrap px-3 py-2 text-sm font-medium">
                         {!!(transaction.source & TransactionSource.Sbanken) && 'Sbanken'}
                         {!!(transaction.source & TransactionSource.Sbanken) &&
-                          !(transaction.source & TransactionSource.Ynab) &&
-                          !transaction.isReserved && (
+                          !(transaction.source & TransactionSource.Ynab) && (
                             <Button
                               size="xs"
                               className="ml-1"
