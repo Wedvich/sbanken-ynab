@@ -58,21 +58,20 @@ export const getEnrichedAccounts = createSelector(
       const ynabAccount = ynabAccountsLookup[linkedAccount.ynabAccountId];
       const ynabBudget = ynabBudgetsLookup[linkedAccount.ynabBudgetId];
 
-      const sbankenUnclearedBalance = +getSbankenUnclearedBalance(sbankenAccount).toFixed(2);
+      const sbankenUnclearedBalance = +getSbankenUnclearedBalance(sbankenAccount).toFixed(2) || 0;
 
       const enrichedAccount: EnrichedAccount = {
         ...linkedAccount,
         compositeId: createCompositeAccountId(linkedAccount),
         sbankenLinkOk: !!sbankenAccount,
-        sbankenClearedBalance: +(sbankenAccount?.balance ?? 0).toFixed(2),
+        sbankenClearedBalance: +(sbankenAccount?.balance ?? 0).toFixed(2) || 0,
         sbankenUnclearedBalance,
-        sbankenWorkingBalance: +((sbankenAccount?.balance ?? 0) + sbankenUnclearedBalance).toFixed(
-          2
-        ),
+        sbankenWorkingBalance:
+          +((sbankenAccount?.balance ?? 0) + sbankenUnclearedBalance).toFixed(2) || 0,
         ynabLinkOk: !!ynabAccount && !!ynabBudget,
-        ynabClearedBalance: +((ynabAccount?.cleared_balance ?? 0) / 1000).toFixed(2),
-        ynabUnclearedBalance: +((ynabAccount?.uncleared_balance ?? 0) / 1000).toFixed(2),
-        ynabWorkingBalance: +((ynabAccount?.balance ?? 0) / 1000).toFixed(2),
+        ynabClearedBalance: +((ynabAccount?.cleared_balance ?? 0) / 1000).toFixed(2) || 0,
+        ynabUnclearedBalance: +((ynabAccount?.uncleared_balance ?? 0) / 1000).toFixed(2) || 0,
+        ynabWorkingBalance: +((ynabAccount?.balance ?? 0) / 1000).toFixed(2) || 0,
       };
 
       linkedAccounts.push(enrichedAccount);
