@@ -19,7 +19,7 @@ import type {
   SbankenSuccessResponse,
 } from './sbanken.types';
 
-interface SbankenToken {
+export interface SbankenToken {
   value: string;
   notBefore: number;
   expires: number;
@@ -41,7 +41,6 @@ export const sbankenAccountsAdapter = createEntityAdapter<SbankenAccountWithClie
 
 export interface SbankenState {
   accounts: EntityState<SbankenAccountWithClientId>;
-  credentialIdByAccountId: Record<string, string>;
   credentials: EntityState<SbankenCredential>;
   requestStatusByCredentialId: Record<string, RequestStatus | undefined>;
   showReservedTransactions: boolean;
@@ -107,7 +106,6 @@ function loadShowReservedTransactions() {
 
 const initialState: SbankenState = {
   accounts: sbankenAccountsAdapter.getInitialState(),
-  credentialIdByAccountId: {},
   credentials: initialCredentials,
   requestStatusByCredentialId: sbankenCredentialsAdapter
     .getSelectors()
@@ -145,15 +143,6 @@ export const sbankenSlice = createSlice({
   name: 'sbanken',
   initialState,
   reducers: {
-    putCredentialIdsByAccountIds: (
-      state,
-      action: PayloadAction<{ credentialId: string; accountIds: Array<string> }>
-    ) => {
-      const { credentialId, accountIds } = action.payload;
-      for (const accountId of accountIds) {
-        state.credentialIdByAccountId[accountId] = credentialId;
-      }
-    },
     saveCredential: (
       state,
       action: PayloadAction<
@@ -196,16 +185,8 @@ export const sbankenSlice = createSlice({
   },
 });
 
-export const {
-  deleteCredential,
-  putCredentialIdsByAccountIds,
-  saveCredential,
-  setShowReservedTransactions,
-} = sbankenSlice.actions;
-
-// FIXME: Remove imports
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-export const putCredential = () => {};
+export const { deleteCredential, saveCredential, setShowReservedTransactions } =
+  sbankenSlice.actions;
 
 export const fetchSbankenToken = createAsyncThunk<SbankenToken, SbankenCredential>(
   `${sbankenSlice.name}/fetchSbankenToken`,
@@ -213,6 +194,7 @@ export const fetchSbankenToken = createAsyncThunk<SbankenToken, SbankenCredentia
     const credentials = window.btoa(
       `${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`
     );
+
     const response = await fetch(sbankenIdentityServerUrl, {
       method: 'post',
       headers: new Headers({

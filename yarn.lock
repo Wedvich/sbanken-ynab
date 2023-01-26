@@ -1724,6 +1724,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"busboy@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "busboy@npm:1.6.0"
+  dependencies:
+    streamsearch: ^1.1.0
+  checksum: 32801e2c0164e12106bf236291a00795c3c4e4b709ae02132883fe8478ba2ae23743b11c5735a0aae8afe65ac4b6ca4568b91f0d9fed1fdbc32ede824a73746e
+  languageName: node
+  linkType: hard
+
 "c8@npm:^7.12.0":
   version: 7.12.0
   resolution: "c8@npm:7.12.0"
@@ -6085,6 +6094,7 @@ __metadata:
     rollup-plugin-visualizer: ^5.9.0
     tailwindcss: ^3.2.4
     typescript: ^4.9.4
+    undici: ^5.16.0
     vite: ^4.0.4
     vite-plugin-static-copy: ^0.13.0
     vitest: ^0.27.2
@@ -6295,6 +6305,13 @@ __metadata:
   dependencies:
     internal-slot: ^1.0.4
   checksum: d04173690b2efa40e24ab70e5e51a3ff31d56d699550cfad084104ab3381390daccb36652b25755e420245f3b0737de66c1879eaa2a8d4fc0a78f9bf892fcb42
+  languageName: node
+  linkType: hard
+
+"streamsearch@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "streamsearch@npm:1.1.0"
+  checksum: 1cce16cea8405d7a233d32ca5e00a00169cc0e19fbc02aa839959985f267335d435c07f96e5e0edd0eadc6d39c98d5435fb5bbbdefc62c41834eadc5622ad942
   languageName: node
   linkType: hard
 
@@ -6749,6 +6766,15 @@ __metadata:
     has-symbols: ^1.0.3
     which-boxed-primitive: ^1.0.2
   checksum: b7a1cf5862b5e4b5deb091672ffa579aa274f648410009c81cca63fed3b62b610c4f3b773f912ce545bb4e31edc3138975b5bc777fc6e4817dca51affb6380e9
+  languageName: node
+  linkType: hard
+
+"undici@npm:^5.16.0":
+  version: 5.16.0
+  resolution: "undici@npm:5.16.0"
+  dependencies:
+    busboy: ^1.6.0
+  checksum: bc22e797cbf469351713c88af33e65e21952a75f431b78b0e75fb2411426ab38b888ec0761d4b81eadf8f6e8872ed23fb75641cc7319c6a7f08bd083899fa1cc
   languageName: node
   linkType: hard
 

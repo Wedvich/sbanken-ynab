@@ -9,7 +9,12 @@ import {
 import { DateTime } from 'luxon';
 import type { RootState } from '.';
 import { sbankenApiBaseUrl } from '../config';
-import { sbankenAccountsAdapter, sbankenCredentialsAdapter, validateSbankenToken } from './sbanken';
+import {
+  fetchSbankenToken,
+  sbankenAccountsAdapter,
+  sbankenCredentialsAdapter,
+  validateSbankenToken,
+} from './sbanken';
 import {
   SbankenGetTransactionsEntities,
   SbankenGetTransactionsRequest,
@@ -48,11 +53,11 @@ export const sbankenApi = createApi({
   endpoints: () => ({}),
 });
 
-export const { useGetTransactionsQuery } = sbankenApi.injectEndpoints({
+export const sbankenGetTransactionsApi = sbankenApi.injectEndpoints({
   endpoints: (build) => ({
     getTransactions: build.query<SbankenGetTransactionsEntities, SbankenGetTransactionsRequest>({
-      queryFn: async ({ accountId, fromDate }, { getState }, extraOptions, baseQuery) => {
-        const state = getState() as RootState;
+      queryFn: async ({ accountId, fromDate }, { dispatch, getState }, extraOptions, baseQuery) => {
+        let state = getState() as RootState;
         const account = sbankenAccountsAdapter
           .getSelectors()
           .selectById(state.sbanken.accounts, accountId);
@@ -60,7 +65,7 @@ export const { useGetTransactionsQuery } = sbankenApi.injectEndpoints({
           throw new Error('No account with ID ' + accountId);
         }
 
-        const credential = sbankenCredentialsAdapter
+        let credential = sbankenCredentialsAdapter
           .getSelectors()
           .selectById(state.sbanken.credentials, account.clientId);
         if (!credential) {
@@ -68,11 +73,19 @@ export const { useGetTransactionsQuery } = sbankenApi.injectEndpoints({
         }
 
         if (!validateSbankenToken(credential.token)) {
-          throw new Error(`Invalid token for credential with ID ${credential.clientId}`);
+          await dispatch(fetchSbankenToken(credential));
+          state = getState() as RootState;
+          credential = sbankenCredentialsAdapter
+            .getSelectors()
+            .selectById(state.sbanken.credentials, account.clientId);
+
+          if (!validateSbankenToken(credential?.token)) {
+            throw new Error(`Unable to refresh token for credential with ID ${account.clientId}`);
+          }
         }
 
         const headers: HeadersInit = {
-          Authorization: `Bearer ${credential.token.value}`,
+          Authorization: `Bearer ${credential!.token.value}`,
         };
 
         const archiveUrl = `${sbankenApiBaseUrl}/Transactions/archive/${accountId}?startDate=${fromDate}`;
@@ -177,3 +190,5 @@ export const { useGetTransactionsQuery } = sbankenApi.injectEndpoints({
     }),
   }),
 });
+
+export const { useGetTransactionsQuery } = sbankenGetTransactionsApi;

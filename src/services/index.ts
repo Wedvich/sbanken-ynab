@@ -13,20 +13,27 @@ import { ynabApi } from './ynab.api';
 import { listenerMiddleware } from './listener';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
-export const store = configureStore({
-  reducer: {
-    [accountsSlice.name]: accountsSlice.reducer,
-    [sbankenApi.reducerPath]: sbankenApi.reducer,
-    [sbankenSlice.name]: sbankenSlice.reducer,
-    [ynabApi.reducerPath]: ynabApi.reducer,
-    [ynabSlice.name]: ynabSlice.reducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .prepend(listenerMiddleware.middleware)
-      .concat(sbankenApi.middleware, ynabApi.middleware),
-  enhancers: (existingEnhancers) => existingEnhancers.concat(autoBatchEnhancer()),
-});
+export const createStore = (test = false, preloadedState?: any) =>
+  configureStore({
+    reducer: {
+      [accountsSlice.name]: accountsSlice.reducer,
+      [sbankenApi.reducerPath]: sbankenApi.reducer,
+      [sbankenSlice.name]: sbankenSlice.reducer,
+      [ynabApi.reducerPath]: ynabApi.reducer,
+      [ynabSlice.name]: ynabSlice.reducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        immutableCheck: !test,
+        serializableCheck: !test,
+      })
+        .prepend(listenerMiddleware.middleware)
+        .concat(sbankenApi.middleware, ynabApi.middleware),
+    enhancers: (existingEnhancers) => existingEnhancers.concat(autoBatchEnhancer()),
+    preloadedState,
+  });
+
+export const store = createStore();
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
