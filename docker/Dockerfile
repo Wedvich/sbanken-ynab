@@ -1,9 +1,9 @@
 # Based on https://rsbh.dev/blog/dockerize-react-app
-FROM node:17 AS builder
+FROM node:18 AS builder
 LABEL stage=builder
 WORKDIR /app
-COPY tmp/ ./ 
-RUN yarn install --frozen-lockfile
+COPY tmp/ ./
+RUN yarn install --immutable --immutable-cache
 COPY . .
 RUN yarn build
 
