@@ -133,10 +133,10 @@ export const AccountPage = () => {
             </a>
           </div>
           <dl className="mt-5 grid grid-cols-1 divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow lg:grid-cols-3 lg:divide-y-0 lg:divide-x">
-            {sums.map((item) => {
+            {sums.map((item, index) => {
               const isAjour = item.diff === 0;
               return (
-                <div key={item.label} className="px-4 py-5 sm:p-6">
+                <div key={item.label} className="px-4 py-5 sm:p-6 relative">
                   <dt className="text-lg font-medium mb-2.5 flex items-center">{item.label}</dt>
                   <dd className="grid grid-cols-[auto_1fr] items-baseline">
                     <span
@@ -187,6 +187,12 @@ export const AccountPage = () => {
                       {!isAjour ? formatMoney(item.diff) : 'à jour'}
                     </span>
                   </dd>
+                  {index === 1 && (
+                    <Icons.Plus className="h-8 w-8 absolute left-1/2 -top-4 lg:-left-4 lg:top-1/2 lg:-mt-4 p-1 text-gray-300 bg-white" />
+                  )}
+                  {index === 2 && (
+                    <Icons.Equal className="h-8 w-8 absolute left-1/2 -top-4 lg:-left-4 lg:top-1/2 lg:-mt-4 p-1 text-gray-300 bg-white" />
+                  )}
                 </div>
               );
             })}
