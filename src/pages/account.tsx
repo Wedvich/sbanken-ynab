@@ -9,10 +9,16 @@ import { useAppDispatch, useAppSelector } from '../services';
 import { deleteAccount, getEnrichedAccountById } from '../services/accounts';
 import { fetchAccounts } from '../services/ynab';
 import { formatMoney } from '../utils';
-import { Transactions } from '../components/transactions';
+import { Transactions, useYnabTransactionsRequest } from '../components/transactions';
 import { getFetchStatusForSbankenAccount } from '../services/sbanken.selectors';
 import { Spinner } from '../components/spinner';
 import { getFetchStatusForYnabAccount } from '../services/ynab.selectors';
+import {
+  useClearTransactionsMutation,
+  useGetTransactionsQuery as useGetYnabTransactionsQuery,
+  ynabTransactionsAdapter,
+} from '../services/ynab.api';
+import { YnabClearedState } from '../services/ynab.types';
 
 const fromDate = DateTime.utc().minus({ days: 30 }).toISODate();
 
@@ -83,6 +89,34 @@ export const AccountPage = () => {
     ];
   }, [account]);
 
+  const ynabTransactionsRequest = useYnabTransactionsRequest(account?.ynabBudgetId ?? '', fromDate);
+
+  const canMarkAllAsCleared =
+    !!account &&
+    account.sbankenUnclearedBalance === 0 &&
+    account.ynabUnclearedBalance !== 0 &&
+    account.sbankenWorkingBalance === account.ynabWorkingBalance;
+
+  const { data: ynabTransactionsData, isFetching: isFetchingTransactions } =
+    useGetYnabTransactionsQuery(ynabTransactionsRequest, {
+      skip: !canMarkAllAsCleared || !account?.ynabLinkOk,
+    });
+
+  const hasTransactions = !!ynabTransactionsData?.transactions;
+
+  const [clearTransactions, { isLoading: isClearingTransactions }] = useClearTransactionsMutation();
+
+  const handleMarkAllAsCleared = () => {
+    if (!hasTransactions) return;
+
+    const transactions = ynabTransactionsAdapter
+      .getSelectors()
+      .selectAll(ynabTransactionsData.transactions)
+      .filter((t) => t.cleared === YnabClearedState.Uncleared);
+
+    void clearTransactions({ transactions });
+  };
+
   if (!account || !sums) {
     return <Navigate to="/kontoer" replace />;
   }
@@ -137,7 +171,27 @@ export const AccountPage = () => {
               const isAjour = item.diff === 0;
               return (
                 <div key={item.label} className="px-4 py-5 sm:p-6 relative">
-                  <dt className="text-lg font-medium mb-2.5 flex items-center">{item.label}</dt>
+                  <dt className="text-lg font-medium mb-2.5 flex items-center">
+                    {item.label}
+                    {index === 1 && canMarkAllAsCleared && (
+                      <Button
+                        size="xs"
+                        className="ml-auto"
+                        disabled={
+                          isFetching ||
+                          isFetchingTransactions ||
+                          !hasTransactions ||
+                          isClearingTransactions
+                        }
+                        onClick={handleMarkAllAsCleared}
+                      >
+                        <span className="mr-1 inline-flex bg-gray-500 w-4 h-4 items-center justify-center rounded-full leading-3">
+                          <span className="text-white text-xs -mt-[1px] font-bold">C</span>
+                        </span>
+                        Clear alle
+                      </Button>
+                    )}
+                  </dt>
                   <dd className="grid grid-cols-[auto_1fr] items-baseline">
                     <span
                       className={classNames({

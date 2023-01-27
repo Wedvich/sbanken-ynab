@@ -26,7 +26,7 @@ export interface YnabTransaction {
   date: string;
   amount: number;
   memo?: string;
-  cleared: string;
+  cleared: YnabClearedState;
   approved: boolean;
   flag_color: string;
   account_id: string;
@@ -145,4 +145,8 @@ export enum YnabClearedState {
   Uncleared = 'uncleared',
   Cleared = 'cleared',
   Reconciled = 'reconciled',
+}
+
+export interface YnabClearTransactionsRequest {
+  transactions: Array<YnabTransaction>;
 }

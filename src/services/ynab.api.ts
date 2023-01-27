@@ -8,6 +8,7 @@ import {
 import { ynabApiBaseUrl } from '../config';
 import {
   YnabClearedState,
+  YnabClearTransactionsRequest,
   YnabCreateTransactionRequest,
   YnabCreateTransactionResponse,
   YnabCreateTransactionsEntity,
@@ -22,6 +23,7 @@ import type { RootState } from '.';
 import { adjustAccountBalance, clearServerKnowledge, setServerKnowledge } from './ynab';
 import { createEntityAdapter } from '@reduxjs/toolkit';
 import type { Transaction } from './transactions';
+import { groupBy } from 'lodash-es';
 
 export const ynabTransactionsAdapter = createEntityAdapter<YnabTransaction>({
   sortComparer: (a, b) => b.date.localeCompare(a.date) || a.amount - b.amount,
@@ -266,3 +268,69 @@ export const { useCreateTransactionMutation } = ynabApi.injectEndpoints({
     }),
   }),
 });
+
+export const ynabClearTransactionsApi = ynabApi.injectEndpoints({
+  endpoints: (build) => ({
+    clearTransactions: build.mutation<any, YnabClearTransactionsRequest>({
+      queryFn: async ({ transactions }, { getState }, extraOptions, baseQuery) => {
+        const state = getState() as RootState;
+
+        const transactionsByBudgetId = groupBy(
+          transactions.map((t) => ({
+            id: t.id,
+            account_id: t.account_id,
+            cleared: YnabClearedState.Cleared,
+          })),
+          (t) => {
+            const budgetId = state.ynab.accounts.entities[t.account_id]?.budget_id;
+            if (!budgetId) {
+              throw new Error(`No budgetId found for accountId ${t.account_id}`);
+            }
+            return budgetId;
+          }
+        );
+
+        // TODO: https://jakearchibald.com/2023/unhandled-rejections/
+
+        for (const [budgetId, budgetTransactions] of Object.entries(transactionsByBudgetId)) {
+          const url = `/budgets/${budgetId}/transactions`;
+
+          const token = state.ynab.tokensByBudgetId[budgetId]?.[0];
+          if (!token) {
+            throw new Error(`No token found for budgetId ${budgetId}`);
+          }
+
+          const headers = new Headers({
+            Authorization: `Bearer ${token}`,
+          });
+
+          const result = (await baseQuery({
+            url,
+            headers,
+            method: 'PATCH',
+            body: {
+              transactions: budgetTransactions,
+            },
+          })) as QueryReturnValue<
+            YnabSuccessResponse<unknown>,
+            FetchBaseQueryError,
+            FetchBaseQueryMeta
+          >;
+
+          console.group(url);
+          console.log('transactions:', budgetTransactions);
+          console.log('token:', token);
+          console.log('result:', result);
+          console.log('request.url', result.meta?.request.url);
+          console.groupEnd();
+        }
+
+        return {
+          data: {},
+        };
+      },
+    }),
+  }),
+});
+
+export const { useClearTransactionsMutation } = ynabClearTransactionsApi;

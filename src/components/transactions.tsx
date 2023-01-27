@@ -26,22 +26,25 @@ interface TransactionsProps {
   fromDate: string;
 }
 
-export const Transactions = ({ account, fromDate }: TransactionsProps) => {
-  const dispatch = useAppDispatch();
-
-  const serverKnowledge = useAppSelector((state) =>
-    getYnabKnowledgeByBudgetId(state, account.ynabBudgetId)
-  );
+export function useYnabTransactionsRequest(budgetId: string, fromDate: string) {
+  const serverKnowledge = useAppSelector((state) => getYnabKnowledgeByBudgetId(state, budgetId));
 
   const ynabTransactionsRequest: YnabGetTransactionsRequest = useMemo(
     () => ({
-      budgetId: account.ynabBudgetId ?? '',
+      budgetId,
       fromDate,
       serverKnowledge,
     }),
-    [account.ynabBudgetId, fromDate, serverKnowledge]
+    [budgetId, fromDate, serverKnowledge]
   );
 
+  return ynabTransactionsRequest;
+}
+
+export const Transactions = ({ account, fromDate }: TransactionsProps) => {
+  const dispatch = useAppDispatch();
+
+  const ynabTransactionsRequest = useYnabTransactionsRequest(account.ynabBudgetId, fromDate);
   const { data: ynabTransactionsData, isFetching: ynabIsLoading } = useGetYnabTransactionsQuery(
     ynabTransactionsRequest,
     {
