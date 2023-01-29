@@ -60,5 +60,6 @@ export default defineConfig(({ mode }) => ({
       reporter: ['text', 'lcov', 'cobertura'],
       src: ['src'],
     },
+    useAtomics: true,
   },
 }));
