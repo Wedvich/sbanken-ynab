@@ -11,7 +11,7 @@ jobs:
         inputs:
           version: 18.x
 
-      - script: yarn --immutable --immutable-cache --check-cache
+      - script: yarn --immutable --immutable-cache
         displayName: Install dependencies
 
       - script: yarn lint-ci
