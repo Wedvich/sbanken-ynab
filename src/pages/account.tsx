@@ -114,7 +114,7 @@ export const AccountPage = () => {
       .selectAll(ynabTransactionsData.transactions)
       .filter((t) => t.cleared === YnabClearedState.Uncleared);
 
-    void clearTransactions({ transactions });
+    void clearTransactions({ transactions, fromDate });
   };
 
   if (!account || !sums) {

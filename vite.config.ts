@@ -57,7 +57,7 @@ export default defineConfig(({ mode }) => ({
     globals: true,
     coverage: {
       all: true,
-      reporter: ['text', 'lcov'],
+      reporter: ['text', 'lcov', 'cobertura'],
       src: ['src'],
     },
   },

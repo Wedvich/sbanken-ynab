@@ -199,28 +199,31 @@ export const ynabSlice = createSlice({
         action.payload.endpoint
       ];
     },
-    adjustAccountBalance(
-      state,
-      action: PayloadAction<{ accountId: string; amount: number; cleared: boolean }>
-    ) {
-      const account = ynabAccountsSelectors.selectById(state.accounts, action.payload.accountId);
-      if (!account) return;
+    adjustAccountBalance: {
+      reducer(
+        state,
+        action: PayloadAction<{ accountId: string; amount: number; cleared: boolean }>
+      ) {
+        const account = ynabAccountsSelectors.selectById(state.accounts, action.payload.accountId);
+        if (!account) return;
 
-      const amount = action.payload.amount * 1000;
+        const amount = action.payload.amount * 1000;
 
-      const changes: Partial<YnabAccountWithBudgetId> = {
-        balance: account.balance + amount,
-      };
-      if (action.payload.cleared) {
-        changes.cleared_balance = account.cleared_balance + amount;
-      } else {
-        changes.uncleared_balance = account.uncleared_balance + amount;
-      }
+        const changes: Partial<YnabAccountWithBudgetId> = {
+          balance: account.balance + amount,
+        };
+        if (action.payload.cleared) {
+          changes.cleared_balance = account.cleared_balance + amount;
+        } else {
+          changes.uncleared_balance = account.uncleared_balance + amount;
+        }
 
-      state.accounts = ynabAccountsAdapter.updateOne(state.accounts, {
-        id: account.id,
-        changes,
-      });
+        state.accounts = ynabAccountsAdapter.updateOne(state.accounts, {
+          id: account.id,
+          changes,
+        });
+      },
+      prepare: prepareAutoBatched<{ accountId: string; amount: number; cleared: boolean }>(),
     },
   },
   extraReducers: (builder) => {

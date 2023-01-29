@@ -17,16 +17,13 @@ jobs:
       - script: yarn lint-ci
         displayName: Lint code
 
-      # - script: yarn stylelint
-      #   displayName: Lint styles
-
       - script: yarn typecheck
         displayName: Check types
 
       - script: yarn test-ci
         displayName: Run tests
 
-      # - task: PublishTestResults@2
+      # - task: PublishCodeCoverageResults@2
       #   displayName: Publish test results
       #   continueOnError: true
       #   inputs:

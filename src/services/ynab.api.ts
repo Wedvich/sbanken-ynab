@@ -8,7 +8,10 @@ import {
 import { ynabApiBaseUrl } from '../config';
 import {
   YnabClearedState,
+  YnabClearTransactionsEntities,
+  YnabClearTransactionsMeta,
   YnabClearTransactionsRequest,
+  YnabClearTransactionsResponse,
   YnabCreateTransactionRequest,
   YnabCreateTransactionResponse,
   YnabCreateTransactionsEntity,
@@ -19,7 +22,7 @@ import {
   YnabSuccessResponse,
   YnabTransaction,
 } from './ynab.types';
-import type { RootState } from '.';
+import type { RootState, Undoable } from '.';
 import { adjustAccountBalance, clearServerKnowledge, setServerKnowledge } from './ynab';
 import { createEntityAdapter } from '@reduxjs/toolkit';
 import type { Transaction } from './transactions';
@@ -271,14 +274,13 @@ export const { useCreateTransactionMutation } = ynabApi.injectEndpoints({
 
 export const ynabClearTransactionsApi = ynabApi.injectEndpoints({
   endpoints: (build) => ({
-    clearTransactions: build.mutation<any, YnabClearTransactionsRequest>({
+    clearTransactions: build.mutation<YnabClearTransactionsEntities, YnabClearTransactionsRequest>({
       queryFn: async ({ transactions }, { getState }, extraOptions, baseQuery) => {
         const state = getState() as RootState;
 
         const transactionsByBudgetId = groupBy(
-          transactions.map((t) => ({
-            id: t.id,
-            account_id: t.account_id,
+          transactions.map<YnabTransaction>((t) => ({
+            ...t,
             cleared: YnabClearedState.Cleared,
           })),
           (t) => {
@@ -292,7 +294,11 @@ export const ynabClearTransactionsApi = ynabApi.injectEndpoints({
 
         // TODO: https://jakearchibald.com/2023/unhandled-rejections/
 
-        for (const [budgetId, budgetTransactions] of Object.entries(transactionsByBudgetId)) {
+        const requests = Object.entries(transactionsByBudgetId);
+        const meta: YnabClearTransactionsMeta = {};
+        const serverKnowledgeByBudgetId: Record<string, number> = {};
+        const updatedTransactions: Array<YnabTransaction> = [];
+        for (const [budgetId, budgetTransactions] of requests) {
           const url = `/budgets/${budgetId}/transactions`;
 
           const token = state.ynab.tokensByBudgetId[budgetId]?.[0];
@@ -312,22 +318,106 @@ export const ynabClearTransactionsApi = ynabApi.injectEndpoints({
               transactions: budgetTransactions,
             },
           })) as QueryReturnValue<
-            YnabSuccessResponse<unknown>,
+            YnabSuccessResponse<YnabClearTransactionsResponse>,
             FetchBaseQueryError,
             FetchBaseQueryMeta
           >;
 
-          console.group(url);
-          console.log('transactions:', budgetTransactions);
-          console.log('token:', token);
-          console.log('result:', result);
-          console.log('request.url', result.meta?.request.url);
-          console.groupEnd();
+          if (result.error) {
+            (meta.partialErrors ??= []).push(budgetId);
+            continue;
+          }
+
+          Array.prototype.push.apply(updatedTransactions, result.data.data.transactions);
+          serverKnowledgeByBudgetId[budgetId] = result.data.data.server_knowledge;
         }
 
         return {
-          data: {},
+          data: {
+            transactions: updatedTransactions,
+            serverKnowledgeByBudgetId,
+          },
+          meta,
         };
+      },
+      onQueryStarted: async (
+        { transactions, fromDate },
+        { dispatch, getState, queryFulfilled }
+      ) => {
+        const state = getState() as RootState;
+
+        const transactionsByBudgetId = groupBy(transactions, (t) => {
+          const budgetId = state.ynab.accounts.entities[t.account_id]?.budget_id;
+          if (!budgetId) {
+            throw new Error(`No budgetId found for accountId ${t.account_id}`);
+          }
+
+          return budgetId;
+        });
+
+        const patchesByBudgetId = Object.entries(transactionsByBudgetId).reduce(
+          (acc, [budgetId, budgetTransactions]) => {
+            const balanceAdjustmentsByAccountId = Object.entries(
+              budgetTransactions.reduce((acc, t) => {
+                acc[t.account_id] = (acc[t.account_id] ?? 0) + t.amount;
+                return acc;
+              }, {} as Record<string, number>)
+            );
+
+            acc[budgetId] = balanceAdjustmentsByAccountId
+              .flatMap(([accountId, amount]) => [
+                dispatch(adjustAccountBalance({ accountId, amount: amount / 1000, cleared: true })),
+                dispatch(
+                  adjustAccountBalance({ accountId, amount: amount / -1000, cleared: false })
+                ),
+              ])
+              .concat([
+                dispatch(
+                  getTransactionsApi.util.updateQueryData(
+                    'getTransactions',
+                    { budgetId, fromDate },
+                    (draft) => {
+                      ynabTransactionsAdapter.upsertMany(
+                        draft.transactions,
+                        budgetTransactions.flat()
+                      );
+                    }
+                  )
+                ),
+              ]);
+
+            return acc;
+          },
+          {} as Record<string, Array<Undoable>>
+        );
+
+        try {
+          const { data, meta } = await queryFulfilled;
+
+          if ((meta as YnabClearTransactionsMeta)?.partialErrors?.length) {
+            for (const budgetId of (meta as YnabClearTransactionsMeta).partialErrors!) {
+              for (const patch of patchesByBudgetId[budgetId]) {
+                patch.undo();
+              }
+            }
+          }
+
+          for (const [budgetId, serverKnowledge] of Object.entries(
+            data.serverKnowledgeByBudgetId
+          )) {
+            dispatch(
+              setServerKnowledge({
+                budgetId,
+                knowledge: serverKnowledge,
+                endpoint: getTransactionsApi.endpoints.getTransactions.name,
+              })
+            );
+          }
+        } catch {
+          for (const patch of Object.values(patchesByBudgetId).flat()) {
+            patch.undo();
+          }
+        }
       },
     }),
   }),

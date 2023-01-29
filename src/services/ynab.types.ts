@@ -149,4 +149,21 @@ export enum YnabClearedState {
 
 export interface YnabClearTransactionsRequest {
   transactions: Array<YnabTransaction>;
+  fromDate: string;
+}
+
+export interface YnabClearTransactionsEntities {
+  transactions: Array<YnabTransaction>;
+  serverKnowledgeByBudgetId: Record<string, number>;
+}
+
+export interface YnabClearTransactionsResponse {
+  transaction_ids: Array<string>;
+  transactions: Array<YnabTransaction>;
+  duplicate_import_ids: Array<string>;
+  server_knowledge: number;
+}
+
+export interface YnabClearTransactionsMeta {
+  partialErrors?: Array<string>;
 }
