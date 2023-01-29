@@ -5,7 +5,12 @@ import { sbankenGetTransactionsApi } from './sbanken.api';
 import { produce } from 'immer';
 import { sbankenApiBaseUrl, sbankenIdentityServerUrl } from '../config';
 import { createStore, RootState, store } from '.';
-import { sbankenAccountsAdapter, SbankenCredential, sbankenCredentialsAdapter } from './sbanken';
+import {
+  fetchSbankenAccounts,
+  sbankenAccountsAdapter,
+  SbankenCredential,
+  sbankenCredentialsAdapter,
+} from './sbanken';
 import type { SbankenAccountWithClientId } from './sbanken.types';
 
 const mockAgent = new undici.MockAgent();
@@ -26,7 +31,19 @@ apiPool
   .reply(200, {
     availableItems: 0,
     items: [],
-  });
+  })
+  .times(Number.MAX_SAFE_INTEGER);
+
+apiPool
+  .intercept({
+    path: `${apiUrl.pathname}/Accounts`,
+    method: 'get',
+  })
+  .reply(200, {
+    availableItems: 0,
+    items: [],
+  })
+  .times(Number.MAX_SAFE_INTEGER);
 
 const identityUrl = new URL(sbankenIdentityServerUrl);
 const identityPool = mockAgent.get(identityUrl.origin);
@@ -49,31 +66,28 @@ identityPool
   .reply(200, {
     access_token: mockRefreshedToken,
     expires_in: 3600,
-  });
+  })
+  .times(Number.MAX_SAFE_INTEGER);
+
+const initialState = produce(store.getState(), (draft: RootState) => {
+  draft.sbanken.accounts = sbankenAccountsAdapter.setOne(draft.sbanken.accounts, {
+    accountId: mockAccountId,
+    clientId: 'def',
+  } as SbankenAccountWithClientId);
+  draft.sbanken.credentials = sbankenCredentialsAdapter.setOne(draft.sbanken.credentials, {
+    clientId: 'def',
+    clientSecret: 'ghi',
+    token: {
+      expires: exp,
+      notBefore: nbf,
+      value: '.eyX.',
+    },
+  } as SbankenCredential);
+});
 
 describe('getTransactions', () => {
-  const initialState = produce(store.getState(), (draft: RootState) => {
-    draft.sbanken.accounts = sbankenAccountsAdapter.setOne(draft.sbanken.accounts, {
-      accountId: mockAccountId,
-      clientId: 'def',
-    } as SbankenAccountWithClientId);
-    draft.sbanken.credentials = sbankenCredentialsAdapter.setOne(draft.sbanken.credentials, {
-      clientId: 'def',
-      clientSecret: 'ghi',
-      token: {
-        expires: exp,
-        notBefore: nbf,
-        value: '.eyX.',
-      },
-    } as SbankenCredential);
-  });
-
-  beforeEach(() => {
-    vitest.setSystemTime(exp + 1);
-
-    return () => {
-      vitest.setSystemTime(vitest.getRealSystemTime());
-    };
+  afterEach(() => {
+    vitest.setSystemTime(vitest.getRealSystemTime());
   });
 
   it('refreshes token if expired before request is sent', async () => {
@@ -87,5 +101,19 @@ describe('getTransactions', () => {
     );
 
     expect(isSuccess).toBe(true);
+  });
+});
+
+describe('fetchSbankenAccounts', () => {
+  it('refreshes token if expired before request is sent', async () => {
+    vitest.setSystemTime(exp + 1);
+    const testStore = createStore(true, initialState as any);
+    const credential = sbankenCredentialsAdapter
+      .getSelectors()
+      .selectById(testStore.getState().sbanken.credentials, 'def')!;
+
+    const { meta } = await testStore.dispatch(fetchSbankenAccounts(credential));
+
+    expect(meta.requestStatus).toBe('fulfilled');
   });
 });

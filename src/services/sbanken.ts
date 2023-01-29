@@ -226,15 +226,23 @@ export const fetchSbankenToken = createAsyncThunk<SbankenToken, SbankenCredentia
 export const fetchSbankenAccounts = createAsyncThunk<
   Array<SbankenAccountWithClientId>,
   SbankenCredential
->(`${sbankenSlice.name}/fetchAccountsForClient`, async (credential) => {
+>(`${sbankenSlice.name}/fetchSbankenAccounts`, async (credential, { dispatch }) => {
   if (!validateSbankenToken(credential.token)) {
-    return Promise.reject('invalid token');
+    const result = await dispatch(fetchSbankenToken(credential));
+    if (fetchSbankenToken.rejected.match(result) || !validateSbankenToken(result.payload)) {
+      throw new Error(`Unable to refresh token for credential with ID ${credential.clientId}`);
+    }
+
+    credential = {
+      ...credential,
+      token: result.payload,
+    };
   }
 
   const response = await fetch(`${sbankenApiBaseUrl}/Accounts`, {
     headers: {
       Accept: 'application/json',
-      Authorization: `Bearer ${credential.token.value}`,
+      Authorization: `Bearer ${credential.token!.value}`,
     },
   });
 

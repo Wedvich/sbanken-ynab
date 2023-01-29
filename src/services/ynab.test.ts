@@ -99,7 +99,7 @@ describe('clearServerKnowledge', () => {
   });
 });
 
-describe('adjustServerKnowledge', () => {
+describe('adjustAccountBalance', () => {
   const dispatch = vi.fn();
   let state: YnabState;
   const getState = () => ({ [ynabSlice.name]: state } as RootState);
