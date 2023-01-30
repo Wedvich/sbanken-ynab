@@ -22,7 +22,7 @@ export const AccountsPage = () => {
                 </NavLink>
               </Fragment>
             ) : (
-              'Velg en konto i listen til venstre for å se transaksjonene.'
+              'Velg en konto for å se transaksjonene.'
             )}
           </p>
         </div>
