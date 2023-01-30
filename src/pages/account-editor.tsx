@@ -240,7 +240,7 @@ export const AccountEditor = () => {
                 </div>
               </div>
             </div>
-            <div className="sm:flex gap-2">
+            <div className="flex gap-2">
               <Button importance="primary" type="submit" disabled={!canSave}>
                 Lagre
               </Button>
