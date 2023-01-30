@@ -175,7 +175,7 @@ export const AccountPage = () => {
               const isAjour = item.diff === 0;
               return (
                 <div key={item.label} className="px-4 py-5 sm:p-6 relative">
-                  <dt className="text-lg font-medium mb-2.5 flex items-center">
+                  <dt className="text-lg font-medium mb-2.5 flex items-center leading-8">
                     {item.label}
                     {index === 1 && canMarkAllAsCleared && (
                       <Button
