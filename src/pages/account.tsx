@@ -147,24 +147,28 @@ export const AccountPage = () => {
               <Icons.Delete className="mr-1" />
               Fjern
             </Button>
-            <a
-              href={`https://app.youneedabudget.com/${account.ynabBudgetId}/accounts/${account.ynabAccountId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-pink-600 hover:text-pink-700 hover:underline underline-offset-2 inline-flex items-center gap-1 text-sm"
-            >
-              Åpne i YNAB
-              <Icons.ExternalLink />
-            </a>
-            <a
-              href={`https://secure.sbanken.no/Home/AccountStatement?accountId=${account.sbankenAccountId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-pink-600 hover:text-pink-700 hover:underline underline-offset-2 inline-flex items-center gap-1 text-sm"
-            >
-              Åpne i Sbanken
-              <Icons.ExternalLink />
-            </a>
+            {!window.navigator.userAgent.match(/android|iphone/i) && (
+              <Fragment>
+                <a
+                  href={`https://app.youneedabudget.com/${account.ynabBudgetId}/accounts/${account.ynabAccountId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-pink-600 hover:text-pink-700 hover:underline underline-offset-2 inline-flex items-center gap-1 text-sm"
+                >
+                  Åpne i YNAB
+                  <Icons.ExternalLink />
+                </a>
+                <a
+                  href={`https://secure.sbanken.no/Home/AccountStatement?accountId=${account.sbankenAccountId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-pink-600 hover:text-pink-700 hover:underline underline-offset-2 inline-flex items-center gap-1 text-sm"
+                >
+                  Åpne i Sbanken
+                  <Icons.ExternalLink />
+                </a>
+              </Fragment>
+            )}
           </div>
           <dl className="mt-5 grid grid-cols-1 divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow lg:grid-cols-3 lg:divide-y-0 lg:divide-x">
             {sums.map((item, index) => {
