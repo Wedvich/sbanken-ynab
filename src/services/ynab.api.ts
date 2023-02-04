@@ -16,6 +16,7 @@ import {
   YnabCreateTransactionResponse,
   YnabCreateTransactionsEntity,
   YnabErrorResponse,
+  YnabGetPayeesEntities,
   YnabGetTransactionsEntities,
   YnabGetTransactionsRequest,
   YnabGetTransactionsResponse,
@@ -424,3 +425,35 @@ export const ynabClearTransactionsApi = ynabApi.injectEndpoints({
 });
 
 export const { useClearTransactionsMutation } = ynabClearTransactionsApi;
+
+export const getPayeesApi = ynabApi.injectEndpoints({
+  endpoints: (build) => ({
+    getPayees: build.query<YnabGetPayeesEntities, void>({
+      queryFn: async (_, { endpoint, getState }, extraOptions, baseQuery) => {
+        const state = getState() as RootState;
+
+        const budgetIds = state.ynab.includedBudgets;
+        if (!budgetIds.length) {
+          return {
+            data: {
+              payees: [],
+              serverKnowledgeByBudgetId: {},
+            },
+          };
+        }
+
+        // const lastEndpointKnowledge =
+        //   state.ynab.serverKnowledgeByBudgetId[budgetId]?.byEndpoint[endpoint] ?? 0;
+
+        return {
+          data: {
+            payees: [],
+            serverKnowledgeByBudgetId: {},
+          },
+        };
+      },
+    }),
+  }),
+});
+
+export const { useGetPayeesQuery } = getPayeesApi;
