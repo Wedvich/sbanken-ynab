@@ -9,7 +9,7 @@ import { ynabApiBaseUrl } from '../config';
 import {
   YnabClearedState,
   YnabClearTransactionsEntities,
-  YnabClearTransactionsMeta,
+  YnabRequestMeta,
   YnabClearTransactionsRequest,
   YnabClearTransactionsResponse,
   YnabCreateTransactionRequest,
@@ -22,6 +22,9 @@ import {
   YnabGetTransactionsResponse,
   YnabSuccessResponse,
   YnabTransaction,
+  YnabPayeeWithBudgetId,
+  YnabGetPayeesResponse,
+  YnabGetPayeesRequest,
 } from './ynab.types';
 import type { RootState, Undoable } from '.';
 import { adjustAccountBalance, clearServerKnowledge, setServerKnowledge } from './ynab';
@@ -296,7 +299,7 @@ export const ynabClearTransactionsApi = ynabApi.injectEndpoints({
         // TODO: https://jakearchibald.com/2023/unhandled-rejections/
 
         const requests = Object.entries(transactionsByBudgetId);
-        const meta: YnabClearTransactionsMeta = {};
+        const meta: YnabRequestMeta = {};
         const serverKnowledgeByBudgetId: Record<string, number> = {};
         const updatedTransactions: Array<YnabTransaction> = [];
         for (const [budgetId, budgetTransactions] of requests) {
@@ -395,8 +398,8 @@ export const ynabClearTransactionsApi = ynabApi.injectEndpoints({
         try {
           const { data, meta } = await queryFulfilled;
 
-          if ((meta as YnabClearTransactionsMeta)?.partialErrors?.length) {
-            for (const budgetId of (meta as YnabClearTransactionsMeta).partialErrors!) {
+          if ((meta as YnabRequestMeta)?.partialErrors?.length) {
+            for (const budgetId of (meta as YnabRequestMeta).partialErrors!) {
               for (const patch of patchesByBudgetId[budgetId]) {
                 patch.undo();
               }
@@ -428,28 +431,56 @@ export const { useClearTransactionsMutation } = ynabClearTransactionsApi;
 
 export const getPayeesApi = ynabApi.injectEndpoints({
   endpoints: (build) => ({
-    getPayees: build.query<YnabGetPayeesEntities, void>({
-      queryFn: async (_, { endpoint, getState }, extraOptions, baseQuery) => {
+    getPayees: build.query<YnabGetPayeesEntities, YnabGetPayeesRequest>({
+      queryFn: async ({ budgetIds }, { endpoint, getState }, extraOptions, baseQuery) => {
         const state = getState() as RootState;
 
-        const budgetIds = state.ynab.includedBudgets;
-        if (!budgetIds.length) {
-          return {
-            data: {
-              payees: [],
-              serverKnowledgeByBudgetId: {},
-            },
-          };
-        }
+        const meta: YnabRequestMeta = {};
+        const serverKnowledgeByBudgetId: Record<string, number> = {};
+        const payees: Array<YnabPayeeWithBudgetId> = [];
+        for (const budgetId of budgetIds) {
+          const lastEndpointKnowledge =
+            state.ynab.serverKnowledgeByBudgetId[budgetId]?.byEndpoint[endpoint] ?? 0;
 
-        // const lastEndpointKnowledge =
-        //   state.ynab.serverKnowledgeByBudgetId[budgetId]?.byEndpoint[endpoint] ?? 0;
+          const url = `/budgets/${budgetId}/payees${
+            lastEndpointKnowledge ? `?last_knowledge_of_server=${lastEndpointKnowledge}` : ''
+          }`;
+
+          const token = state.ynab.tokensByBudgetId[budgetId]?.[0];
+          if (!token) {
+            console.log(state.ynab.tokensByBudgetId);
+            throw new Error(`No token found for budgetId ${budgetId}`);
+          }
+
+          const headers = new Headers({
+            Authorization: `Bearer ${token}`,
+          });
+
+          const result = (await baseQuery({
+            url,
+            headers,
+            method: 'GET',
+          })) as QueryReturnValue<
+            YnabSuccessResponse<YnabGetPayeesResponse>,
+            FetchBaseQueryError,
+            FetchBaseQueryMeta
+          >;
+
+          if (result.error) {
+            (meta.partialErrors ??= []).push(budgetId);
+            continue;
+          }
+
+          Array.prototype.push.apply(payees, result.data.data.payees);
+          serverKnowledgeByBudgetId[budgetId] = result.data.data.server_knowledge;
+        }
 
         return {
           data: {
-            payees: [],
-            serverKnowledgeByBudgetId: {},
+            payees,
+            serverKnowledgeByBudgetId,
           },
+          meta,
         };
       },
     }),

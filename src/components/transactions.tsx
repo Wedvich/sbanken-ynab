@@ -8,6 +8,7 @@ import { getYnabKnowledgeByBudgetId } from '../services/ynab';
 import {
   useGetTransactionsQuery as useGetYnabTransactionsQuery,
   useCreateTransactionMutation,
+  useGetPayeesQuery,
 } from '../services/ynab.api';
 import { useGetTransactionsQuery as useGetSbankenTransactionsQuery } from '../services/sbanken.api';
 import { getTransactionsGroupedByAccountId } from '../services/ynab.selectors';
@@ -100,6 +101,17 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
   }, [filteredTransactionsForSbankenAccount, transactionsForYnabAccount]);
 
   const [createTransaction, { isLoading: isCreatingTransaction }] = useCreateTransactionMutation();
+
+  const budgetIds = useAppSelector((state) => state.ynab.includedBudgets);
+
+  // TODO: Use in creation
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const ynabPayees = useGetPayeesQuery(
+    { budgetIds },
+    {
+      skip: !account.ynabLinkOk,
+    }
+  );
 
   return (
     <Fragment>

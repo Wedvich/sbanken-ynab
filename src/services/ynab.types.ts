@@ -175,8 +175,12 @@ export interface YnabClearTransactionsResponse {
   server_knowledge: number;
 }
 
-export interface YnabClearTransactionsMeta {
+export interface YnabRequestMeta {
   partialErrors?: Array<string>;
+}
+
+export interface YnabGetPayeesRequest {
+  budgetIds: Array<string>;
 }
 
 export interface YnabGetPayeesResponse {
