@@ -9,24 +9,28 @@ import { ynabApiBaseUrl } from '../config';
 import {
   YnabClearedState,
   YnabClearTransactionsEntities,
-  YnabClearTransactionsMeta,
+  YnabRequestMeta,
   YnabClearTransactionsRequest,
   YnabClearTransactionsResponse,
   YnabCreateTransactionRequest,
   YnabCreateTransactionResponse,
   YnabCreateTransactionsEntity,
   YnabErrorResponse,
+  YnabGetPayeesEntities,
   YnabGetTransactionsEntities,
   YnabGetTransactionsRequest,
   YnabGetTransactionsResponse,
   YnabSuccessResponse,
   YnabTransaction,
+  YnabGetPayeesResponse,
+  YnabGetPayeesRequest,
 } from './ynab.types';
 import type { RootState, Undoable } from '.';
 import { adjustAccountBalance, clearServerKnowledge, setServerKnowledge } from './ynab';
 import { createEntityAdapter } from '@reduxjs/toolkit';
 import type { Transaction } from './transactions';
 import { groupBy } from 'lodash-es';
+import { inferPayeeIdFromDescription } from './ynab.utils';
 
 export const ynabTransactionsAdapter = createEntityAdapter<YnabTransaction>({
   sortComparer: (a, b) => b.date.localeCompare(a.date) || a.amount - b.amount,
@@ -163,7 +167,12 @@ export const { useGetTransactionsQuery } = getTransactionsApi;
 export const { useCreateTransactionMutation } = ynabApi.injectEndpoints({
   endpoints: (build) => ({
     createTransaction: build.mutation<YnabCreateTransactionsEntity, YnabCreateTransactionRequest>({
-      queryFn: async ({ accountId, transaction }, { getState }, extraOptions, baseQuery) => {
+      queryFn: async (
+        { accountId, transaction, payees },
+        { getState },
+        extraOptions,
+        baseQuery
+      ) => {
         const state = getState() as RootState;
         const budgetId = state.ynab.accounts.entities[accountId]?.budget_id;
         if (!budgetId) {
@@ -178,6 +187,7 @@ export const { useCreateTransactionMutation } = ynabApi.injectEndpoints({
         }
 
         const ynabTransaction = convertToYnabTransaction(transaction, accountId);
+        ynabTransaction.payee_id = inferPayeeIdFromDescription(payees, transaction.description);
 
         const headers = new Headers({
           Authorization: `Bearer ${token}`,
@@ -295,7 +305,7 @@ export const ynabClearTransactionsApi = ynabApi.injectEndpoints({
         // TODO: https://jakearchibald.com/2023/unhandled-rejections/
 
         const requests = Object.entries(transactionsByBudgetId);
-        const meta: YnabClearTransactionsMeta = {};
+        const meta: YnabRequestMeta = {};
         const serverKnowledgeByBudgetId: Record<string, number> = {};
         const updatedTransactions: Array<YnabTransaction> = [];
         for (const [budgetId, budgetTransactions] of requests) {
@@ -394,8 +404,8 @@ export const ynabClearTransactionsApi = ynabApi.injectEndpoints({
         try {
           const { data, meta } = await queryFulfilled;
 
-          if ((meta as YnabClearTransactionsMeta)?.partialErrors?.length) {
-            for (const budgetId of (meta as YnabClearTransactionsMeta).partialErrors!) {
+          if ((meta as YnabRequestMeta)?.partialErrors?.length) {
+            for (const budgetId of (meta as YnabRequestMeta).partialErrors!) {
               for (const patch of patchesByBudgetId[budgetId]) {
                 patch.undo();
               }
@@ -424,3 +434,68 @@ export const ynabClearTransactionsApi = ynabApi.injectEndpoints({
 });
 
 export const { useClearTransactionsMutation } = ynabClearTransactionsApi;
+
+export const getPayeesApi = ynabApi.injectEndpoints({
+  endpoints: (build) => ({
+    getPayees: build.query<YnabGetPayeesEntities, YnabGetPayeesRequest>({
+      queryFn: async ({ budgetId }, { endpoint, getState }, extraOptions, baseQuery) => {
+        const state = getState() as RootState;
+        const lastEndpointKnowledge =
+          state.ynab.serverKnowledgeByBudgetId[budgetId]?.byEndpoint[endpoint] ?? 0;
+
+        const url = `/budgets/${budgetId}/payees${
+          lastEndpointKnowledge ? `?last_knowledge_of_server=${lastEndpointKnowledge}` : ''
+        }`;
+
+        const token = state.ynab.tokensByBudgetId[budgetId]?.[0];
+        if (!token) {
+          throw new Error(`No token found for budgetId ${budgetId}`);
+        }
+
+        const headers = new Headers({
+          Authorization: `Bearer ${token}`,
+        });
+
+        const result = (await baseQuery({
+          url,
+          headers,
+          method: 'GET',
+        })) as QueryReturnValue<
+          YnabSuccessResponse<YnabGetPayeesResponse>,
+          FetchBaseQueryError,
+          FetchBaseQueryMeta
+        >;
+
+        if (result.error) {
+          return result;
+        }
+
+        const { data, meta } = result;
+        const { payees, server_knowledge } = data.data;
+
+        return {
+          data: {
+            payees,
+            serverKnowledge: server_knowledge,
+          },
+          meta,
+        };
+      },
+      onQueryStarted: async (args, { dispatch, queryFulfilled, getCacheEntry }) => {
+        try {
+          const { data } = await queryFulfilled;
+          const endpoint = getCacheEntry().endpointName!;
+          dispatch(
+            setServerKnowledge({
+              budgetId: args.budgetId,
+              knowledge: data.serverKnowledge,
+              endpoint,
+            })
+          );
+        } catch {} // Ignore query errors for this
+      },
+    }),
+  }),
+});
+
+export const { useGetPayeesQuery } = getPayeesApi;

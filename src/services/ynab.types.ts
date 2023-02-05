@@ -80,6 +80,13 @@ export interface YnabBudgetWithAccounts extends YnabBudget {
   accounts: Array<YnabAccount>;
 }
 
+export interface YnabPayee {
+  id: string;
+  name: string;
+  transfer_account_id: string;
+  deleted: boolean;
+}
+
 export interface YnabGetBudgetsResponse {
   budgets: Array<YnabBudgetWithAccounts>;
   default_budget: string | null;
@@ -127,6 +134,7 @@ export interface YnabCreateTransactionRequest {
   accountId: string;
   fromDate: string;
   transaction: Transaction;
+  payees: Array<YnabPayee>;
 }
 
 export interface YnabCreateTransactionResponse {
@@ -164,6 +172,20 @@ export interface YnabClearTransactionsResponse {
   server_knowledge: number;
 }
 
-export interface YnabClearTransactionsMeta {
+export interface YnabRequestMeta {
   partialErrors?: Array<string>;
+}
+
+export interface YnabGetPayeesRequest {
+  budgetId: string;
+}
+
+export interface YnabGetPayeesResponse {
+  payees: Array<YnabPayee>;
+  server_knowledge: number;
+}
+
+export interface YnabGetPayeesEntities {
+  payees: Array<YnabPayee>;
+  serverKnowledge: number;
 }
