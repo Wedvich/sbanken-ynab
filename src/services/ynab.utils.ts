@@ -1,14 +1,17 @@
 import type { YnabPayee } from './ynab.types';
 
+const prepare = (s: string) => s.trim().toLowerCase().split(/[ *]/);
+
 export const inferPayeeIdFromDescription = (
   payees: Array<YnabPayee>,
   description?: string
 ): string | undefined => {
   if (!payees.length || !description?.length) return undefined;
 
-  const parts = description.toLowerCase().trim().split(' ');
+  const parts = prepare(description);
   const matches = payees.filter((payee) => {
-    const payeeName = payee.name.toLowerCase().trim().split(' ');
+    if (payee.deleted) return false;
+    const payeeName = prepare(payee.name);
     return payeeName.every((namePart) => parts.includes(namePart));
   });
 

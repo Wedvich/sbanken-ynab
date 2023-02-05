@@ -83,7 +83,7 @@ export interface YnabBudgetWithAccounts extends YnabBudget {
 export interface YnabPayee {
   id: string;
   name: string;
-  transfer_account_id: string;
+  transfer_account_id: string | null;
   deleted: boolean;
 }
 
