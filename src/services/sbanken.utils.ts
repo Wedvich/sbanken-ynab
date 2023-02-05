@@ -48,6 +48,11 @@ export function inferDate(transaction?: SbankenTransactionBase): string | undefi
   }
 }
 
+/**
+ * Keeps track of generated synthetic IDs to avoid duplicates.
+ */
+const syntheticIdCache = new Map<string, number>();
+
 export const createSyntheticId = (transaction: SbankenTransactionBase): string => {
   const baseTransaction = pick(transaction, [
     'accountingDate',
@@ -58,6 +63,23 @@ export const createSyntheticId = (transaction: SbankenTransactionBase): string =
     'transactionTypeCode',
     'transactionTypeText',
   ]);
-  const syntheticId = `synthetic:${crc32(JSON.stringify(baseTransaction))}`;
+  let syntheticId = `synthetic:${crc32(JSON.stringify(baseTransaction))}`;
+  if (syntheticIdCache.has(syntheticId)) {
+    const counter = syntheticIdCache.get(syntheticId)! + 1;
+    syntheticId = `${syntheticId}:${counter}`;
+    syntheticIdCache.set(syntheticId, counter);
+  } else {
+    syntheticIdCache.set(syntheticId, 1);
+  }
+
+  console.log(syntheticId);
+
   return syntheticId;
+};
+
+/** Gets the next synthetic ID that would be generated in case of a conflict. */
+export const getNextSyntheticId = (syntheticId: string) => {
+  const syntheticBaseId = syntheticId.split(':').slice(0, 1).join(':');
+  const counter = (syntheticIdCache.get(syntheticBaseId) ?? 1) + 1;
+  return `${syntheticBaseId}:${counter}`;
 };
