@@ -31,7 +31,7 @@ import { createEntityAdapter } from '@reduxjs/toolkit';
 import type { Transaction } from './transactions';
 import { groupBy } from 'lodash-es';
 import { inferPayeeIdFromDescription } from './ynab.utils';
-import { getNextSyntheticId } from './sbanken.utils';
+import { getRandomSuffix } from './sbanken.utils';
 
 export const ynabTransactionsAdapter = createEntityAdapter<YnabTransaction>({
   sortComparer: (a, b) => b.date.localeCompare(a.date) || a.amount - b.amount,
@@ -209,14 +209,12 @@ export const { useCreateTransactionMutation } = ynabApi.injectEndpoints({
           },
         })) as Result;
 
-        // FIXME: This is crude and only really works for 2 duplicates. If there are 3 or more, it
-        // will break down and we need a more accurate solution.
         if (
           result.error &&
           result.error.status === 409 &&
           ynabTransaction.import_id?.startsWith('synthetic')
         ) {
-          ynabTransaction.import_id = getNextSyntheticId(ynabTransaction.import_id);
+          ynabTransaction.import_id += `:${getRandomSuffix()}`;
           result = (await baseQuery({
             url,
             headers,
