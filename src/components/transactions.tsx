@@ -102,16 +102,14 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
 
   const [createTransaction, { isLoading: isCreatingTransaction }] = useCreateTransactionMutation();
 
-  const budgetIds = useAppSelector((state) => state.ynab.includedBudgets);
-
-  // TODO: Use in creation
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const ynabPayees = useGetPayeesQuery(
-    { budgetIds },
+  const { data } = useGetPayeesQuery(
+    { budgetId: account.ynabBudgetId },
     {
       skip: !account.ynabLinkOk,
     }
   );
+
+  const payees = data?.payees ?? [];
 
   return (
     <Fragment>
@@ -240,6 +238,7 @@ export const Transactions = ({ account, fromDate }: TransactionsProps) => {
                                   accountId: account.ynabAccountId,
                                   fromDate,
                                   transaction,
+                                  payees,
                                 });
                               }}
                             >
