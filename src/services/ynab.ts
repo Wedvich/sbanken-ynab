@@ -22,6 +22,7 @@ import type {
   YnabGetBudgetsResponse,
   YnabAccountsResponse,
 } from './ynab.types';
+import { addAlert } from './alerts';
 
 const budgetsAdapter = createEntityAdapter<YnabBudget>({
   selectId: (budget) => budget.id,
@@ -307,6 +308,8 @@ export const ynabSlice = createSlice({
 export const { clearServerKnowledge, deleteToken, saveToken, setServerKnowledge, toggleBudget } =
   ynabSlice.actions;
 
+const ynabError = 'ynab-error';
+
 export const fetchBudgetsAndAccounts = createAsyncThunk<YnabGetBudgetsResponse, string>(
   `${ynabSlice.name}/fetchBudgetsAndAccounts`,
   async (token, { dispatch }) => {
@@ -327,6 +330,14 @@ export const fetchBudgetsAndAccounts = createAsyncThunk<YnabGetBudgetsResponse, 
     }
 
     if (!response.ok) {
+      dispatch(
+        addAlert({
+          id: ynabError,
+          title: 'Kunne ikke hente budsjetter fra YNAB',
+          message:
+            'Det oppsto en feil under henting av budsjetter, og serveren ga ingen spesifisert feilkode. Du kan forsøke å lage et nytt token i YNAB sine utviklerinnstillinger.',
+        })
+      );
       return Promise.reject(response.statusText);
     }
 

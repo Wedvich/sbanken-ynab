@@ -22,17 +22,18 @@ export const Alerts = () => {
         show={alerts.length > 0}
         as="div"
         className="flex w-full flex-col items-center space-y-4 lg:items-end"
-        enter="transform ease-out duration-300 transition"
-        enterFrom="translate-y-2 opacity-0 lg:translate-y-0 lg:translate-x-2"
-        enterTo="translate-y-0 opacity-100 lg:translate-x-0"
-        leave="transition ease-in duration-100"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
       >
         {alerts.map((alert) => (
-          <div
+          <Transition.Child
             key={alert.id}
+            as="div"
             className="pointer-events-auto w-full max-w-md overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
+            enter="transform ease-out duration-300 transition"
+            enterFrom="translate-y-2 opacity-0 lg:translate-y-0 lg:translate-x-2"
+            enterTo="translate-y-0 opacity-100 lg:translate-x-0"
+            leave="transition ease-in duration-100"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
           >
             <div className="p-4">
               <div className="flex items-start">
@@ -68,7 +69,7 @@ export const Alerts = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </Transition.Child>
         ))}
       </Transition>
     </div>
