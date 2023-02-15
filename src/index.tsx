@@ -27,6 +27,7 @@ import { store } from './services';
 import ServiceWorkerManager from './service-worker/manager';
 
 import { Settings } from 'luxon';
+import { Alerts } from './components/alerts';
 Settings.defaultLocale = 'nb';
 
 const router = createBrowserRouter([
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
       <Fragment>
         {process.env.NODE_ENV === 'production' && <ServiceWorkerManager />}
         <App />
+        <Alerts />
       </Fragment>
     ),
   },

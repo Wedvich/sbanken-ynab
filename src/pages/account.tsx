@@ -153,7 +153,7 @@ export const AccountPage = () => {
                   href={`https://app.youneedabudget.com/${account.ynabBudgetId}/accounts/${account.ynabAccountId}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-pink-600 hover:text-pink-700 hover:underline underline-offset-2 inline-flex items-center gap-1 text-sm"
+                  className="text-pink-600 hover:text-pink-500 hover:underline underline-offset-2 inline-flex items-center gap-1 text-sm"
                 >
                   Åpne i YNAB
                   <Icons.ExternalLink />
@@ -162,7 +162,7 @@ export const AccountPage = () => {
                   href={`https://secure.sbanken.no/Home/AccountStatement?accountId=${account.sbankenAccountId}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-pink-600 hover:text-pink-700 hover:underline underline-offset-2 inline-flex items-center gap-1 text-sm"
+                  className="text-pink-600 hover:text-pink-500 hover:underline underline-offset-2 inline-flex items-center gap-1 text-sm"
                 >
                   Åpne i Sbanken
                   <Icons.ExternalLink />

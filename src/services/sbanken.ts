@@ -18,6 +18,7 @@ import type {
   SbankenAccount,
   SbankenSuccessResponse,
 } from './sbanken.types';
+import { addAlert, dismissAlert } from './alerts';
 
 export interface SbankenToken {
   value: string;
@@ -188,9 +189,11 @@ export const sbankenSlice = createSlice({
 export const { deleteCredential, saveCredential, setShowReservedTransactions } =
   sbankenSlice.actions;
 
+const sbankenToken400 = 'sbanken-token-400';
+
 export const fetchSbankenToken = createAsyncThunk<SbankenToken, SbankenCredential>(
   `${sbankenSlice.name}/fetchSbankenToken`,
-  async ({ clientId, clientSecret }) => {
+  async ({ clientId, clientSecret }, { dispatch }) => {
     const credentials = window.btoa(
       `${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`
     );
@@ -206,8 +209,18 @@ export const fetchSbankenToken = createAsyncThunk<SbankenToken, SbankenCredentia
     });
 
     if (!response.ok) {
+      dispatch(
+        addAlert({
+          id: sbankenToken400,
+          title: 'Kunne ikke hente token fra Sbanken',
+          message:
+            'Sannsynligvis er det fordi passordet er utløpt, da de kun er gyldige i 3 måneder. Du må opprette et nytt passord i utviklerportalen til Sbanken.',
+        })
+      );
       return Promise.reject(response.statusText);
     }
+
+    dispatch(dismissAlert(sbankenToken400));
 
     const { access_token } = await response.json(); // TODO: Type response
     const parts: Array<string> = access_token.split('.');
@@ -259,11 +272,14 @@ startAppListening({
   matcher: isAnyOf(saveCredential.match, deleteCredential.match, fetchSbankenToken.fulfilled.match),
   effect: async (action, { dispatch, getState }) => {
     if (saveCredential.match(action)) {
-      await dispatch(fetchSbankenToken(action.payload));
-
-      if (action.payload.originalClientId) {
+      if (
+        !!action.payload.originalClientId &&
+        action.payload.originalClientId !== action.payload.clientId
+      ) {
         dispatch(deleteCredential(action.payload.originalClientId));
       }
+
+      await dispatch(fetchSbankenToken(action.payload));
     }
 
     const credentials = getSbankenCredentials(getState());

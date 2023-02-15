@@ -5,18 +5,20 @@ import {
   createAsyncThunk,
   ThunkAction,
 } from '@reduxjs/toolkit';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { accountsSlice } from './accounts';
 import { sbankenSlice } from './sbanken';
 import { ynabSlice } from './ynab';
 import { sbankenApi } from './sbanken.api';
 import { ynabApi } from './ynab.api';
 import { listenerMiddleware } from './listener';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { alertsSlice } from './alerts';
 
 export const createStore = (test = false, preloadedState?: any) =>
   configureStore({
     reducer: {
       [accountsSlice.name]: accountsSlice.reducer,
+      [alertsSlice.name]: alertsSlice.reducer,
       [sbankenApi.reducerPath]: sbankenApi.reducer,
       [sbankenSlice.name]: sbankenSlice.reducer,
       [ynabApi.reducerPath]: ynabApi.reducer,

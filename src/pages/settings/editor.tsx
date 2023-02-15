@@ -4,6 +4,7 @@ import { FocusTrap } from '@headlessui/react';
 import { Form } from 'react-router-dom';
 import classNames from 'classnames';
 import Button from '../../components/button';
+import Icons from '../../components/icons';
 import type { SbankenCredential } from '../../services/sbanken';
 import type { RequestStatus } from '../../utils';
 
@@ -160,21 +161,8 @@ export const YnabTokenEditor = ({
                     </>
                   ) : (
                     <>
-                      <svg
-                        className="w-4 h-4 inline-flex mr-1 text-red-600"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M18 6L6 18M6 6L18 18"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      Feil ved tilkobling
+                      <Icons.Alert className="text-red-600 mr-1" aria-hidden="true" />
+                      <span className="text-red-500">Feil ved tilkobling</span>
                     </>
                   )}
                 </span>
@@ -353,21 +341,8 @@ export const SbankenCredentialEditor = ({
                     </>
                   ) : (
                     <>
-                      <svg
-                        className="w-4 h-4 inline-flex mr-1 text-red-600"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M18 6L6 18M6 6L18 18"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      Feil ved tilkobling
+                      <Icons.Alert className="text-red-600 mr-1" aria-hidden="true" />
+                      <span className="text-red-500">Feil ved tilkobling</span>
                     </>
                   )}
                 </span>
