@@ -8,6 +8,7 @@ describe('inferPayeeIdFromDescription', () => {
     { id: 'c', name: 'Fresh Cutz', deleted: false, transfer_account_id: null },
     { id: 'd', name: 'Coop Extra', deleted: false, transfer_account_id: null },
     { id: 'e', name: 'Coop Mega', deleted: false, transfer_account_id: null },
+    { id: 'f', name: 'Rema 1000', deleted: false, transfer_account_id: null },
   ];
 
   it('finds the correct payee by partial match', () => {
@@ -28,7 +29,7 @@ describe('inferPayeeIdFromDescription', () => {
     expect(payeeId).toEqual('d');
   });
 
-  it('returns undefined when there are only multiple artial matches', () => {
+  it('returns undefined when there are only multiple partial matches', () => {
     const payeeId = inferPayeeIdFromDescription(payees, 'Coop');
 
     expect(payeeId).toBeUndefined();
@@ -38,5 +39,11 @@ describe('inferPayeeIdFromDescription', () => {
     const payeeId = inferPayeeIdFromDescription(payees, 'Spotify');
 
     expect(payeeId).toBeUndefined();
+  });
+
+  it('matches partial payee names when there are no better matches', () => {
+    const payeeId = inferPayeeIdFromDescription(payees, 'REMA LORENVEIEN');
+
+    expect(payeeId).toEqual('f');
   });
 });
