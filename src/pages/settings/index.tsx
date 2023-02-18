@@ -20,6 +20,8 @@ import Button from '../../components/button';
 import { Dialog } from '@headlessui/react';
 import Icons from '../../components/icons';
 import { ImportExport } from './import-export';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const resetEverything = () => {
   localStorage.clear();
@@ -60,6 +62,12 @@ export const Settings = () => {
 
   const [showResetDialog, setShowResetDialog] = useState(false);
 
+  const location = useLocation();
+  useEffect(() => {
+    if (!location.hash) return;
+    document.querySelector(location.hash)?.scrollIntoView();
+  }, [location.hash]);
+
   return (
     <div className="py-10">
       <div className="max-w-5xl">
@@ -67,6 +75,7 @@ export const Settings = () => {
           <h1 className="text-3xl font-semibold text-gray-900">Innstillinger</h1>
           <Section
             title="You Need A Budget"
+            id="ynab"
             description={
               <Fragment>
                 Legg til ett eller flere{' '}
@@ -110,6 +119,7 @@ export const Settings = () => {
           </Section>
           <Section
             title="Sbanken"
+            id="sbanken"
             description={
               <Fragment>
                 Du må gå til{' '}

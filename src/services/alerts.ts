@@ -1,11 +1,6 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '.';
-
-interface Alert {
-  id: string;
-  title: string;
-  message: string;
-}
+import type { Alert } from './alerts.constants';
 
 const alertsAdapter = createEntityAdapter<Alert>();
 

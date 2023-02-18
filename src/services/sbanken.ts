@@ -19,6 +19,7 @@ import type {
   SbankenSuccessResponse,
 } from './sbanken.types';
 import { addAlert, dismissAlert } from './alerts';
+import { alerts } from './alerts.constants';
 
 export interface SbankenToken {
   value: string;
@@ -209,14 +210,7 @@ export const fetchSbankenToken = createAsyncThunk<SbankenToken, SbankenCredentia
     });
 
     if (!response.ok) {
-      dispatch(
-        addAlert({
-          id: sbankenToken400,
-          title: 'Kunne ikke hente token fra Sbanken',
-          message:
-            'Sannsynligvis er det fordi passordet er utløpt, da de kun er gyldige i 3 måneder. Du må opprette et nytt passord i utviklerportalen til Sbanken.',
-        })
-      );
+      dispatch(addAlert(alerts.sbankenToken400));
       return Promise.reject(response.statusText);
     }
 

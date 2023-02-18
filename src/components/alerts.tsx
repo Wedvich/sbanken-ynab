@@ -27,7 +27,7 @@ export const Alerts = () => {
           <Transition.Child
             key={alert.id}
             as="div"
-            className="pointer-events-auto w-full max-w-md overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
+            className="pointer-events-auto w-full max-w-md overflow-hidden rounded-lg bg-white shadow-lg shadow-red-300 ring-1 ring-red-300"
             enter="transform ease-out duration-300 transition"
             enterFrom="translate-y-2 opacity-0 lg:translate-y-0 lg:translate-x-2"
             enterTo="translate-y-0 opacity-100 lg:translate-x-0"
@@ -47,7 +47,8 @@ export const Alerts = () => {
                     <div className="mt-3 flex space-x-7">
                       <Button
                         onClick={() => {
-                          navigate('/innstillinger');
+                          navigate(`/innstillinger#${alert.source}`);
+                          dispatch(dismissAlert(alert.id));
                         }}
                       >
                         Gå til innstillingene
