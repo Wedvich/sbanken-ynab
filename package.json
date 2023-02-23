@@ -80,6 +80,6 @@
     "undici": "^5.19.1",
     "vite": "^4.0.4",
     "vite-plugin-static-copy": "^0.13.0",
-    "vitest": "^0.28.4"
+    "vitest": "^0.28.5"
   }
 }

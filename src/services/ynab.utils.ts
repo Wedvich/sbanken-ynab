@@ -1,3 +1,4 @@
+import { deburr } from 'lodash-es';
 import type { YnabPayee } from './ynab.types';
 
 const prepareCache = new Map<string, Array<string>>();
@@ -20,13 +21,20 @@ export const inferPayeeIdFromDescription = (
   const activePayees = payees.filter((payee) => !payee.deleted);
   let matches = activePayees.filter((payee) => {
     const payeeName = prepare(payee.name);
-    return payeeName.every((namePart) => parts.includes(namePart));
+    return parts.every((part) => payeeName.includes(part));
   });
 
   if (!matches.length) {
     matches = activePayees.filter((payee) => {
+      const payeeName = prepare(deburr(payee.name));
+      return parts.every((part) => payeeName.includes(part));
+    });
+  }
+
+  if (!matches.length) {
+    matches = activePayees.filter((payee) => {
       const payeeName = prepare(payee.name);
-      return payeeName.some((namePart) => parts.includes(namePart));
+      return parts.some((part) => payeeName.includes(part));
     });
   }
 
