@@ -9,7 +9,7 @@ jobs:
       - task: UseNode@1
         displayName: Install Node 18
         inputs:
-          version: 18.x
+          version: 18.14.0
 
       - script: yarn --immutable --immutable-cache
         displayName: Install dependencies
