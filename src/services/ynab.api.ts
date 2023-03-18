@@ -63,7 +63,7 @@ const convertToYnabTransaction = (
   accountId: string
 ): Partial<YnabTransaction> => ({
   account_id: accountId,
-  amount: transaction.amount * 1000,
+  amount: Math.round(transaction.amount * 1000), // Handle float precision - YNAB requires integer
   date: transaction.date.toISO(),
   import_id: transaction.sbankenTransactionId,
   memo: transaction.description,
