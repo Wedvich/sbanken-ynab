@@ -25,6 +25,11 @@ import { useLocation } from 'react-router-dom';
 
 const resetEverything = () => {
   localStorage.clear();
+  void navigator.serviceWorker
+    ?.getRegistrations?.()
+    .then((registrations) =>
+      Promise.all(registrations.map((registration) => registration.unregister()))
+    );
   window.location.href = '/';
 };
 
