@@ -9,7 +9,6 @@ import {
 import { DateTime } from 'luxon';
 import type { RootState } from '.';
 import { sbankenApiBaseUrl } from '../config';
-import { addAlert } from './alerts';
 import {
   fetchSbankenToken,
   sbankenAccountsAdapter,

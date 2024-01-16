@@ -43,7 +43,7 @@ export default defineConfig(({ mode }) => ({
         },
       ],
     }),
-    visualizer(),
+    visualizer() as any, // Vite's plugin types are a moving target
   ],
   server: {
     open: true,
